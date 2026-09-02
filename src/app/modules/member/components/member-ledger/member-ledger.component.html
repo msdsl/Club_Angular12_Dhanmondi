@@ -1,0 +1,44 @@
+<div class="tab-pane" role="tabpanel" aria-labelledby="ledger-tab">
+  <div class="" style="background-color: #fff; font-size: 14px; font-weight: bold; padding: 5px 10px">
+    Member Ledger
+  </div>
+  <hr />
+  <div class="content mt-2">
+    <div class="table-responsive">
+        <table class="mt-1 table table-hover mt-1 text-center customer-list">
+            <thead class="table-head rounded-lg">
+        <tr>
+          <th class="sl-th">Sl</th>
+          <th>Dates</th>
+          <th>Amount</th>
+          <th>BankCreditCardName</th>
+          <th>PayType</th>
+          <th>Description</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let x of memberLedgerDetails; index as i">
+          <td>{{ (currentPage - 1) * pageSize + i + 1 }}</td>
+          <td>{{ x.Dates | date: 'yyyy-MM-dd' }}</td>
+          <td>{{ x.Amount }}</td>
+          <td>{{ x.BankCreditCardName }}</td>
+          <td>{{ x.PayType }}</td>
+          <td>{{ x.Description }}</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+  <div style="float: right" class="mt-2">
+    <ngb-pagination
+      [collectionSize]="collectionSize"
+      [(page)]="currentPage"
+      [pageSize]="pageSize"
+      [maxSize]="10"
+      [rotate]="true"
+      [ellipses]="false"
+      [boundaryLinks]="true"
+      (pageChange)="loadForLegerPagination(currentPage)"
+    ></ngb-pagination>
+  </div>
+</div>
+</div>

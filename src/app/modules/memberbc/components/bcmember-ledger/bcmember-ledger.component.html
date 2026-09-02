@@ -1,0 +1,52 @@
+<div class="form-section-card p-4 rounded-3 border mb-4">
+  <div class="d-flex align-items-center justify-content-between mb-3 pb-2 border-bottom border-gray-200">
+    <div class="d-flex align-items-center gap-2">
+      <i class="fas fa-book-open text-primary"></i>
+      <h5 class="fw-bolder text-dark mb-0">Member Financial Ledger</h5>
+    </div>
+    <span class="badge badge-light-primary fs-9 fw-semibold">Transaction Statement</span>
+  </div>
+
+  <div class="table-responsive rounded-2 border">
+    <table class="table table-hover align-middle mb-0 text-center custom-member-table">
+      <thead class="table-head">
+        <tr>
+          <th class="w-50px">SL</th>
+          <th class="text-center">Date</th>
+          <th class="text-end pe-4">Amount (BDT)</th>
+          <th class="text-start">Bank / Card</th>
+          <th class="text-center">Pay Type</th>
+          <th class="text-start">Description</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let x of memberLedgerDetails; index as i">
+          <td class="text-muted fs-8 fw-bold">{{ (currentPage - 1) * pageSize + i + 1 }}</td>
+          <td class="text-dark fw-semibold fs-8">{{ x.Dates | date : "dd/MM/yyyy" }}</td>
+          <td class="text-end pe-4 fw-bolder text-primary">{{ x.Amount | number:'1.2-2' }}</td>
+          <td class="text-start text-dark fw-semibold fs-8">{{ x.BankCreditCardName || '—' }}</td>
+          <td class="text-center">
+            <span class="badge badge-light-info fs-9 fw-bold px-2 py-1">{{ x.PayType || 'Cash' }}</span>
+          </td>
+          <td class="text-start text-muted fs-8">{{ x.Description || '—' }}</td>
+        </tr>
+        <tr *ngIf="!memberLedgerDetails || memberLedgerDetails.length === 0">
+          <td colspan="6" class="p-3 text-muted">No ledger transactions found</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <div class="d-flex justify-content-end mt-3">
+    <ngb-pagination
+      [collectionSize]="collectionSize"
+      [(page)]="currentPage"
+      [pageSize]="pageSize"
+      [maxSize]="10"
+      [rotate]="true"
+      [ellipses]="false"
+      [boundaryLinks]="true"
+      (pageChange)="loadForLegerPagination(currentPage)"
+    ></ngb-pagination>
+  </div>
+</div>

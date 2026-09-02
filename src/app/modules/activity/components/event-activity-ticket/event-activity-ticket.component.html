@@ -1,0 +1,357 @@
+<form [formGroup]="eventActivityTicketForm">
+  <div class="row mb-2">
+    <div class="col-md-3">
+      <div class="form-group">
+        <label for="name" class="required fw-semibold fs-6 mb-2">Service</label>
+        <ng-select [items]="serviceTypeList" bindLabel="Title" bindValue="Id" formControlName="MemServiceId" (change)="patchEventTitle($event)"></ng-select>
+      </div>
+      <small [hidden]="handleBlur(eventActivityTicketForm.controls.MemServiceId)" class="text-danger" translate>
+        Service is required
+      </small>
+    </div>
+    <div class="col-md-3">
+      <div class="form-group">
+        <label for="name" class="fw-semibold fs-6 mb-2">Ticket Selling Start Date</label>
+        <input type="date" class="form-control" name="startDate" formControlName="StartDate" />
+      </div>
+    </div>
+    <div class="col-md-3">
+      <div class="form-group">
+        <label for="name" class="fw-semibold fs-6 mb-2">Ticket Selling End Date</label>
+        <input type="date" class="form-control" name="TicketLimit" formControlName="EndDate" />
+      </div>
+    </div>
+    <div class="col-md-3">
+      <div class="form-group">
+        <label for="name" class="fw-semibold fs-6 mb-2">Event Date</label>
+        <input type="date" class="form-control" name="TicketLimit" formControlName="EventDate" />
+      </div>
+    </div>
+
+
+
+    
+    <div class="col-md-3">
+      <div class="form-group">
+        <label for="name" class="fw-semibold fs-6 mb-2">Ticket Limit</label>
+        <input type="number" class="form-control" name="TicketLimit" formControlName="TicketLimit" />
+      </div>
+    </div>
+
+    <div class="col-md-3">
+      <div class="form-group">
+        <label for="name" class="fw-semibold fs-6 mb-2">Promo Code</label>
+        <input type="text" class="form-control" name="PromoCode" formControlName="PromoCode" />
+      </div>
+    </div>
+
+
+    <div class="col-md-3">
+      <div class="form-group">
+        <label for="name" class="fw-semibold fs-6 mb-2">Location</label>
+        <input type="text" class="form-control" name="Location" formControlName="Location" />
+      </div>
+    </div>
+    <div class="col-md-3">
+      <div class="form-group">
+        <label for="name" class="fw-semibold fs-6 mb-2">Service Charge Percent</label>
+        <input type="text" class="form-control" name="ServiceChargePercent" formControlName="ServiceChargePercent" />
+      </div>
+    </div>
+  </div>
+  <div class="row mb-2">
+
+    <div class="col-md-3">
+      <div class="form-group">
+        <label for="name" class="fw-semibold fs-6 mb-2">Vat Charge Percent</label>
+        <input type="number" class="form-control" name="VatChargePercent" formControlName="VatChargePercent" />
+      </div>
+    </div>
+    <div class="col-md-4">
+      <div class="form-group">
+        <label for="name" class="fw-semibold fs-6 mb-2">Description</label>
+        <textarea name="" id="" formControlName="Description" class="form-control"></textarea>
+      </div>
+    </div>
+
+  </div>
+  <div class="row">
+    <div class="col-md-4 mt-4 mb-4">
+      <div class="d-flex">
+        <input
+          type="text"
+          class="form-control col-md-6 mr-1"
+          name="TokenCode"
+          formControlName="TokenCode"
+          placeholder="Token Code"
+        />
+        <a style="color: #fff; cursor: pointer" class="primary-btn ms-2" (click)="addEventToken()"
+          ><i class="fa fa-plus mr-2"></i></a
+        >
+      </div>
+      <table class="mt-2">
+        <tr *ngFor="let x of EventTokenReqs; index as i">
+          <td class="w-100px">{{ x.TokenCode }}</td>
+          <td style="padding: 0.5rem">
+            <a
+              (click)="removeEventTokenDetail(x)"
+              class="action-btn-remove"
+              style="display: block; text-align: center; cursor: pointer"
+            >
+              <i class="fa fa-minus"></i>
+            </a>
+          </td>
+        </tr>
+      </table>
+    </div>
+  </div>
+  <div class="row mb-2">
+    
+
+    <div class="col-md-3">
+      <div class="form-group">
+        <label for="name" class="required fw-semibold fs-6 mb-2">Availability</label>
+        <!-- <ng-select [items]="AvailabilityList" bindLabel="Name" bindValue="Id" formControlName="AvailabilityId"
+          (change)="triggerGetAvailabilityDetail($event)"></ng-select> -->
+      </div>
+      <!-- <small [hidden]="handleBlur(eventActivityTicketForm.controls.AvailabilityId)" class="text-danger" translate>
+        Availability is required
+      </small> -->
+    </div>
+    
+    <div class="col-md-9" *ngIf="AvailabilityDetail?.length>0">
+      <div class="table-responsive">
+        <table class="mt-1 table table-hover mt-1 text-center customer-list">
+          <thead class="table-head rounded-lg">
+            <tr>
+              <th class="w-55px text-start">Title</th>
+              <th class="text-start">Start</th>
+              <th class="text-start">End</th>
+              <th class="text-start">Day</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr *ngFor="let data of AvailabilityDetail; let i = index" (dblclick)="goToEditPage(data.Id)">
+              <td class="text-start">{{ data.Title }}</td>
+              <td class="text-start">{{ convertTime(data.StartTime) }}</td>
+              <td class="text-start">{{ convertTime(data.EndTime) }}</td>
+              <td class="text-start">
+                <span *ngIf="data.IsWholeDay" class="green-label">Yes</span>
+                <span *ngIf="!data.IsWholeDay" class="red-label">No</span>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+  </div>
+
+  <div class="row mb-2">
+    <div class="col-md-12">
+      <div  formArrayName="ServiceTicketDetailReqs" class="px-3 py-2 border rounded">
+        <div *ngFor="let item of serviceTicketDetailArray; let i = index" class="pt-1">
+          <div [formGroupName]="i" class="section-body">
+            <div class="row mb-2">
+              <div class="col-3">
+                <div class="form-group">
+                  <label for="" *ngIf="i==0">Title</label>
+                  <ng-select [items]="serviceTicketTypeList" bindLabel="Title" bindValue="Id"
+            placeholder="Member Type" formControlName="ServiceTicketTypeId"></ng-select>
+                </div>
+              </div>
+              <div class="col-3">
+                <div class="form-group">
+                  <label for="" *ngIf="i==0">Unit Price</label>
+                  <input type="number" formControlName="UnitPrice" id="name" class="form-control"
+                    placeholder="UnitPrice" name="UnitPrice" />
+                </div>
+              </div>
+              <div class="col-2">
+                <div class="form-group">
+                  <label for="" *ngIf="i==0">Max Quantity</label>
+                  <input type="number" formControlName="MaxQuantity" id="name" class="form-control"
+                    placeholder="MaxQuantity" name="MaxQuantity" />
+                </div>
+              </div>
+              <div class="col-2">
+                <div class="form-group">
+                  <label for="" *ngIf="i==0">Min Quantity</label>
+                  <input type="number" formControlName="MinQuantity" id="name" class="form-control"
+                    placeholder="MinQuantity" name="MinQuantity" />
+                </div>
+              </div>
+           
+              <div class="col-2">
+                <label for="" *ngIf="i==0">Action</label>
+                <div class="form-group d-flex gap-1">
+                  <button [ngClass]="{
+                    hidden: i == 0 && TopUpDetailsArray?.length == 1
+                  }" type="button" class="btn-trash me-1" (click)="removeItem(i)">
+                    <i class="far fa-trash-alt"></i>
+                  </button>
+                  <button [ngClass]="{
+                    hidden: !(i == TopUpDetailsArray?.length - 1)
+                  }" type="button" class="btn-add" (click)="addItemDetail(i)">
+                    <i class="fa fa-plus"></i>
+                  </button>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="col-6 mt-5">
+      <div class="border rounded px-3 py-2">
+
+        <button class="primary-btn" (click)="areaLayoutButtonClick(areaLayoutModal)">+Add Layout</button>
+
+        <div class="table-responsive">
+          <table class="mt-1 table table-hover mt-1 text-center customer-list">
+            <thead class="table-head rounded-lg">
+              <tr>
+                <th>Area Layout</th>
+                <th>Table</th>
+                <th>No of Chair</th>
+                <th>Action</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr *ngFor="let data of selectedLayouts; let i = index" >
+                <td >{{data.Title}}</td>
+                <td >
+                  <div class="cell-overflow">
+                    <p *ngFor="let detail of data.AreaLayoutDetails;">{{detail.TableName}}</p>
+                  </div>
+                </td>
+                <td >
+                  <div class="cell-overflow">
+                    <p *ngFor="let detail of data.AreaLayoutDetails;">{{detail.NumberOfChair}}</p>
+                  </div>
+                </td>
+                <td class="w-175px align-content-start">
+                  <a class="delete-btn" (click)="deleteSelectedLayout(data.Id)"> <i class="far fa-trash-alt"></i></a>
+                </td>
+              </tr>
+            </tbody>
+            <tbody *ngIf="selectedLayouts?.length < 1 ">
+              <tr>
+                <td colspan="15" class="p-0">
+                  <app-empty [message]="'No Data Found'"></app-empty>
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+
+
+      </div>
+    </div>
+
+  </div>
+
+  <div class="row">
+    <div class="col-6">
+      <div class="col-3">
+        <div class="form-group mt-4">
+          <div class="">
+            <div class="input-group justify-content-center align-items-center">
+              <div class="pic-holder">
+                <img *ngIf="this.eventActivityTicketForm.value.ImgFileUrl" id="profilePic" width="192" height="192" class="pic ml-5"
+                  [src]="this.eventActivityTicketForm.value.ImgFileUrl" />
+                <!-- <img src="../../../../../assets/media/icon/upload-image.png" alt=""> -->
+  
+                <div class="rr" *ngIf="!this.eventActivityTicketForm.value.ImgFileUrl">
+                  <Input formControlName="formFile" class="uploadProfileInput" type="file" name="profile_pic"
+                    id="newProfilePhoto" accept="image/*" (change)="imageChangeHandler($event)" />
+                </div>
+                <a (click)="removeImage()" *ngIf="this.eventActivityTicketForm.value.ImgFileUrl"><i
+                    class="fa-solid fa-circle-xmark"></i></a>
+              </div>
+            </div>
+          </div>
+        </div>
+  
+      </div>
+    </div>
+  </div>
+
+  <div class="mt-2">
+    <button class="primary-btn" (click)="onSubmit()">Save</button>
+  </div>
+</form>
+
+<swal #noticeSwal [swalOptions]="swalOptions"> </swal>
+
+
+<ng-template #areaLayoutModal let-modal>
+  <div>
+    <div class="modal-header">
+      <h4 class="modal-title ml-1" id="myModalLabel160">Area Layout List</h4>
+      <button
+        type="button"
+        aria-label="Close"
+        class="btn-close"
+        (click)="modal.dismiss('Cross click')"
+      ></button>
+    </div>
+  </div>
+  <div class="px-3 py-2">
+    <div class="d-flex flex-wrap card-d gap-2">
+      <div class="mr-1 mt-1" *ngFor="let item of areaLayoutDataList; let i = index">
+        <div [ngClass]="{'selected-color': selected == i}" 
+        class="custom-btn" 
+        triggers="manual" 
+        [autoClose]="'outside'"
+        placement="start" 
+        [ngbTooltip]="tipContent"
+        (click)="addLayoutToModel(item)"
+        #t="ngbTooltip"
+        (mouseenter)="onMouseEnter(t)"
+        (mouseleave)="onMouseLeave(t, 'button')">
+          <a> {{ item.Title }}</a>
+
+
+          <ng-template #tipContent>
+            <div class="p-3 text-start tooltip-content" (mouseenter)="onMouseEnterTable()" (mouseleave)="onMouseLeave(t, 'table')">
+              <p class="text-center mb-1 fw-bold">Layout Detail</p>
+
+
+              <table class="w-100">
+                <thead>
+                    <tr>
+                        <th>Table</th>
+                        <th>Number Of Chair</th>
+                    </tr>
+                </thead>
+            </table>
+            <div style="max-height: 429px; overflow-y: scroll;">
+                <table class="w-100">
+                    <tbody>
+                        <tr *ngFor="let detail of item.AreaLayoutDetails; index as i">
+                            <td>{{detail.TableName}}</td>
+                            <td class="text-center">{{detail.NumberOfChair}}</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+            
+            </div>
+          </ng-template>
+
+
+
+
+
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="d-flex justify-content-end w-100 border-0 gap-2 modal-footer">
+    <button class="discard-btn me-1" (click)="modal.dismiss('Cross click')">
+      Close
+    </button>
+  </div>
+</ng-template>

@@ -1,0 +1,18 @@
+:host ::ng-deep .pagination > li.page-item.active > a.page-link > span {
+    display: none;
+  }
+  .custom-tooltip {
+    background-color: #333;
+    color: #fff;
+    padding: 5px 10px;
+    border-radius: 5px;
+    font-size: 12px;
+    position: absolute;
+    z-index: 1000;
+    pointer-events: none;
+    white-space: nowrap;
+  }
+.fc-event-title .fc-sticky:hover{
+    color: black !important;
+    min-width: fit-content !important;
+}

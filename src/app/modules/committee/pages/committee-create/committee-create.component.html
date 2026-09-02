@@ -1,0 +1,112 @@
+<div class="card">
+  <div class="card-header">
+    <p>Committee Create</p>
+  </div>
+  <div class="card-body">
+
+    <form [formGroup]="executiveForm">
+      <div class="row mb-2">
+        <div class="col-md-2">
+          <div class="form-group">
+            <label for="name" class="required fw-semibold fs-6 mb-2">Select Year</label>
+            <ng-select [items]="SubscribedYearList" formControlName="CommitteeYear"></ng-select>
+          </div>
+          <small [hidden]="handleBlur(executiveForm.controls.CommitteeYear)" class="text-danger" translate>
+            Year is required
+          </small>
+        </div>
+        <div class="col-md-2">
+          <div class="form-group">
+            <label for="name" class="required fw-semibold fs-6 mb-2">Select Category</label>
+            <ng-select [items]="CommitteeCategoryList" bindLabel="Title" bindValue="Id" formControlName="CommitteeCategoryId"></ng-select>
+          </div>
+          <small [hidden]="handleBlur(executiveForm.controls.CommitteeYear)" class="text-danger" translate>
+            Year is required
+          </small>
+        </div>
+        <div class="col-md-2">
+          <div class="form-group">
+            <label for="name" class="fw-semibold fs-6 mb-2">Create Date</label>
+            <input type="date" class="form-control" name="SubscriptionFee" formControlName="CommitteeDate" />
+          </div>
+        </div>
+
+        <div class="col-md-2">
+          <div class="form-group">
+            <label for="name" class="fw-semibold fs-6 mb-2">Title</label>
+            <input type="text" class="form-control" name="Title" formControlName="Title" />
+          </div>
+        </div>
+        <div class="col-md-2">
+          <div class="form-group">
+            <label for="name" class="fw-semibold fs-6 mb-2">Designation</label>
+            <input type="text" class="form-control" name="Designation" formControlName="Designation" />
+          </div>
+        </div>
+        <div class="col-md-2">
+          <div class="form-group">
+            <label for="name" class="fw-semibold fs-6 mb-2">Member</label>
+            <input type="text" class="form-control" (keyup.enter)="showMemberInfo($event)">
+          </div>
+        </div>
+      </div>
+
+
+    </form>
+
+
+    <div class="content mt-2">
+      <div class="table-responsive">
+        <table class="mt-1 table table-hover mt-1 text-center customer-list">
+          <thead class="table-head rounded-lg">
+            <tr>
+              <th class="">Sl</th>
+              <th class="text-start">Photo</th>
+              <th class="text-start">Membership No.</th>
+              <th class="text-start">Name</th>
+              <th class="text-start">Designation</th>
+              <th class="text-start">Phone</th>
+              <th class="text-start">Email</th>
+              <th class="">Member</th>
+              <th class="">Action</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr *ngFor="let data of executiveMembers; let i = index">
+              <td class="">{{ i+1 }}</td>
+              <td class="text-start"><img class="member-img" [src]="data.ImgFileUrl" alt=""></td>
+              <td class="text-start">{{ data.MemberShipNo }}</td>
+              <td class="text-start">{{ data.MemberName }}</td>
+              <td class="text-start">{{ data.Designation }}</td>
+              <td class="text-start">{{ data.Phone }}</td>
+              <td class="text-start">{{ data.Email }}</td>
+              <td class="">
+                <span class="green-label" *ngIf="data.IsMasterMember">Yes</span>
+                <span class="red-label" *ngIf="!data.IsMasterMember">No</span>
+              </td>
+
+              <td class="">
+                <button (click)="removeExecutiveMember(data)" type="button" class="btn-trash me-1"><i class="far fa-trash-alt"></i></button>
+              </td>
+            </tr>
+          </tbody>
+          <tbody *ngIf="executiveMembers?.length < 1 ">
+            <tr>
+                <td colspan="15" class="p-0">
+                    <app-empty [message]="'No Data Found'"></app-empty>
+                </td>
+            </tr>
+        </tbody>
+
+
+        </table>
+      </div>
+
+    </div>
+    <div>
+      <button class="primary-btn" (click)="onSubmit()">Save</button>
+    </div>
+
+  </div>
+</div>
+<swal #noticeSwal [swalOptions]="swalOptions"> </swal>

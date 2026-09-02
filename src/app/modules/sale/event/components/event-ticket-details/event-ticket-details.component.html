@@ -1,0 +1,52 @@
+<section>
+  <div class="feature-section">
+    <div class="feature-section-wrapper">
+      <div class="feature-list-header-wrapper">
+        <div class="feature-list-header">
+          <h3>Event Ticket Sale Details</h3>
+        </div>
+      </div>
+
+  
+     
+
+      <div class="content mt-2">
+        <div class="table-responsive">
+          <table class="mt-1 table table-hover mt-1 text-center customer-list">
+            <thead class="table-head rounded-lg">
+              <tr>
+                <th class="sl-th">Id</th>
+                <th>AreaLayoutTitle</th>
+                <th>EventTitle</th>
+                <th>EventTokens</th>
+                <th>NoofChair</th>
+                <th>TableTitle</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr *ngFor="let x of eventTicketDetail?.SaleEventTicketDetailReqs; index as i">
+                <td class="sl-td">{{ i + 1 }}</td>
+                <td>{{ x.AreaLayoutTitle }}</td>
+                <td>{{ x.EventTitle }}</td>
+                <td>{{ x.EventTokens }}</td>
+                <td>{{ x.NoofChair }}</td>
+                <td>{{ x.TableTitle }}</td>
+              </tr>
+            </tbody>
+            <tbody *ngIf="eventTicketDetail?.SaleEventTicketDetailReqs?.length < 1">
+              <tr>
+                <td colspan="15" class="p-0">
+                  <app-empty [message]="'No Data Found'"></app-empty>
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      
+      </div>
+    </div>
+  </div>
+</section>
+
+
+

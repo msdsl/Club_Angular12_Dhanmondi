@@ -1,0 +1,220 @@
+<form [formGroup]="memberFamilyInfoForm">
+  <h5>Family Information</h5>
+  <div class="row">
+    <div class="col-9">
+      <div class="row mb-3">
+        <div class="col-4">
+          <label for="">Spouse Card No <sup>*</sup></label>
+          <input type="text" formControlName="CardNo" placeholder="Card No" class="form-control">
+
+          <!-- <small [hidden]="handleBlur(memberFamilyInfoForm.controls.CollegeId)" class="text-danger">
+            College is required
+          </small> -->
+        </div>
+        <div class="col-4">
+          <label for="">Spouse Name <sup>*</sup></label>
+          <input type="text" formControlName="Spouse" placeholder="Spouse Name" class="form-control">
+          <!-- <small [hidden]="handleBlur(memberFamilyInfoForm.controls.BatchNo)" class="text-danger">
+              Batch No is required
+            </small> -->
+        </div>
+        <div class="col-4">
+          <label for="">Spouse Occupation <sup>*</sup></label>
+          <input type="text" formControlName="SpouseOccupation" placeholder="Spouse Occupation" class="form-control">
+          <!-- <small [hidden]="handleBlur(memberFamilyInfoForm.controls.CadetNo)" class="text-danger">
+              Cadet No is required
+            </small> -->
+        </div>
+      </div>
+      <div class="row mb-3">
+        <div class="col-4">
+          <label for="">Anniversary </label>
+          <input type="date" formControlName="Anniversary" class="form-control">
+
+        </div>
+        <div class="col-4">
+          <label for="">NOK </label>
+         
+          <select formControlName="Nok"  class="form-control">
+            <option value="N\A">N\A</option>
+            <option *ngFor="let x of noks" [value]="x">{{ x }}</option>
+          </select>
+          <!-- <ng-select [items]="noks" bindLabel="Name" bindValue="Id"  placeholder="Nok" formControlName="Nok"></ng-select> -->
+
+        </div>
+      </div>
+
+
+
+      <hr>
+
+      <button class="primary-btn" (click)="addChild(addChildModal)">
+        +Add
+      </button>
+
+      <div class="table-responsive">
+        <table class="mt-1 table table-hover mt-1 text-center customer-list">
+          <thead class="table-head rounded-lg">
+            <tr>
+              <th class="w-55px">SL.</th>
+              <th class="text-start">Name</th>
+              <th class="text-start">Phone</th>
+              <th class="text-start">Date Of Birth</th>
+              <th class="text-start">Gender</th>
+
+              <th>Action</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr *ngFor="let data of childInfoArray; let i = index"
+              (dblclick)="careateOrEditModalPopUp(createOrUpdateModal, data)">
+              <td>{{ i + 1 }}</td>
+              <td class="text-start">{{ data.ContactName }}</td>
+              <td class="text-start">{{ data.Phone }}</td>
+              <td class="text-start">{{ data.Dob }}</td>
+              <td class="text-start">{{ data.Gender }}</td>
+
+              <td class="w-175px">
+                <div class="action-dropdown">
+                  <button class="dropdown-item" title="Delete Item" type="button" (click)="deleteButtonClick(i)">
+                    <i class="far fa-trash-alt" aria-hidden="true"></i>
+                  </button>
+
+
+                </div>
+              </td>
+            </tr>
+          </tbody>
+          <tbody *ngIf="childInfoArray?.length < 1 || hasData === false">
+            <tr>
+              <td colspan="6" class="p-0">
+                <app-empty [message]="'No Data Found'"></app-empty>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+
+      <div class="row mb-3">
+        <div class="col-4">
+          <button class="primary-btn" (click)="onSubmit()">
+            Submit
+          </button>
+        </div>
+      </div>
+
+    </div>
+    <div class="col-3">
+
+
+      <div class="form-group mt-4">
+        <div class="">
+          <div class="input-group justify-content-center align-items-center">
+            <div class="pic-holder">
+              <img *ngIf="this.memberFamilyInfoForm.value.ImgFileUrl" id="profilePic" width="192" height="192"
+                class="pic ml-5" [src]="this.memberFamilyInfoForm.value.ImgFileUrl" />
+              <!-- <img src="../../../../../assets/media/icon/upload-image.png" alt=""> -->
+
+              <div class="rr" *ngIf="!this.memberFamilyInfoForm.value.ImgFileUrl">
+                <Input formControlName="SpouseFile" class="uploadProfileInput" type="file" name="profile_pic"
+                  id="newProfilePhoto" accept="image/*" (change)="imageChangeHandler($event)" />
+              </div>
+              <a (click)="removeImage()" *ngIf="this.memberFamilyInfoForm.value.ImgFileUrl"><i
+                  class="fa-solid fa-circle-xmark"></i></a>
+            </div>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</form>
+
+<ng-template #addChildModal let-modal>
+  <div>
+    <div class="modal-header">
+      <h4 class="modal-title ml-1" id="myModalLabel160">Add Child</h4>
+      <button type="button" aria-label="Close" class="btn-close" (click)="modal.dismiss('Cross click')"></button>
+    </div>
+  </div>
+  <div class="px-3 py-2">
+    <form [formGroup]="childInfoForm">
+      <div class="row mb-2">
+        <div class="col-md-12">
+          <div class="form-group">
+            <label for="name" class="required fw-semibold fs-6 mb-2">Name</label>
+            <input type="text" formControlName="ContactName" id="name" class="form-control" placeholder="Name" required />
+
+          </div>
+        </div>
+      </div>
+      <div class="row mb-2">
+        <div class="col-md-12">
+          <div class="form-group">
+            <label for="name" class="required fw-semibold fs-6 mb-2">Phone</label>
+            <input type="text" formControlName="Phone" id="name" class="form-control" placeholder="Phone" required />
+
+          </div>
+        </div>
+      </div>
+      <div class="row mb-2">
+        <div class="col-md-12">
+          <div class="form-group">
+            <label for="name" class="required fw-semibold fs-6 mb-2">Date Of Birth</label>
+            <input type="date" formControlName="Dob" id="name" class="form-control" placeholder="Name" required />
+          </div>
+        </div>
+      </div>
+      <div class="row">
+        <div class="col-md-12">
+          
+
+          <div class="d-flex gap-5">
+            <div class="form-group d-flex gap-2 align-items-center">
+              <input
+                class="form-check-input m-0"
+                formControlName="Gender"
+                type="radio"
+                value="M"
+                id="genderMale"
+              />
+              <label class=" mb-0" for="genderMale"> Son </label>
+            </div>
+            <div class="form-group d-flex gap-2 align-items-center">
+              <input
+                class="form-check-input m-0"
+                formControlName="Gender"
+                type="radio"
+                value="F"
+                id="genderFemale"
+              />
+              <label class=" mb-0" for="genderFemale"> Daughter </label>
+            </div>
+            <div class="form-group d-flex gap-2 align-items-center">
+              <input
+                class="form-check-input m-0"
+                formControlName="Gender"
+                type="radio"
+                value="N/A"
+                id="genderNA"
+              />
+              <label class=" mb-0" for="genderNA"> N/A </label>
+            </div>
+          </div>
+
+
+
+        </div>
+      </div>
+    </form>
+  </div>
+  <div class="d-flex justify-content-end w-100 border-0 gap-2 modal-footer">
+    <button class="discard-btn me-1" (click)="modal.dismiss('Cross click')">
+      Discard
+    </button>
+    <button class="primary-btn" (click)="onSubmitChildAddForm()" (click)="modal.dismiss('Cross click')">
+      Submit
+    </button>
+  </div>
+</ng-template>

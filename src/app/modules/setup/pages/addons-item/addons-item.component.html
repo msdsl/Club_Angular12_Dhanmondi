@@ -1,0 +1,263 @@
+<section>
+  <div class="feature-section">
+    <div class="feature-section-wrapper">
+      <div class="feature-list-header-wrapper">
+        <div class="feature-list-header">
+          <h3>Addons Item List</h3>
+        </div>
+        <div>
+          <span class="float-right">
+            <button
+              type="button"
+              class="primary-btn"
+              (click)="careateOrEditModalPopUp(createOrUpdateModal)"
+            >
+              + Add New
+            </button>
+          </span>
+        </div>
+      </div>
+      <div class="feature-list-search-filter"></div>
+      <form [formGroup]="searchForm">
+        <div class="row">
+          <div class="col-md-5 col-lg-4 col-xl-6">
+            <div class="row">
+              <div class="col-sm-12">
+                <div class="d-flex justify-content-between align-items-center">
+                  <label class="d-flex align-items-center gap-2">
+                    <select
+                      style="width: 5rem"
+                      class="form-control mx-25 w-100px py-2 custom-select"
+                      formControlName="pageSize"
+                      (change)="filterData()"
+                    >
+                      <option value="5">5</option>
+                      <option value="10">10</option>
+                      <option value="25">25</option>
+                      <option value="50">50</option>
+                      <option value="100">100</option>
+                    </select>
+                  </label>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="col-md-7 col-lg-8 col-xl-6">
+            <div class="filter-search-option">
+              <div class="input-group justify-content-end gap-3">
+                <button
+                  [ngClass]="{ hide: isFilter === false }"
+                  type="button"
+                  class="btn-filter"
+                >
+                  <i class="fas fa-filter filter-icon me-2"></i>
+                </button>
+
+                <div class="d-flex align-items-center position-relative w-50">
+                  <app-keenicon
+                    name="magnifier"
+                    class="fs-3 search-input-icon"
+                  ></app-keenicon>
+                  <input
+                    type="text"
+                    data-action="filter"
+                    class="form-control form-control-solid ps-12 search-input"
+                    placeholder="Search ..."
+                    formControlName="searchKey"
+                    (keyup)="filterData()"
+                  />
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </form>
+
+      <div class="content mt-2">
+        <div class="table-responsive">
+          <table class="mt-1 table table-hover mt-1 text-center customer-list">
+            <thead class="table-head rounded-lg">
+              <tr>
+                <th class="w-55px">SL.</th>
+                <th class="text-start">Name</th>
+                <th class="text-start">Price</th>
+                <th class="text-start">Price Date</th>
+                <th class="text-start">Description</th>
+
+                <th>Action</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr
+                *ngFor="let data of addonsItems; let i = index"
+                (dblclick)="careateOrEditModalPopUp(createOrUpdateModal, data)"
+              >
+                <td>{{ (currentPage - 1) * pageSize + i + 1 }}</td>
+                <td class="text-start">{{ data.Title }}</td>
+                <td class="text-start">{{ data.Price }}</td>
+                <td class="text-start">
+                  {{ data.PriceDate | date : "dd-MM-YYYY" }}
+                </td>
+                <td class="text-start">{{ data.Description }}</td>
+                <td class="w-100px text-center">
+                  <div class="table-action-group">
+                    <button
+                      class="btn-table-action btn-table-edit"
+                      title="Edit Item"
+                      type="button"
+                      (click)="careateOrEditModalPopUp(createOrUpdateModal, data)"
+                    >
+                      <i class="fas fa-edit"></i>
+                    </button>
+                    <button
+                      class="btn-table-action btn-table-delete"
+                      title="Delete Item"
+                      type="button"
+                      (click)="deleteButtonClick(data.Id)"
+                    >
+                      <i class="far fa-trash-alt"></i>
+                    </button>
+                  </div>
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+        <div class="row">
+          <div class="col-sm-12">
+            <ngb-pagination
+              class="d-flex justify-content-end"
+              [collectionSize]="numberOfEntries"
+              [(page)]="currentPage"
+              [pageSize]="pageSize"
+              (pageChange)="updatePageWiseTableData($event)"
+              [boundaryLinks]="true"
+              [maxSize]="4"
+            >
+            </ngb-pagination>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<ng-template #createOrUpdateModal let-modal>
+  <div>
+    <div class="modal-header">
+      <h4 class="modal-title ml-1" id="myModalLabel160">Addons Item Setup</h4>
+      <button
+        type="button"
+        aria-label="Close"
+        class="btn-close"
+        (click)="modal.dismiss('Cross click')"
+      ></button>
+    </div>
+  </div>
+  <div class="px-3 py-2">
+    <form [formGroup]="addonsItemForm">
+      <div class="row mb-3">
+        <div class="col-md-12">
+          <div class="form-group">
+            <label for="name" class="required fw-semibold fs-6 mb-2"
+              >Name</label
+            >
+            <input
+              type="text"
+              formControlName="Title"
+              id="name"
+              class="form-control"
+              placeholder="Title"
+              required
+            />
+            <small
+              [hidden]="handleBlur(addonsItemForm.controls.Title)"
+              class="text-danger"
+              translate
+            >
+              Title is required
+            </small>
+          </div>
+        </div>
+      </div>
+      <div class="row mb-3">
+        <div class="col-md-12">
+          <div class="form-group">
+            <label for="name" class="fw-semibold fs-6 mb-2">Price</label>
+            <input
+              type="number"
+              class="form-control"
+              name="Price"
+              formControlName="Price"
+            />
+          </div>
+        </div>
+      </div>
+      <div class="row mb-3">
+        <div class="col-md-12">
+          <div class="form-group">
+            <label for="name" class="fw-semibold fs-6 mb-2">Price Date</label>
+            <input
+              type="date"
+              class="form-control"
+              name="DisplayName"
+              formControlName="PriceDate"
+            />
+          </div>
+        </div>
+      </div>
+      <div class="row mb-3">
+        <div class="col-md-12">
+          <div class="form-group">
+            <label for="name" class="required fw-semibold fs-6 mb-2"
+              >Description</label
+            >
+
+            <textarea
+              name=""
+              id=""
+              rows="10"
+              class="form-control"
+              formControlName="Description"
+            ></textarea>
+          </div>
+        </div>
+      </div>
+    </form>
+  </div>
+  <div class="d-flex justify-content-end w-100 border-0 gap-2 modal-footer">
+    <button class="discard-btn me-1" (click)="modal.dismiss('Cross click')">
+      Discard
+    </button>
+    <button
+      class="primary-btn"
+      (click)="onSubmit()"
+      (click)="modal.dismiss('Cross click')"
+    >
+      Submit
+    </button>
+  </div>
+</ng-template>
+
+<ng-template #deleteConfirmation let-c="close" let-d="dismiss">
+  <app-confirmation-modal
+    text="Do You Confirm to delete this profession?"
+    (closeButtonClicked)="d('Cross click')"
+    (okButtonClicked)="deleteButtonClick()"
+  ></app-confirmation-modal>
+</ng-template>
+<swal #noticeSwal [swalOptions]="swalOptions"> </swal>
+<swal
+  #deleteSwal
+  title="Are you sure to delete?"
+  text="This cannot be undone"
+  icon="warning"
+  [showCancelButton]="true"
+  [focusCancel]="true"
+  (confirm)="triggerDelete()"
+  [customClass]="{
+    confirmButton: 'btn btn-danger',
+    cancelButton: 'btn btn-active-light'
+  }"
+>
+</swal>

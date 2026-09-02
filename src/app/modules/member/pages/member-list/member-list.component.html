@@ -1,0 +1,578 @@
+<section>
+    <div class="feature-section">
+        <div class="feature-section-wrapper">
+            <div class="feature-list-header-wrapper">
+                <div class="feature-list-header">
+                    <h3>Member List</h3>
+                </div>
+                <div class="d-flex align-items-center gap-2">
+                    <button type="button" class="primary-btn"
+                        (click)="openBulkImportModal(bulkImportModal)">
+                        <i class="fa fa-file-excel"></i> Bulk Import
+                    </button>
+                    <button type="button" class="primary-btn"
+                        (click)="goToCreatePage()">
+                        + Add New
+                    </button>
+                </div>
+            </div>
+            <div class="feature-list-search-filter"></div>
+            <form [formGroup]="searchForm">
+                <div class="row">
+                    <div class="col-md-5 col-lg-4 col-xl-6">
+                        <div class="row">
+                            <div class="col-sm-12">
+                                <div class="d-flex justify-content-between align-items-center">
+                                    <label class="d-flex align-items-center gap-2">
+                                        <select style="width: 5rem"
+                                            class="form-control mx-25 w-100px py-2 custom-select"
+                                            formControlName="pageSize" (change)="filterData()">
+                                            <option value="5">5</option>
+                                            <option value="10">10</option>
+                                            <option value="25">25</option>
+                                            <option value="50">50</option>
+                                            <option value="100">100</option>
+                                        </select>
+                                    </label>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-7 col-lg-8 col-xl-6">
+                        <div class="filter-search-option">
+                            <div class="input-group justify-content-end gap-3">
+                                <button [ngClass]="{ hide: isFilter === false }" type="button" class="btn-filter"
+                                    (click)="toggleFilter()">
+                                    <i class="fas fa-filter filter-icon me-2"></i>
+                                </button>
+
+                                <div class="d-flex align-items-center position-relative w-50">
+                                    <app-keenicon name="magnifier" class="fs-3 search-input-icon"></app-keenicon>
+                                    <input type="text" data-action="filter"
+                                        class="form-control form-control-solid ps-12 search-input"
+                                        placeholder="Search ..." formControlName="searchKey" (keyup)="filterData()" />
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </form>
+            <div class="filter-container" [ngClass]="{'show':isShowFilter}">
+                <form [formGroup]="filterForm">
+                    <div class="row mb-2">
+                        <div class="col-2">
+                            <input type="text" formControlName="MemberShipNo" placeholder="MemberShipNo"
+                                class="form-control">
+                        </div>
+                        <div class="col-2">
+                            <input type="text" formControlName="FullName" placeholder="FullName" class="form-control">
+                        </div>
+                        <div class="col-2">
+                            <input type="text" formControlName="CadetName" placeholder="CadetName" class="form-control">
+                        </div>
+                        <div class="col-2">
+                            <ng-select [items]="memberTypes" bindLabel="Name" bindValue="Id" placeholder="Member Type"
+                                formControlName="MemberTypeId"></ng-select>
+                        </div>
+                        <div class="col-2">
+                            <ng-select [items]="memberActiveStatus" bindLabel="Name" bindValue="Id" placeholder="Member Active Status"
+                                formControlName="MemberActiveStatusId"></ng-select>
+                        </div>
+                        <div class="col-2">
+                            <input type="text" formControlName="Phone" placeholder="Phone" class="form-control">
+                        </div>
+                    </div>
+                    <div class="row mb-2">
+                        <div class="col-2">
+                            <input type="text" formControlName="Email" placeholder="Email" class="form-control">
+                        </div>
+                        <div class="col-2">
+                            <ng-select [items]="colleges" bindLabel="Name" bindValue="Id" placeholder="College"
+                                formControlName="CollegeId"></ng-select>
+                        </div>
+                        <div class="col-2">
+                            <input type="text" formControlName="BatchNo" placeholder="BatchNo" class="form-control">
+                        </div>
+                        <div class="col-2">
+                            <ng-select [items]="bloodGroups" bindLabel="Code" bindValue="Id" placeholder="Blood Group"
+                                formControlName="BloodGroupId"></ng-select>
+                        </div>
+                        <div class="col-2">
+                            <ng-select [items]="memberProfessions" bindLabel="Name" bindValue="Id" placeholder="Member Profession"
+                                formControlName="MemberProfessionId"></ng-select>
+                        </div>
+                        <div class="col-2">
+                            <input type="text" formControlName="Organaization" placeholder="Organaization"
+                                class="form-control">
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-2">
+                            <input type="text" formControlName="Designation" placeholder="Designation"
+                                class="form-control">
+                        </div>
+                        <div class="col-2">
+                            <input type="text" formControlName="Specialization" placeholder="Specialization"
+                                class="form-control">
+                        </div>
+                        <div class="col-2">
+                            <input type="text" formControlName="HscYear" placeholder="HscYear" class="form-control">
+                        </div>
+                        <div class="col-2">
+                            <input type="text" formControlName="CadetNo" placeholder="CadetNo" class="form-control">
+                        </div>
+                        <div class="col-4">
+                            <div>
+                                <button (click)="getMemberList()" class="search-btn">Search</button>
+                                <button (click)="resetFilterForm()" class="reset-btn ms-3">Reset</button>
+                            </div>
+                        </div>
+                    </div>
+                </form>
+            </div>
+
+            <div class="content mt-2">
+                <div class="table-responsive">
+                    <table class="mt-1 table table-hover mt-1 text-center customer-list">
+                        <thead class="table-head rounded-lg">
+                            <tr>
+                                <th class="w-55px">SL.</th>
+                                <th>Photo</th>
+                                <th>Info</th>
+                                <th>MemberShipNo</th>
+                                <th>Type</th>
+                                <th>Status</th>
+                                <th>Active Status</th>
+                                <th>CadetNo</th>
+                                <th>Batch</th>
+                                <th>College</th>
+                                <th>HSC</th>
+                                <th>Blood</th>
+                                <th>DOB</th>
+                                <th>Profession</th>
+                                <th>Action</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr *ngFor="let data of members; let i = index"
+                                (dblclick)="goToEdit(data.Id)">
+                                <td>{{ (currentPage - 1) * pageSize + i + 1 }}</td>
+                                <td>
+                                    <img src="{{ data.ImgFileUrl }}" alt="Image" width="80" height="80"
+                                        style="border-radius: 50%; box-shadow: hsla(0, 0%, 0%, 0.158) 0px 2px 23px" />
+                                </td>
+                                <td style="min-width: 300px">
+                                    <div class="mt-1 member-info-cell">
+                                        <div style="font-weight: bold">
+                                            <i style="color: #9eb8f1" class="fas fa-user-tie  mb-2"></i> {{ data.Name }}
+                                        </div>
+                                        <div *ngIf="data.Phone"><i style="color: #9eb8f1"
+                                                class="fa fa-phone  mb-2"></i>{{ data.Phone }}</div>
+                                        <div *ngIf="data.Email"><i style="color: #9eb8f1" class="fa fa-envelope me-2"></i> {{
+                                            data.Email }}</div>
+                                        <div *ngIf="data.MemberFullId">
+                                            <i style="color: #9eb8f1" class="fa fa-id-card me-2"></i> {{ data.MemberFullId }}
+                                        </div>
+                                    </div>
+                                </td>
+
+                                <td>{{ data.MemberShipNo }}</td>
+                                <td>{{ data.TypeText }}</td>
+                                <td>
+                                    {{ data.StatusText }}
+                                </td>
+                                <!-- <td>{{ data.Name }}</td> -->
+                                <td>{{ data.ActiveStatusText }}</td>
+                                <td>{{ data.CadetNo }}</td>
+                                <td>{{ data.BatchNo }}</td>
+                                <td>{{ data.CollegeCode }}</td>
+                                <td>{{ data.HscYear }}</td>
+                                <td>{{ data.BloodGroupText }}</td>
+                                <td>{{ data.Dbo | date: 'dd/MM/YYYY' }}</td>
+                                <td>{{ data.ProfessionText }}</td>
+                                <!-- <td class="text-start">{{ data.Code }}</td> -->
+
+                                <td class="w-100px text-center">
+                                    <div class="table-action-group">
+                                        <button class="btn-table-action btn-table-edit" title="Edit Member" type="button" (click)="goToEdit(data.Id)">
+                                            <i class="fas fa-edit"></i>
+                                        </button>
+                                        <button class="btn-table-action btn-table-delete" title="Delete Member" type="button" (click)="deleteButtonClick(data.Id)">
+                                            <i class="far fa-trash-alt"></i>
+                                        </button>
+                                    </div>
+                                </td>
+                            </tr>
+                        </tbody>
+                        <tbody *ngIf="members?.length < 1 || hasData === false">
+                            <tr>
+                                <td colspan="15" class="p-0">
+                                    <app-empty [message]="'No Data Found'"></app-empty>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+                <div class="row">
+                    <div class="col-sm-12">
+                        <ngb-pagination class="d-flex justify-content-end" [collectionSize]="numberOfEntries"
+                            [(page)]="currentPage" [pageSize]="pageSize" (pageChange)="updatePageWiseTableData($event)"
+                            [boundaryLinks]="true" [maxSize]="4">
+                        </ngb-pagination>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<ng-template #createOrUpdateModal let-modal>
+    <div>
+        <div class="modal-header">
+            <h4 class="modal-title ml-1" id="myModalLabel160">Member List Setup</h4>
+            <button type="button" aria-label="Close" class="btn-close" (click)="modal.dismiss('Cross click')"></button>
+        </div>
+    </div>
+    <div class="px-3 py-2">
+        <form [formGroup]="memberForm">
+            <div class="row">
+                <div class="col-md-12">
+                    <div class="form-group">
+                        <label for="name" class="required fw-semibold fs-6 mb-2">Name</label>
+                        <input type="text" formControlName="Title" id="Title" class="form-control" placeholder="Title"
+                            required />
+                        <small [hidden]="handleBlur(memberForm.controls.Title)" class="text-danger" translate>
+                            Name is required
+                        </small>
+                    </div>
+                </div>
+            </div>
+        </form>
+    </div>
+    <div class="d-flex justify-content-end w-100 border-0 gap-2 modal-footer">
+        <button class="discard-btn me-1" (click)="modal.dismiss('Cross click')">
+            Discard
+        </button>
+        <button class="primary-btn" (click)="onSubmit()" (click)="modal.dismiss('Cross click')">
+            Submit
+        </button>
+    </div>
+</ng-template>
+
+<ng-template #deleteConfirmation let-c="close" let-d="dismiss">
+    <app-confirmation-modal text="Do You Confirm to delete this profession?" (closeButtonClicked)="d('Cross click')"
+        (okButtonClicked)="deleteButtonClick()"></app-confirmation-modal>
+</ng-template>
+
+<ng-template #bulkImportModal let-modal>
+  <div class="modern-modal-content bulk-import-modal-wrapper">
+    <!-- Modal Header -->
+    <div class="modal-header modern-modal-header d-flex justify-content-between align-items-center bg-light">
+      <div class="d-flex align-items-center">
+        <span class="modal-title-icon me-2 text-success">
+          <i class="fas fa-file-excel fa-2x"></i>
+        </span>
+        <div>
+          <h5 class="modal-title font-weight-bold fw-bold mb-0 text-dark">Bulk Member Registration (Multi-Sheet Excel)</h5>
+          <span class="text-muted small">Import Members, Spouse, and Children in one single workbook</span>
+        </div>
+      </div>
+      <button type="button" class="btn-close" [disabled]="isImporting" (click)="modal.dismiss('Cross click')" aria-label="Close"></button>
+    </div>
+
+    <!-- Modal Body -->
+    <div class="modal-body p-4 custom-scrollbar" style="max-height: 75vh; overflow-y: auto;">
+      <!-- Step 1 & 2 Action Row -->
+      <div class="row mb-3 align-items-stretch">
+        <!-- Download Sample Template Box -->
+        <div class="col-lg-5 col-md-12 mb-3 mb-lg-0">
+          <div class="template-download-box p-3 rounded h-100 border d-flex flex-column justify-content-between">
+            <div>
+              <div class="d-flex align-items-center mb-2">
+                <span class="badge bg-primary-soft text-primary font-weight-bold fw-bold me-2">Step 1</span>
+                <strong class="text-dark font-size-14">Get Excel Template</strong>
+              </div>
+              <p class="text-muted small mb-2">
+                Download the multi-sheet template containing pre-formatted <strong>Members</strong>, <strong>Spouse</strong>, and <strong>Children</strong> sheets.
+              </p>
+            </div>
+            <button type="button" class="btn btn-outline-primary btn-sm w-100 font-weight-bold fw-bold" (click)="downloadMultiSheetTemplate()">
+              <i class="fas fa-download me-1"></i> Download Multi-Sheet Template (.xlsx)
+            </button>
+          </div>
+        </div>
+
+        <!-- File Upload Drag & Drop Box -->
+        <div class="col-lg-7 col-md-12">
+          <div class="file-drop-zone p-3 rounded h-100 border text-center d-flex flex-column align-items-center justify-content-center position-relative">
+            <input type="file" class="file-input-hidden" (change)="onExcelFileSelected($event)" accept=".xlsx, .xls" [disabled]="isImporting" />
+            <i class="fas fa-cloud-upload-alt text-success fa-2x mb-2"></i>
+            <strong class="text-dark font-size-14 d-block mb-1">
+              {{ selectedImportFileName ? selectedImportFileName : 'Click or Drag & Drop Excel File here' }}
+            </strong>
+            <span class="text-muted extra-small">Supports .xlsx &amp; .xls (Members, Spouse, Children tabs)</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Live Parsing Summary & AI Health Score Badges -->
+      <div class="row mb-3" *ngIf="parsedMembersList.length > 0">
+        <div class="col-md-3 col-6 mb-2">
+          <div class="stat-pill-box bg-blue-soft border rounded p-2 text-center">
+            <div class="text-muted extra-small font-weight-bold fw-bold">MEMBERS FOUND</div>
+            <h5 class="text-primary font-weight-bold fw-bold mb-0">{{ parsedMembersList.length }}</h5>
+          </div>
+        </div>
+        <div class="col-md-3 col-6 mb-2">
+          <div class="stat-pill-box bg-pink-soft border rounded p-2 text-center">
+            <div class="text-muted extra-small font-weight-bold fw-bold">SPOUSES LINKED</div>
+            <h5 class="text-pink-bold font-weight-bold fw-bold mb-0">{{ parsedSpousesList.length }}</h5>
+          </div>
+        </div>
+        <div class="col-md-3 col-6 mb-2">
+          <div class="stat-pill-box bg-amber-soft border rounded p-2 text-center">
+            <div class="text-muted extra-small font-weight-bold fw-bold">CHILDREN LINKED</div>
+            <h5 class="text-amber-bold font-weight-bold fw-bold mb-0">{{ parsedChildrenList.length }}</h5>
+          </div>
+        </div>
+        <div class="col-md-3 col-6 mb-2">
+          <div class="stat-pill-box bg-green-soft border rounded p-2 text-center">
+            <div class="text-muted extra-small font-weight-bold fw-bold">AI READINESS SCORE</div>
+            <h5 class="text-success font-weight-bold fw-bold mb-0">
+              <i class="fas fa-shield-alt me-1"></i> {{ aiQualityScore }}%
+            </h5>
+          </div>
+        </div>
+      </div>
+
+      <!-- AI Insights & Auto-Cleansing Summary Banner -->
+      <div class="ai-insights-banner p-3 rounded mb-3 border" *ngIf="parsedMembersList.length > 0 && aiInsightsList.length > 0" style="background: linear-gradient(135deg, rgba(245, 243, 255, 0.9) 0%, rgba(238, 242, 255, 0.9) 100%); border-color: #c7d2fe !important;">
+        <div class="d-flex align-items-center justify-content-between mb-2">
+          <div class="d-flex align-items-center">
+            <span class="badge bg-purple-soft text-purple font-weight-bold fw-bold me-2 px-2 py-1">
+              <i class="fas fa-brain me-1"></i> AI Cleanse Engine
+            </span>
+            <strong class="text-dark font-size-13">AI Auto-Corrected {{ aiCleanedCount }} Data Discrepancies</strong>
+          </div>
+          <span class="badge bg-success-soft text-success font-weight-bold fw-bold extra-small">
+            <i class="fas fa-check-circle me-1"></i> Zero Manual Effort
+          </span>
+        </div>
+        <div class="row">
+          <div class="col-md-6 mb-1" *ngFor="let insight of aiInsightsList">
+            <div class="extra-small text-dark font-weight-500">
+              {{ insight }}
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Live Progress Bar & Percentage during Import -->
+      <div class="import-progress-card p-3 rounded bg-white shadow-sm border border-primary mb-3" *ngIf="isImporting">
+        <div class="d-flex align-items-center justify-content-between mb-2">
+          <div class="d-flex align-items-center">
+            <i class="fas fa-spinner fa-spin text-primary fa-lg me-2"></i>
+            <div>
+              <div class="font-weight-bold fw-bold text-dark font-size-14">{{ importStatusText }}</div>
+              <span class="text-muted extra-small">Please do not close the window while importing</span>
+            </div>
+          </div>
+          <div class="text-end">
+            <span class="badge bg-primary text-white font-weight-bold fw-bold px-2 py-1" style="font-size: 1rem;">
+              {{ importProgress }}%
+            </span>
+          </div>
+        </div>
+        <div class="progress" style="height: 12px; border-radius: 6px; background-color: #e2e8f0;">
+          <div
+            class="progress-bar progress-bar-striped progress-bar-animated bg-success"
+            role="progressbar"
+            [style.width.%]="importProgress"
+            [attr.aria-valuenow]="importProgress"
+            aria-valuemin="0"
+            aria-valuemax="100"
+          ></div>
+        </div>
+      </div>
+
+      <!-- Tabbed Preview Tables -->
+      <div class="preview-card border rounded p-0 overflow-hidden" *ngIf="parsedMembersList.length > 0">
+        <div class="card-header bg-light d-flex justify-content-between align-items-center px-3 py-2 border-bottom">
+          <div class="btn-group btn-group-sm">
+            <button
+              type="button"
+              class="btn"
+              [ngClass]="activeImportTab === 'members' ? 'btn-primary' : 'btn-outline-secondary'"
+              (click)="activeImportTab = 'members'"
+            >
+              <i class="fas fa-users me-1"></i> Members ({{ parsedMembersList.length }})
+            </button>
+            <button
+              type="button"
+              class="btn"
+              [ngClass]="activeImportTab === 'spouses' ? 'btn-primary' : 'btn-outline-secondary'"
+              (click)="activeImportTab = 'spouses'"
+            >
+              <i class="fas fa-heart me-1"></i> Spouses ({{ parsedSpousesList.length }})
+            </button>
+            <button
+              type="button"
+              class="btn"
+              [ngClass]="activeImportTab === 'children' ? 'btn-primary' : 'btn-outline-secondary'"
+              (click)="activeImportTab = 'children'"
+            >
+              <i class="fas fa-child me-1"></i> Children ({{ parsedChildrenList.length }})
+            </button>
+          </div>
+          <span class="text-muted extra-small">Check parsed data before registering</span>
+        </div>
+
+        <div class="table-responsive" style="max-height: 280px; overflow-y: auto;">
+          <!-- Tab 1: Members Preview Table -->
+          <table class="table table-hover table-sm mb-0 align-middle font-size-13" *ngIf="activeImportTab === 'members'">
+            <thead class="table-light sticky-top">
+              <tr>
+                <th style="width: 40px;">#</th>
+                <th>Status</th>
+                <th>Membership No</th>
+                <th>Full Name</th>
+                <th>Phone</th>
+                <th>Blood</th>
+                <th>Profession</th>
+                <th>Spouse</th>
+                <th>Children</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr *ngFor="let m of parsedMembersList; let idx = index" [class.table-danger]="!m.isValid">
+                <td class="text-muted font-weight-bold fw-bold">{{ idx + 1 }}</td>
+                <td>
+                  <span class="badge" [ngClass]="m.isValid ? 'bg-success text-white' : 'bg-danger text-white'" [title]="m.errorMessage">
+                    {{ m.isValid ? 'Valid' : 'Error' }}
+                  </span>
+                </td>
+                <td><strong>{{ m.MembershipNo }}</strong></td>
+                <td>
+                  {{ m.FullName }}
+                  <span *ngIf="m.isNameAiCleaned" class="badge bg-purple-soft text-purple ms-1 extra-small" title="Auto-formatted by AI">
+                    <i class="fas fa-magic"></i> AI
+                  </span>
+                </td>
+                <td>
+                  {{ m.Phone }}
+                  <span *ngIf="m.isPhoneAiCleaned" class="badge bg-purple-soft text-purple ms-1 extra-small" title="Auto-normalized by AI">
+                    <i class="fas fa-magic"></i> AI
+                  </span>
+                </td>
+                <td><span class="badge bg-light text-dark border">{{ m.BloodGroup || '-' }}</span></td>
+                <td>{{ m.Profession || '-' }}</td>
+                <td>
+                  <span *ngIf="m.SpouseData" class="badge bg-pink-light text-pink-bold" [title]="m.SpouseData.SpouseName">
+                    <i class="fas fa-check me-1"></i> {{ m.SpouseData.SpouseName }}
+                  </span>
+                  <span *ngIf="!m.SpouseData" class="text-muted">-</span>
+                </td>
+                <td>
+                  <span *ngIf="m.ChildrenList.length > 0" class="badge bg-amber-light text-amber-bold">
+                    {{ m.ChildrenList.length }} Child(ren)
+                  </span>
+                  <span *ngIf="m.ChildrenList.length === 0" class="text-muted">-</span>
+                </td>
+              </tr>
+            </tbody>
+          </table>
+
+          <!-- Tab 2: Spouse Preview Table -->
+          <table class="table table-hover table-sm mb-0 align-middle font-size-13" *ngIf="activeImportTab === 'spouses'">
+            <thead class="table-light sticky-top">
+              <tr>
+                <th style="width: 40px;">#</th>
+                <th>Membership No</th>
+                <th>Spouse Name</th>
+                <th>Card No</th>
+                <th>Occupation</th>
+                <th>Anniversary</th>
+                <th>NOK</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr *ngFor="let s of parsedSpousesList; let idx = index">
+                <td class="text-muted font-weight-bold fw-bold">{{ idx + 1 }}</td>
+                <td><strong>{{ s.MembershipNo }}</strong></td>
+                <td>{{ s.SpouseName }}</td>
+                <td>{{ s.SpouseCardNo || '-' }}</td>
+                <td>{{ s.SpouseOccupation || '-' }}</td>
+                <td>{{ s.Anniversary || '-' }}</td>
+                <td>{{ s.Nok || 'Yes' }}</td>
+              </tr>
+              <tr *ngIf="parsedSpousesList.length === 0">
+                <td colspan="7" class="text-center text-muted p-3">No spouse records found in Spouse sheet</td>
+              </tr>
+            </tbody>
+          </table>
+
+          <!-- Tab 3: Children Preview Table -->
+          <table class="table table-hover table-sm mb-0 align-middle font-size-13" *ngIf="activeImportTab === 'children'">
+            <thead class="table-light sticky-top">
+              <tr>
+                <th style="width: 40px;">#</th>
+                <th>Membership No</th>
+                <th>Child Name</th>
+                <th>Gender</th>
+                <th>Date of Birth</th>
+                <th>Phone</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr *ngFor="let ch of parsedChildrenList; let idx = index">
+                <td class="text-muted font-weight-bold fw-bold">{{ idx + 1 }}</td>
+                <td><strong>{{ ch.MembershipNo }}</strong></td>
+                <td>{{ ch.ChildName }}</td>
+                <td>
+                  <span class="badge" [ngClass]="ch.Gender === 'Female' || ch.Gender === 'F' ? 'bg-pink-light text-pink-bold' : 'bg-blue-soft text-primary'">
+                    {{ ch.Gender }}
+                  </span>
+                </td>
+                <td>{{ ch.Dob || '-' }}</td>
+                <td>{{ ch.Phone || '-' }}</td>
+              </tr>
+              <tr *ngIf="parsedChildrenList.length === 0">
+                <td colspan="6" class="text-center text-muted p-3">No children records found in Children sheet</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+
+    <!-- Modal Footer -->
+    <div class="modal-footer modern-modal-footer d-flex justify-content-between align-items-center bg-light">
+      <button type="button" class="btn btn-secondary btn-sm" [disabled]="isImporting" (click)="modal.dismiss('Close')">
+        Cancel
+      </button>
+
+      <button
+        type="button"
+        class="btn btn-success btn-sm px-4 fw-bold"
+        [disabled]="isImporting || validMemberCount === 0"
+        (click)="executeBulkRegistration(modal)"
+      >
+        <span *ngIf="!isImporting">
+          <i class="fas fa-file-upload me-1"></i> Register {{ validMemberCount }} Members
+        </span>
+        <span *ngIf="isImporting">
+          <i class="fas fa-spinner fa-spin me-1"></i> Processing Registration...
+        </span>
+      </button>
+    </div>
+  </div>
+</ng-template>
+
+<swal #noticeSwal [swalOptions]="swalOptions"> </swal>
+
+<swal #deleteSwal title="Are you sure to delete?" text="This cannot be undone" icon="warning" [showCancelButton]="true"
+    [focusCancel]="true" (confirm)="triggerDelete()" [customClass]="{
+      confirmButton: 'btn btn-danger',
+      cancelButton: 'btn btn-active-light'
+    }">
+</swal>

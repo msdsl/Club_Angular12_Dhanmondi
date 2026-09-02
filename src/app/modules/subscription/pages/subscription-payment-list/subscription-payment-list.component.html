@@ -1,0 +1,251 @@
+<section>
+  <div class="feature-section">
+    <div class="feature-section-wrapper">
+      <!-- Modern Page Header with AI Pulse Indicator -->
+      <div class="d-flex flex-wrap align-items-center justify-content-between gap-3 mb-4 pb-3 border-bottom border-gray-200">
+        <div class="d-flex align-items-center gap-3">
+          <div class="history-header-icon">
+            <i class="fas fa-file-invoice-dollar fs-2"></i>
+          </div>
+          <div>
+            <div class="d-flex align-items-center gap-2 mb-1">
+              <h3 class="fw-bolder text-dark mb-0">Subscription Collection History</h3>
+              <span class="badge-ai-live">
+                <span class="ai-live-dot"></span> Verified Invoices
+              </span>
+            </div>
+            <p class="page-header-subtitle mb-0">
+              Audit trail of member subscription receipts, payment breakdowns, fee structures, and collection vouchers.
+            </p>
+          </div>
+        </div>
+
+        <div class="d-flex align-items-center gap-2">
+          <button
+            type="button"
+            class="btn-filter-custom"
+            [class.active]="isShowFilter"
+            (click)="toggleFilter()"
+          >
+            <i class="fas fa-filter me-1.5"></i> Date Filter
+          </button>
+        </div>
+      </div>
+
+      <!-- Controls: Page Size & Search Filter -->
+      <form [formGroup]="filterForm">
+        <div class="d-flex flex-wrap align-items-center justify-content-between gap-3 mb-3">
+          <div class="d-flex align-items-center gap-2">
+            <span class="text-muted fs-8 fw-semibold">Show</span>
+            <select
+              class="form-select form-select-sm w-80px custom-select"
+              formControlName="pageSize"
+              (change)="filterData()"
+            >
+              <option value="5">5</option>
+              <option value="10">10</option>
+              <option value="25">25</option>
+              <option value="50">50</option>
+              <option value="100">100</option>
+            </select>
+            <span class="text-muted fs-8 fw-semibold">entries</span>
+          </div>
+
+          <div class="search-input-wrapper">
+            <input
+              type="text"
+              class="form-control form-control-sm search-box-input"
+              placeholder="Search member, invoice..."
+              formControlName="searchKey"
+              (keyup)="filterData()"
+            />
+          </div>
+        </div>
+
+        <!-- Collapsible Filter Drawer -->
+        <div class="filter-drawer-card mb-4 p-3 rounded-3 border" [class.show]="isShowFilter">
+          <div class="row g-3 align-items-end">
+            <div class="col-md-3 col-sm-6">
+              <label class="filter-label">Start Date</label>
+              <input type="date" formControlName="startDate" class="form-control form-control-sm" />
+            </div>
+            <div class="col-md-3 col-sm-6">
+              <label class="filter-label">End Date</label>
+              <input type="date" formControlName="endDate" class="form-control form-control-sm" />
+            </div>
+            <div class="col-md-6 col-sm-12 d-flex gap-2 justify-content-md-end">
+              <button type="button" (click)="getFilteredSubscriptionPaymentList()" class="primary-btn btn-sm px-4">
+                <i class="fas fa-search me-1"></i> Apply Filter
+              </button>
+              <button type="button" (click)="resetFilterForm()" class="btn btn-secondary btn-sm px-3">
+                <i class="fas fa-undo me-1"></i> Reset
+              </button>
+            </div>
+          </div>
+        </div>
+      </form>
+
+      <!-- Main Payment History Table -->
+      <div class="content">
+        <div class="table-responsive rounded-2 border">
+          <table class="table table-hover align-middle mb-0 text-center custom-member-table">
+            <thead class="table-head">
+              <tr>
+                <th class="w-50px text-center">SL</th>
+                <th class="text-center">Membership No</th>
+                <th class="text-start">Member Name</th>
+                <th class="text-center">Payment Voucher No</th>
+                <th class="text-center">Collection Date</th>
+                <th class="text-end">Paid Amount</th>
+                <th class="text-center w-120px">Actions</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr *ngFor="let data of subscriptionPaymentList; let i = index">
+                <td class="text-center text-muted fs-8 fw-bold">{{ (currentPage - 1) * pageSize + i + 1 }}</td>
+                <td class="text-center">
+                  <span class="badge-membership-pill">{{ data.MemberShipNo }}</span>
+                </td>
+                <td class="text-start fw-bolder text-dark fs-7">{{ data.MemberName }}</td>
+                <td class="text-center">
+                  <span class="badge-voucher-pill">#{{ data.PaymentNo }}</span>
+                </td>
+                <td class="text-center text-muted fs-8">
+                  <i class="far fa-calendar-alt text-primary me-1"></i>
+                  {{ data.ActualPaymentDate | date : "dd/MM/yyyy" }}
+                </td>
+                <td class="text-end font-monospace fs-7 fw-bold text-success">
+                  ৳ {{ data.TotalPaymentAmount | number:'1.2-2' }}
+                </td>
+                <td class="text-center">
+                  <div class="d-flex justify-content-center align-items-center gap-1.5">
+                    <button
+                      class="btn-action-info"
+                      title="View Breakdown Details"
+                      type="button"
+                      (click)="getByPaymentNo(data.PaymentNo, viewerModal)"
+                    >
+                      <i class="fas fa-info"></i>
+                    </button>
+                    <button
+                      class="btn-action-pdf"
+                      title="Print PDF Receipt"
+                      type="button"
+                      (click)="openPdfViewerModal(pdfViewerModal, data.PaymentNo)"
+                    >
+                      <i class="fas fa-file-pdf"></i>
+                    </button>
+                  </div>
+                </td>
+              </tr>
+            </tbody>
+            <tbody *ngIf="subscriptionPaymentList?.length < 1 || hasData === false">
+              <tr>
+                <td colspan="7" class="p-4 text-center">
+                  <app-empty [message]="'No Subscription Collection Records Found'"></app-empty>
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+
+        <!-- Pagination -->
+        <div class="d-flex justify-content-between align-items-center flex-wrap gap-2 mt-3" *ngIf="numberOfEntries > 0">
+          <span class="text-muted fs-8">
+            Showing {{ (currentPage - 1) * pageSize + 1 }} to {{ ((currentPage * pageSize) > numberOfEntries ? numberOfEntries : (currentPage * pageSize)) }} of {{ numberOfEntries }} entries
+          </span>
+          <ngb-pagination
+            class="d-flex justify-content-end"
+            [collectionSize]="numberOfEntries"
+            [(page)]="currentPage"
+            [pageSize]="pageSize"
+            (pageChange)="updatePageWiseTableData($event)"
+            [boundaryLinks]="true"
+            [maxSize]="5"
+          >
+          </ngb-pagination>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- Detailed Breakdown Modal -->
+<ng-template #viewerModal let-modal>
+  <div class="modal-header d-flex justify-content-between align-items-center bg-light">
+    <div class="d-flex align-items-center gap-2">
+      <i class="fas fa-receipt text-primary fs-4"></i>
+      <h5 class="modal-title fw-bold text-dark mb-0">Subscription Payment Breakdown</h5>
+    </div>
+    <button type="button" aria-label="Close" class="btn-close" (click)="modal.dismiss('Cross click')"></button>
+  </div>
+
+  <div class="modal-body p-4" *ngIf="subPayemnt && subPayemnt.length > 0">
+    <div class="row g-3 mb-4 p-3 rounded-3 bg-light border">
+      <div class="col-sm-6 col-md-4">
+        <span class="text-muted fs-9 text-uppercase d-block fw-bold">Member Details</span>
+        <span class="fw-bold text-dark fs-7">{{ subPayemnt[0].MemberName }}</span>
+        <span class="badge-membership-pill ms-2">{{ subPayemnt[0].MemberShipNo }}</span>
+      </div>
+      <div class="col-sm-6 col-md-4">
+        <span class="text-muted fs-9 text-uppercase d-block fw-bold">Payment Voucher</span>
+        <span class="fw-bold text-primary font-monospace fs-7">#{{ subPayemnt[0].PaymentNo }}</span>
+      </div>
+      <div class="col-sm-6 col-md-4">
+        <span class="text-muted fs-9 text-uppercase d-block fw-bold">Total Settled</span>
+        <span class="fw-bolder text-success font-monospace fs-6">৳ {{ subPayemnt[0].TotalPaymentAmount | number:'1.2-2' }}</span>
+      </div>
+    </div>
+
+    <div class="table-responsive rounded-2 border">
+      <table class="table table-sm table-hover align-middle mb-0 text-center custom-member-table">
+        <thead class="table-head">
+          <tr>
+            <th class="w-40px">SL</th>
+            <th class="text-start">Subscription Item</th>
+            <th class="text-center">Year</th>
+            <th class="text-center">Actual Date</th>
+            <th class="text-end">Abroad Fee</th>
+            <th class="text-end">Amount (৳)</th>
+            <th class="text-end pe-3">Late Fine (৳)</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let x of subPayemnt; let i = index">
+            <td class="text-muted fs-9">{{ (page - 1) * pageSize + i + 1 }}</td>
+            <td class="text-start fw-semibold fs-8 text-dark">{{ x.SubscriptionName }}</td>
+            <td class="text-center font-monospace fs-8">{{ x.PaymentYear }}</td>
+            <td class="text-center text-muted fs-8">{{ x.ActualPaymentDate | date : "dd/MM/yyyy" }}</td>
+            <td class="text-end font-monospace fs-8">{{ x.AbroadFeeAmount || '—' }}</td>
+            <td class="text-end font-monospace fs-8 fw-bold text-dark">৳ {{ x.PaymentAmount }}</td>
+            <td class="text-end pe-3 font-monospace fs-8 text-danger">{{ x.LateAmount > 0 ? ('৳ ' + x.LateAmount) : '—' }}</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div class="d-flex justify-content-end mt-3" *ngIf="subPayemnt.length > pageSize">
+      <ngb-pagination [(page)]="page" [pageSize]="pageSize" [collectionSize]="subPayemnt.length"></ngb-pagination>
+    </div>
+  </div>
+
+  <div class="modal-footer bg-light">
+    <button type="button" class="btn btn-secondary btn-sm" (click)="modal.dismiss('Cross click')">Close</button>
+  </div>
+</ng-template>
+
+<!-- PDF Document Viewer Modal -->
+<ng-template #pdfViewerModal let-modal>
+  <div class="modal-header d-flex justify-content-between align-items-center bg-light">
+    <div class="d-flex align-items-center gap-2">
+      <i class="fas fa-file-pdf text-danger fs-4"></i>
+      <h5 class="modal-title fw-bold text-dark mb-0">Subscription Voucher Preview</h5>
+    </div>
+    <button type="button" aria-label="Close" class="btn-close" (click)="modal.dismiss('Cross click')"></button>
+  </div>
+  <div class="modal-body p-0">
+    <div *ngIf="url" style="height: 75vh;">
+      <ngx-doc-viewer [url]="url" viewer="url" style="width: 100%; height: 100%;"></ngx-doc-viewer>
+    </div>
+  </div>
+</ng-template>

@@ -1,0 +1,211 @@
+USE [BGCL_DB]
+GO
+
+
+INSERT INTO [dbo].[Customer]
+           ([PrvCusID]
+           ,[CusCategory]
+           ,[Title]
+           ,[CusName]
+           ,[Address]
+           ,[City]
+           ,[Email]
+           ,[CusProfession]
+           ,[DiscAllowed]
+           ,[DiscPrcnt]
+           ,[CreditLimit]
+           ,[CreditDays]
+           ,[Mrcode]
+           ,[Active]
+           ,[Opening]
+           ,[ClubName]
+           ,[CardNo]
+           ,[PinNoHash]
+           ,[PinNoSalt]
+           ,[PinNo]
+           ,[MembershipNo]
+           ,[Picture]
+           ,[ExpireDate]
+           ,[IsMasterMember]
+           ,[AccountNumber]
+           ,[CadetNo]
+           ,[BatchNo]
+           ,[MemberFullId]
+           ,[PaidTill]
+           ,[CadetName]
+           ,[FullName]
+           ,[Phone]
+           ,[Organaization]
+           ,[Designation]
+           ,[Specialization]
+           ,[OfficeAddress]
+           ,[HomeAddress]
+           ,[Dob]
+           ,[MemberStatusId]
+           ,[MemberActiveStatusId]
+           ,[MemberTypeId]
+           ,[CollegeId]
+           ,[MemberProfessionId]
+           ,[BloodGroupId]
+           ,[HscYear]
+           ,[Spouse]
+           ,[SpouseOccupation]
+           ,[Anniversary]
+           ,[IsActive]
+           ,[CreatedBy]
+           ,[CreatedByName]
+           ,[CreatedOn]
+           ,[LastModifiedBy]
+           ,[LastModifiedByName]
+           ,[LastModifiedOn]
+           ,[CurrentBalance]
+           ,[MemberId]
+           ,[CreatedDate]
+           ,[UpdatedBy]
+           ,[UpdatedDate]
+           ,[ActiveStatusDate]
+           ,[Nok]
+           ,[ImgFileUrl]
+           ,[DeviceId]
+           ,[JoinDate]
+           ,[LeaveDate]
+           ,[PermanentAddress]
+           ,[NID]
+           ,[EmergencyContact]
+           ,[ClubJoinDate]
+           ,[QBCusName])
+
+	 select
+           '0',
+           null,
+           null,
+           Name,
+           AreaStatus,
+           null,
+           EmailId,
+           null,
+           null,
+           0,
+           0,
+           0,
+           null,
+           null,
+           GETDATE(),
+           'BGCL',
+           MID,
+           '',
+           '',
+           '',
+           MID,
+           null,
+           null,
+           1,
+           null,
+           null,
+           null,
+           MID,
+           GETDATE(),
+           null,
+           Name,
+           PhoneNo,
+           Organization,
+           Designation,
+           Department,
+           Address,
+           Address,
+           null,
+           7,
+           1,
+           TypeId,
+           null,
+           null,
+           null,
+           HSC,
+           null,
+           null,
+           null,
+           1,
+           7,
+           'sys',
+           GETDATE(),
+           null,
+           null,
+           null,
+           0,
+           null,
+           GETDate(),
+           null,
+           null,
+           GETDate(),
+           Nominee,
+           ImageUrl,
+           null,
+           GETDATE(),
+           null,
+           Address,
+           null,
+           PhoneNo,
+          GETDATE(),
+         null
+		  from  Member_list
+GO
+
+
+USE [BGCL_DB]
+GO
+
+INSERT INTO [dbo].[mem_User]
+           ([Name]
+           ,[UserName]
+           ,[EmailId]
+           ,[EmailConfirmed]
+           ,[PasswordHash]
+           ,[PasswordSalt]
+           ,[LoginFailedAttemptCount]
+           ,[LastLoginFailedAttemptDate]
+           ,[LastLoginDate]
+           ,[CreatedBy]
+           ,[CreatedByName]
+           ,[CreatedOn]
+           ,[LastModifiedBy]
+           ,[LastModifiedByName]
+           ,[LastModifiedOn]
+           ,[IsActive]
+           ,[PhoneNo]
+           ,[LastPasswordResetBy]
+           ,[LastPasswordResetByName]
+           ,[LastPasswordResetOn]
+           ,[AppId]
+           ,[MemberId]
+           ,[ChangePinCount]
+           ,[Otp]
+           ,[OtpCreatedTime])
+     select
+          FullName,-- (<Name, nvarchar(200),>
+          MemberShipNo, --,<UserName, nvarchar(100),>
+         Email,  --,<EmailId, nvarchar(max),>
+        1 ,  --,<EmailConfirmed, bit,>
+         PinNoHash, -- ,<PasswordHash, nvarchar(max),>
+        PinNoSalt,  -- ,<PasswordSalt, nvarchar(max),>
+         0,--  ,<LoginFailedAttemptCount, int,>
+        GETDATE(), --  ,<LastLoginFailedAttemptDate, datetime2(7),>
+         GETDATE(), -- ,<LastLoginDate, datetime2(7),>
+         7,--  ,<CreatedBy, int,>
+        'system',  -- ,<CreatedByName, nvarchar(max),>
+       GETDATE(),  --  ,<CreatedOn, datetime2(7),>
+        null,  -- ,<LastModifiedBy, int,>
+       null,   -- ,<LastModifiedByName, nvarchar(max),>
+        null,  -- ,<LastModifiedOn, datetime2(7),>
+         1, -- ,<IsActive, bit,>
+        Phone,  -- ,<PhoneNo, nvarchar(20),>
+        0,  -- ,<LastPasswordResetBy, int,>
+       null,    --,<LastPasswordResetByName, nvarchar(100),>
+      null,    -- ,<LastPasswordResetOn, datetime,>
+        'WEBAPP',  -- ,<AppId, nvarchar(50),>
+        Id,  -- ,<MemberId, int,>
+         0, -- ,<ChangePinCount, int,>
+          null,--,<Otp, nvarchar(50),>
+        null  -- ,<OtpCreatedTime, datetime,>)
+		  from Customer
+GO
+

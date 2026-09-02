@@ -1,0 +1,56 @@
+<form [formGroup]="userForm" class="py-2">
+  <div class="row g-4 mb-4">
+    <div class="col-md-6">
+      <div class="form-group">
+        <label for="name" class="form-label fw-bold fs-7 text-dark mb-2">
+          <i class="fas fa-user text-primary me-1"></i> Full Name <span class="text-danger">*</span>
+        </label>
+        <input type="text" formControlName="Name" id="name" class="form-control" placeholder="Enter user's full name" required />
+        <small [hidden]="handleBlur(userForm.controls.Name)" class="text-danger mt-1 d-block" translate>
+          Name is required
+        </small>
+      </div>
+    </div>
+
+    <div class="col-md-6">
+      <div class="form-group">
+        <label for="username" class="form-label fw-bold fs-7 text-dark mb-2">
+          <i class="fas fa-at text-primary me-1"></i> Username <span class="text-danger">*</span>
+        </label>
+        <input type="text" formControlName="UserName" id="username" class="form-control" placeholder="Enter username (login ID)" required />
+        <small [hidden]="handleBlur(userForm.controls.UserName)" class="text-danger mt-1 d-block" translate>
+          Username is required
+        </small>
+      </div>
+    </div>
+
+    <div class="col-md-6">
+      <div class="form-group">
+        <label for="email" class="form-label fw-bold fs-7 text-dark mb-2">
+          <i class="fas fa-envelope text-primary me-1"></i> Email Address
+        </label>
+        <input type="email" formControlName="EmailId" id="email" class="form-control" placeholder="example@domain.com" />
+      </div>
+    </div>
+
+    <div class="col-md-6">
+      <div class="form-group">
+        <label for="phone" class="form-label fw-bold fs-7 text-dark mb-2">
+          <i class="fas fa-phone-alt text-primary me-1"></i> Phone Number
+        </label>
+        <input type="text" formControlName="PhoneNo" id="phone" class="form-control" placeholder="+880 1XXX XXXXXX" />
+      </div>
+    </div>
+  </div>
+
+  <div class="d-flex justify-content-end align-items-center gap-3 pt-3 border-top border-gray-200">
+    <button type="button" class="discard-btn" (click)="goBack()">
+      <i class="fas fa-arrow-left me-1"></i> Back
+    </button>
+    <button type="button" class="primary-btn" (click)="onSubmit()">
+      <i class="fas fa-save me-1"></i> Save Changes
+    </button>
+  </div>
+</form>
+
+<swal #noticeSwal [swalOptions]="swalOptions"> </swal>

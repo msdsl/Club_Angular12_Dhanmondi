@@ -1,0 +1,218 @@
+<div class="feature-section-wrapper p-4 p-lg-6 mb-6">
+  <!-- Page Header -->
+  <div class="d-flex flex-wrap align-items-center justify-content-between gap-3 mb-6 pb-4 border-bottom border-gray-200">
+    <div class="d-flex align-items-center gap-3">
+      <div class="role-header-icon">
+        <i class="fas fa-shield-alt fs-2 text-primary"></i>
+      </div>
+      <div>
+        <h3 class="fw-bolder text-dark mb-1">User Roles & Access Control</h3>
+        <p class="role-header-subtitle mb-0">Define roles, assign granular module permissions, and manage user access levels</p>
+      </div>
+    </div>
+    <div>
+      <button type="button" class="primary-btn" (click)="openNewRoleModal(addNewRoleModal)">
+        <i class="fas fa-plus me-2"></i> Add New Role
+      </button>
+    </div>
+  </div>
+
+  <!-- Role Cards Grid -->
+  <div class="row g-4">
+    <!-- Add New Role Card (Dashed) -->
+    <div class="col-md-6 col-xl-4">
+      <div class="card add-role-card h-100" (click)="openNewRoleModal(addNewRoleModal)">
+        <div class="card-body d-flex flex-column align-items-center justify-content-center text-center p-6">
+          <div class="add-icon-circle mb-3">
+            <i class="fas fa-plus fs-2 text-primary"></i>
+          </div>
+          <h4 class="fw-bolder text-dark mb-1">Create New Role</h4>
+          <p class="role-card-description mb-0">Add a custom role with customized access levels</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- Dynamic Role Cards -->
+    <ng-container *ngIf="roleList">
+      <div class="col-md-6 col-xl-4" *ngFor="let r of roleList">
+        <div class="card modern-role-card h-100">
+          <div class="card-body p-5 d-flex flex-column justify-content-between">
+            <div>
+              <!-- Top Row: Icon and User Count -->
+              <div class="d-flex align-items-center justify-content-between mb-4">
+                <div class="role-badge-icon">
+                  <i class="fas fa-user-shield"></i>
+                </div>
+                <span class="user-count-badge">
+                  <i class="fas fa-users me-1"></i> {{ r.Users?.length || 0 }} Users
+                </span>
+              </div>
+
+              <!-- Role Name -->
+              <h4 class="fw-bolder text-dark mb-2">{{ r.Name | titlecase }}</h4>
+              <p class="role-card-description mb-4">Granular permissions configured for this system role.</p>
+            </div>
+
+            <!-- Card Actions -->
+            <div class="d-flex align-items-center gap-2 pt-3 border-top border-gray-100">
+              <button type="button" (click)="viewRole(r, viewModal)" class="btn-role-view flex-grow-1">
+                <i class="fas fa-users-cog me-1"></i> View Users
+              </button>
+              <button type="button" (click)="viewPermission(r, viewPermissionModal)" class="btn-role-edit flex-grow-1">
+                <i class="fas fa-key me-1"></i> Permissions
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </ng-container>
+  </div>
+</div>
+
+<swal #noticeSwal [swalOptions]="swalOptions"> </swal>
+
+<!-- View Role Users Modal -->
+<ng-template #viewModal let-modal>
+  <div class="modal-header d-flex justify-content-between align-items-center">
+    <h4 class="modal-title fw-bolder text-dark m-0" id="modal-basic-title">
+      <i class="fas fa-users text-primary me-2"></i> Users with Role: {{ role.Name }}
+    </h4>
+    <button type="button" class="btn-close" aria-label="Close" (click)="modal.dismiss('Cross click')"></button>
+  </div>
+  <div class="modal-body p-4">
+    <div class="table-responsive rounded-3 border border-gray-200" *ngIf="role.Users && role.Users.length > 0; else noUsers">
+      <table class="table table-hover align-middle mb-0">
+        <thead class="table-head">
+          <tr>
+            <th class="w-55px text-center">SL.</th>
+            <th>Full Name</th>
+            <th>Username</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let x of role.Users; let i = index">
+            <td class="text-center fw-bold text-muted">{{ i + 1 }}</td>
+            <td class="fw-bold text-dark">
+              <i class="fas fa-user-circle text-primary me-2 opacity-75"></i> {{ x.Name }}
+            </td>
+            <td>
+              <span class="badge badge-light-primary fw-bold fs-8">&#64;{{ x.Username }}</span>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+    <ng-template #noUsers>
+      <div class="text-center py-5 bg-light rounded-3">
+        <i class="fas fa-user-slash fs-2x text-muted mb-2 d-block"></i>
+        <p class="text-muted fw-semibold fs-7 mb-0">No users currently assigned to this role.</p>
+      </div>
+    </ng-template>
+  </div>
+  <div class="modal-footer d-flex justify-content-end p-3 bg-light border-top">
+    <button type="button" class="discard-btn" (click)="modal.dismiss('cancel')">
+      Close
+    </button>
+  </div>
+</ng-template>
+
+<!-- View / Edit Permissions Modal -->
+<ng-template #viewPermissionModal let-modal>
+  <div class="modal-header d-flex justify-content-between align-items-center">
+    <h4 class="modal-title fw-bolder text-dark m-0" id="myModalLabel160">
+      <i class="fas fa-key text-primary me-2"></i> Configure Permissions: {{ role?.Name }}
+    </h4>
+    <button type="button" aria-label="Close" class="btn-close" (click)="modal.dismiss('Cross click')"></button>
+  </div>
+
+  <div class="p-4">
+    <div class="d-flex flex-wrap align-items-center justify-content-between gap-3 mb-3 p-3 bg-light rounded-3 border border-gray-200">
+      <div class="d-flex align-items-center gap-2">
+        <input class="form-check-input smart-switch" id="selectAllPermissions" (change)="allSelected()" type="checkbox" />
+        <label class="form-check-label fw-bold text-dark fs-7 cursor-pointer" for="selectAllPermissions">
+          Select All Permissions
+        </label>
+      </div>
+      <button class="btn btn-sm btn-light-primary fw-bold" (click)="roleDetailById()">
+        <i class="fa fa-sync me-1"></i> Refresh Matrix
+      </button>
+    </div>
+
+    <div class="table-responsive rounded-3 border border-gray-200" style="max-height: 60vh; overflow-y: auto;">
+      <table class="table table-hover align-middle mb-0">
+        <thead class="table-head sticky-top">
+          <tr>
+            <th class="w-55px text-center">SL</th>
+            <th style="min-width: 200px">Module</th>
+            <th>Available Permissions</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let x of roleVm.PermissionList; let i = index">
+            <td class="text-center fw-bold text-muted">{{ i + 1 }}</td>
+            <td>
+              <div class="d-flex align-items-center gap-2">
+                <input type="checkbox" class="form-check-input" style="width: 17px; height: 17px; min-height: 17px; border-radius: 4px;"
+                  [id]="'mod_' + i" (change)="allChildSelected(x)" [(ngModel)]="x.IsChecked" />
+                <label class="form-check-label fw-bold text-dark fs-7 cursor-pointer" [for]="'mod_' + i">
+                  {{ x.Title }}
+                </label>
+              </div>
+            </td>
+            <td>
+              <div class="d-flex flex-wrap gap-2">
+                <div class="permission-chip d-flex align-items-center gap-2 px-3 py-1 rounded-2"
+                  [class.permission-chip-active]="x1.IsChecked"
+                  *ngFor="let x1 of x.PermissionDetailVms; let j = index">
+                  <input type="checkbox" [(ngModel)]="x1.IsChecked" (change)="childSelected(x1)"
+                    [id]="'perm_' + i + '_' + j"
+                    style="width: 15px; height: 15px; min-height: 15px; border-radius: 3px;"
+                    class="form-check-input mt-0" />
+                  <label class="form-check-label fs-8 fw-semibold cursor-pointer mb-0" [for]="'perm_' + i + '_' + j">
+                    {{ x1.Name }}
+                  </label>
+                </div>
+              </div>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div class="d-flex justify-content-end gap-2 mt-4 pt-3 border-top border-gray-200">
+      <button class="discard-btn" (click)="modal.dismiss('Cross click')">Cancel</button>
+      <button class="primary-btn" (click)="saveRolePermission()" (click)="modal.dismiss('Cross click')">
+        <i class="fas fa-save me-1"></i> Save Permissions
+      </button>
+    </div>
+  </div>
+</ng-template>
+
+<!-- Add New Role Modal -->
+<ng-template #addNewRoleModal let-modal>
+  <div class="modal-header d-flex justify-content-between align-items-center">
+    <h4 class="modal-title fw-bolder text-dark m-0" id="modal-basic-title">
+      <i class="fas fa-shield-alt text-primary me-2"></i> Create New Role
+    </h4>
+    <button type="button" class="btn-close" aria-label="Close" (click)="modal.dismiss('Cross click')"></button>
+  </div>
+  <div class="modal-body p-4">
+    <form [formGroup]="roleForm">
+      <div class="form-group mb-3">
+        <label for="Title" class="form-label fw-bold fs-7 text-dark mb-2">
+          Role Name <span class="text-danger">*</span>
+        </label>
+        <input type="text" formControlName="Name" id="Title" class="form-control" placeholder="e.g. Admin, Manager, Accountant" required />
+        <small [hidden]="!handleBlur(roleForm.controls.Name)" class="text-danger mt-1 d-block" translate>
+          Role Name is required
+        </small>
+      </div>
+    </form>
+  </div>
+  <div class="modal-footer d-flex justify-content-end gap-3 p-3 bg-light border-top">
+    <button class="discard-btn" type="reset" (click)="modal.dismiss('cancel')">Discard</button>
+    <button class="primary-btn" type="submit" (click)="onSaveRole()" (click)="modal.dismiss('cancel')">
+      <i class="fas fa-plus me-1"></i> Create Role
+    </button>
+  </div>
+</ng-template>

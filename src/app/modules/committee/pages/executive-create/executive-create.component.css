@@ -1,0 +1,43 @@
+.card{
+    border: none;
+}
+.card-header{
+    align-content: center;
+    border: navajowhite;
+    min-height: 48px;
+}
+.card-header p{
+    font-size: 19px;
+    margin: 0;
+    color: #5a5a5a;
+    font-weight: 500;
+}
+.nav-link{
+    color: #4a4a4a;
+    font-size: 14px;
+    font-weight: 500;
+}
+.active.nav-link{
+    color: var(--primary-theme-color) !important;
+}
+.member-img{
+    width: 70px;
+    height: 70px;
+    border-radius: 50%;
+    object-fit: cover;
+}
+.green-label{
+    background: #36dd22;
+    padding: 4px 13px;
+    font-weight: 500;
+    color: white;
+}
+.red-label{
+    background: #c21c1c;
+    padding: 4px 13px;
+    font-weight: 500;
+    color: white;
+}
+td{
+    vertical-align: middle;
+}

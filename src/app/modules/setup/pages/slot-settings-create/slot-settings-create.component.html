@@ -1,0 +1,199 @@
+
+<div class="feature-section-wrapper p-4 p-lg-6 mb-6">
+  <!-- Page Header -->
+  <div class="d-flex flex-wrap align-items-center justify-content-between gap-3 mb-5 pb-3 border-bottom border-gray-200">
+    <div class="d-flex align-items-center gap-3">
+      <div class="slot-header-icon">
+        <i class="fas fa-clock fs-2 text-primary"></i>
+      </div>
+      <div>
+        <h3 class="fw-bolder text-dark mb-1 d-flex align-items-center gap-2">
+          {{ serviceSlotSettingsId ? 'Edit Slot Settings' : 'Create Slot Settings' }}
+          <span *ngIf="serviceSlotSettingsId" class="badge badge-light-primary fs-8 fw-bold">ID: #{{ serviceSlotSettingsId }}</span>
+        </h3>
+        <p class="page-header-subtitle mb-0">Configure weekly operating hours, daily booking slots, and service timings</p>
+      </div>
+    </div>
+    <div>
+      <a routerLink="/setups/slot-settings/list" class="discard-btn text-decoration-none d-inline-flex align-items-center">
+        <i class="fas fa-arrow-left me-2"></i> Back to List
+      </a>
+    </div>
+  </div>
+
+  <form [formGroup]="serviceSlotSettingsForm" (ngSubmit)="onSubmit()">
+    <!-- Primary Service Selection Card -->
+    <div class="card p-4 mb-4 border border-gray-200 rounded-3 bg-light-subtle">
+      <div class="row align-items-center">
+        <div class="col-md-6 col-lg-5">
+          <label class="form-label fw-bold fs-7 text-dark mb-2">
+            <i class="fas fa-concierge-bell text-primary me-1"></i> Select Service <span class="text-danger">*</span>
+          </label>
+          <ng-select
+            [items]="serviceList"
+            bindLabel="Title"
+            bindValue="Id"
+            placeholder="Select a service..."
+            formControlName="ServiceId"
+            [clearable]="true"
+            [appendTo]="'body'"
+            (change)="bindItem($event)"
+          >
+          </ng-select>
+        </div>
+      </div>
+    </div>
+
+    <!-- Weekly Days Slot Settings Grid (Compact Layout) -->
+    <div formArrayName="SlotList" class="d-flex flex-column gap-3">
+      <div
+        *ngFor="let day of serviceSlotSettingsArray; let i = index"
+        [formGroupName]="i"
+        class="card day-slot-card p-3 border border-gray-200 rounded-3 shadow-xs"
+      >
+        <!-- Compact Day Header -->
+        <div class="d-flex flex-wrap align-items-center justify-content-between gap-2 pb-2 mb-2 border-bottom border-gray-100">
+          <div class="d-flex align-items-center gap-2">
+            <div class="day-badge-icon">
+              <i class="far fa-calendar-check text-primary"></i>
+            </div>
+            <h5 class="fw-bolder text-dark mb-0">
+              {{ day.value.DayText }}
+            </h5>
+            <span class="badge badge-light-primary fs-8 fw-bold px-2 py-1">
+              {{ day.get('SlotList').controls.length }} {{ day.get('SlotList').controls.length === 1 ? 'Slot' : 'Slots' }}
+            </span>
+          </div>
+
+          <!-- Quick Copy Tools Group -->
+          <div class="d-flex flex-wrap align-items-center gap-2">
+            <!-- Apply to All Days Button -->
+            <button
+              type="button"
+              class="btn-copy-all"
+              (click)="copyToAllDays(i)"
+              title="Apply these slots to all remaining days of the week"
+            >
+              <i class="fas fa-layer-group me-1"></i> Apply to All Days
+            </button>
+
+            <!-- Copy To Specific Day Dropdown -->
+            <div class="copy-tool-item">
+              <span class="copy-tool-label">Copy To:</span>
+              <div style="min-width: 140px; display: inline-block;">
+                <ng-select
+                  #copyToSelect
+                  [items]="weekDaysList"
+                  placeholder="Select Day..."
+                  [clearable]="false"
+                  [appendTo]="'body'"
+                  (change)="copyToDay(i, $event, copyToSelect)"
+                ></ng-select>
+              </div>
+            </div>
+
+            <!-- Copy From Specific Day Dropdown -->
+            <div class="copy-tool-item">
+              <span class="copy-tool-label">Copy From:</span>
+              <div style="min-width: 140px; display: inline-block;">
+                <ng-select
+                  #copyFromSelect
+                  [items]="weekDaysList"
+                  placeholder="Select Day..."
+                  [clearable]="false"
+                  [appendTo]="'body'"
+                  (change)="patchSameAs(i, day, $event, copyFromSelect)"
+                ></ng-select>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Daily Slots List (Compact Rows) -->
+        <div formArrayName="SlotList" class="d-flex flex-column gap-1.5">
+          <div
+            *ngFor="let slot of day.get('SlotList').controls; let j = index"
+            [formGroupName]="j"
+            class="slot-compact-row px-3 py-2 rounded-2"
+          >
+            <div class="row align-items-center g-2">
+              <!-- Slot Badge -->
+              <div class="col-auto">
+                <span class="slot-number-badge">
+                  Slot {{ j + 1 }}
+                </span>
+              </div>
+
+              <!-- Start Time -->
+              <div class="col-md-3 col-sm-6">
+                <div class="input-group input-group-sm">
+                  <span class="input-group-text py-1 px-2 fs-8 fw-semibold">Start</span>
+                  <input type="time" formControlName="StartTime" class="form-control form-control-sm py-1" />
+                </div>
+              </div>
+
+              <!-- End Time -->
+              <div class="col-md-3 col-sm-6">
+                <div class="input-group input-group-sm">
+                  <span class="input-group-text py-1 px-2 fs-8 fw-semibold">End</span>
+                  <input type="time" formControlName="EndTime" class="form-control form-control-sm py-1" />
+                </div>
+              </div>
+
+              <!-- Whole Day Switch -->
+              <div class="col-md-3 col-sm-6">
+                <div class="d-flex align-items-center gap-2 ps-lg-2">
+                  <input
+                    type="checkbox"
+                    class="form-check-input smart-switch"
+                    [checked]="slot.get('IsWholeDay')?.value"
+                    formControlName="IsWholeDay"
+                  />
+                  <label class="form-check-label fs-8 fw-semibold text-gray-700 mb-0 cursor-pointer">
+                    Whole Day
+                  </label>
+                </div>
+              </div>
+
+              <!-- Action Buttons -->
+              <div class="col-auto ms-auto">
+                <div class="d-flex align-items-center gap-1">
+                  <button
+                    type="button"
+                    class="btn-slot-delete-sm"
+                    title="Remove this slot"
+                    *ngIf="j > 0"
+                    (click)="removeSlot(i, j)"
+                  >
+                    <i class="far fa-trash-alt"></i>
+                  </button>
+                  <button
+                    type="button"
+                    class="btn-slot-add-sm"
+                    title="Add new slot for this day"
+                    *ngIf="j === day.get('SlotList').controls.length - 1"
+                    (click)="addSlot(i, day.value.DayText)"
+                  >
+                    <i class="fa fa-plus"></i>
+                  </button>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </form>
+
+  <!-- Footer Actions -->
+  <div class="d-flex justify-content-end align-items-center gap-3 pt-3 mt-3 border-top border-gray-200">
+    <a routerLink="/setups/slot-settings/list" class="discard-btn text-decoration-none d-inline-flex align-items-center">
+      <i class="fas fa-arrow-left me-2"></i> Back to List
+    </a>
+    <button type="button" class="primary-btn" (click)="onSubmit()">
+      <i class="fas fa-save me-2"></i> Save Slot Settings
+    </button>
+  </div>
+</div>
+
+<swal #noticeSwal [swalOptions]="swalOptions"> </swal>

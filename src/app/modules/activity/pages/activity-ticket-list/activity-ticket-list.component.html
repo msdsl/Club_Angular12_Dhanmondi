@@ -1,0 +1,243 @@
+<section>
+  <div class="feature-section">
+    <div class="feature-section-wrapper">
+      <!-- Modern Page Header with AI Pulse Indicator -->
+      <div class="d-flex flex-wrap align-items-center justify-content-between gap-3 mb-4 pb-3 border-bottom border-gray-200">
+        <div class="d-flex align-items-center gap-3">
+          <div class="ticket-list-header-icon">
+            <i class="fas fa-tags fs-2"></i>
+          </div>
+          <div>
+            <div class="d-flex align-items-center gap-2 mb-1">
+              <h3 class="fw-bolder text-dark mb-0">Activity Tickets & Passes</h3>
+              <span class="badge-ai-live">
+                <span class="ai-live-dot"></span> Active Inventory
+              </span>
+            </div>
+            <p class="page-header-subtitle mb-0">
+              Manage recreational admission tickets, member event passes, promo codes, service charges, and venue rates.
+            </p>
+          </div>
+        </div>
+
+        <div class="d-flex align-items-center gap-2">
+          <button
+            type="button"
+            class="btn-filter-custom"
+            [class.active]="isShowFilter"
+            (click)="toggleFilter()"
+          >
+            <i class="fas fa-filter me-1.5"></i> Advanced Filter
+          </button>
+          <button
+            type="button"
+            class="primary-btn"
+            (click)="goToCreatePage()"
+          >
+            <i class="fas fa-plus me-1.5"></i> + Create Ticket
+          </button>
+        </div>
+      </div>
+
+      <!-- Controls: Page Size & Search Filter -->
+      <form [formGroup]="searchForm">
+        <div class="d-flex flex-wrap align-items-center justify-content-between gap-3 mb-3">
+          <div class="d-flex align-items-center gap-2">
+            <span class="text-muted fs-8 fw-semibold">Show</span>
+            <select
+              class="form-select form-select-sm w-80px custom-select"
+              formControlName="pageSize"
+              (change)="filterData()"
+            >
+              <option value="5">5</option>
+              <option value="10">10</option>
+              <option value="25">25</option>
+              <option value="50">50</option>
+              <option value="100">100</option>
+            </select>
+            <span class="text-muted fs-8 fw-semibold">entries</span>
+          </div>
+
+          <div class="search-input-wrapper">
+            <input
+              type="text"
+              class="form-control form-control-sm search-box-input"
+              placeholder="Search promo code, venue..."
+              formControlName="searchKey"
+              (keyup)="filterData()"
+            />
+          </div>
+        </div>
+      </form>
+
+      <!-- Collapsible Filter Drawer -->
+      <div class="filter-drawer-card mb-4 p-3 rounded-3 border" [class.show]="isShowFilter">
+        <form [formGroup]="filterForm">
+          <div class="row g-3 align-items-end">
+            <div class="col-md-2 col-sm-4">
+              <label class="filter-label">Promo Code</label>
+              <input type="text" formControlName="SearchText" placeholder="Code..." class="form-control form-control-sm" />
+            </div>
+            <div class="col-md-2 col-sm-4">
+              <label class="filter-label">Start Date</label>
+              <input type="date" formControlName="StartDate" class="form-control form-control-sm" />
+            </div>
+            <div class="col-md-2 col-sm-4">
+              <label class="filter-label">End Date</label>
+              <input type="date" formControlName="EndDate" class="form-control form-control-sm" />
+            </div>
+            <div class="col-md-2 col-sm-4">
+              <label class="filter-label">Service Type</label>
+              <ng-select
+                [items]="serviceTypeList"
+                bindLabel="Title"
+                bindValue="Id"
+                placeholder="Type"
+                [appendTo]="'body'"
+                formControlName="ServiceTypeId"
+              ></ng-select>
+            </div>
+            <div class="col-md-2 col-sm-4">
+              <label class="filter-label">Service</label>
+              <ng-select
+                [items]="serviceList"
+                bindLabel="Title"
+                bindValue="Id"
+                placeholder="Service"
+                [appendTo]="'body'"
+                formControlName="ServiceId"
+              ></ng-select>
+            </div>
+            <div class="col-md-2 col-sm-4 d-flex gap-2 justify-content-end">
+              <button type="button" (click)="getActivityTicket()" class="primary-btn btn-sm px-3">
+                <i class="fas fa-search me-1"></i> Apply
+              </button>
+              <button type="button" (click)="resetFilterForm()" class="btn btn-secondary btn-sm px-3">
+                <i class="fas fa-undo me-1"></i> Reset
+              </button>
+            </div>
+          </div>
+        </form>
+      </div>
+
+      <!-- Main Activity Ticket Table -->
+      <div class="content">
+        <div class="table-responsive rounded-2 border">
+          <table class="table table-hover align-middle mb-0 text-center custom-member-table">
+            <thead class="table-head">
+              <tr>
+                <th class="w-50px text-center">SL</th>
+                <th class="text-start">Service</th>
+                <th class="text-start">Type</th>
+                <th class="text-center">Active Dates</th>
+                <th class="text-start">Venue / Location</th>
+                <th class="text-center">Promo Code</th>
+                <th class="text-end">Charge (৳)</th>
+                <th class="text-end">VAT (৳)</th>
+                <th class="text-center w-120px">Actions</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr
+                *ngFor="let data of ActivityTicketList; let i = index"
+                (dblclick)="goToEditPage(data)"
+              >
+                <td class="text-center text-muted fs-8 fw-bold">{{ (currentPage - 1) * pageSize + i + 1 }}</td>
+                <td class="text-start fw-bolder text-dark fs-7">{{ data.MemServiceText }}</td>
+                <td class="text-start">
+                  <span class="badge-type-pill">{{ data.MemberServiceTypeText }}</span>
+                </td>
+                <td class="text-center">
+                  <span class="text-muted fs-8 font-monospace">{{ data.StartDate | date:'dd/MM/yy' }}</span>
+                  <i class="fas fa-arrow-right text-muted mx-1 fs-9"></i>
+                  <span class="text-dark fw-bold fs-8 font-monospace">{{ data.EndDate | date:'dd/MM/yy' }}</span>
+                </td>
+                <td class="text-start text-dark fw-semibold fs-8">{{ data.Location || 'Club Main Area' }}</td>
+                <td class="text-center">
+                  <span class="badge-promo-pill" *ngIf="data.PromoCode">{{ data.PromoCode }}</span>
+                  <span class="text-muted fs-9" *ngIf="!data.PromoCode">—</span>
+                </td>
+                <td class="text-end font-monospace fs-8 fw-bold text-dark">
+                  ৳ {{ data.ServiceChargeAmount }}
+                  <span class="text-muted fs-9" *ngIf="data.ServiceChargePercent > 0">({{ data.ServiceChargePercent }}%)</span>
+                </td>
+                <td class="text-end font-monospace fs-8 text-primary">
+                  ৳ {{ data.VatChargeAmount || 0 }}
+                  <span class="text-muted fs-9" *ngIf="data.VatChargePercent > 0">({{ data.VatChargePercent }}%)</span>
+                </td>
+                <td class="text-center">
+                  <div class="d-flex justify-content-center align-items-center gap-2">
+                    <button
+                      class="btn-action-edit"
+                      title="Edit Ticket"
+                      type="button"
+                      (click)="goToEditPage(data)"
+                    >
+                      <i class="fas fa-pen"></i>
+                    </button>
+                    <button
+                      class="btn-action-delete"
+                      title="Delete Ticket"
+                      type="button"
+                      (click)="deleteButtonClick(data.Id)"
+                    >
+                      <i class="far fa-trash-alt"></i>
+                    </button>
+                  </div>
+                </td>
+              </tr>
+            </tbody>
+            <tbody *ngIf="ActivityTicketList?.length < 1 || hasData === false">
+              <tr>
+                <td colspan="9" class="p-4 text-center">
+                  <app-empty [message]="'No Activity Ticket Records Found'"></app-empty>
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+
+        <!-- Pagination -->
+        <div class="d-flex justify-content-between align-items-center flex-wrap gap-2 mt-3" *ngIf="numberOfEntries > 0">
+          <span class="text-muted fs-8">
+            Showing {{ (currentPage - 1) * pageSize + 1 }} to {{ ((currentPage * pageSize) > numberOfEntries ? numberOfEntries : (currentPage * pageSize)) }} of {{ numberOfEntries }} entries
+          </span>
+          <ngb-pagination
+            class="d-flex justify-content-end"
+            [collectionSize]="numberOfEntries"
+            [(page)]="currentPage"
+            [pageSize]="pageSize"
+            (pageChange)="updatePageWiseTableData($event)"
+            [boundaryLinks]="true"
+            [maxSize]="5"
+          >
+          </ngb-pagination>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<ng-template #deleteConfirmation let-c="close" let-d="dismiss">
+  <app-confirmation-modal
+    text="Do You Confirm to delete this ticket configuration?"
+    (closeButtonClicked)="d('Cross click')"
+    (okButtonClicked)="deleteButtonClick()"
+  ></app-confirmation-modal>
+</ng-template>
+
+<swal #noticeSwal [swalOptions]="swalOptions"> </swal>
+<swal
+  #deleteSwal
+  title="Are you sure to delete?"
+  text="This cannot be undone"
+  icon="warning"
+  [showCancelButton]="true"
+  [focusCancel]="true"
+  (confirm)="triggerDelete()"
+  [customClass]="{
+    confirmButton: 'btn btn-danger',
+    cancelButton: 'btn btn-active-light'
+  }"
+>
+</swal>

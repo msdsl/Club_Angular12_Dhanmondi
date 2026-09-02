@@ -1,0 +1,232 @@
+<section>
+  <div class="feature-section">
+    <div class="feature-section-wrapper">
+      <!-- Modern Page Header with AI Pulse Indicator -->
+      <div class="d-flex flex-wrap align-items-center justify-content-between gap-3 mb-4 pb-3 border-bottom border-gray-200">
+        <div class="d-flex align-items-center gap-3">
+          <div class="type-header-icon">
+            <i class="fas fa-layer-group fs-2"></i>
+          </div>
+          <div>
+            <div class="d-flex align-items-center gap-2 mb-1">
+              <h3 class="fw-bolder text-dark mb-0">Activity Types</h3>
+              <span class="badge-ai-live">
+                <span class="ai-live-dot"></span> Master Classification
+              </span>
+            </div>
+            <p class="page-header-subtitle mb-0">
+              Manage category definitions, display aliases, and classification groups for club recreational sports.
+            </p>
+          </div>
+        </div>
+
+        <div>
+          <button
+            type="button"
+            class="primary-btn"
+            (click)="careateOrEditModalPopUp(createOrUpdateModal)"
+          >
+            <i class="fas fa-plus me-1.5"></i> + Add New Type
+          </button>
+        </div>
+      </div>
+
+      <!-- Search & Page Size Form -->
+      <form [formGroup]="searchForm">
+        <div class="d-flex flex-wrap align-items-center justify-content-between gap-3 mb-3">
+          <div class="d-flex align-items-center gap-2">
+            <span class="text-muted fs-8 fw-semibold">Show</span>
+            <select
+              class="form-select form-select-sm w-80px custom-select"
+              formControlName="pageSize"
+              (change)="filterData()"
+            >
+              <option value="5">5</option>
+              <option value="10">10</option>
+              <option value="25">25</option>
+              <option value="50">50</option>
+              <option value="100">100</option>
+            </select>
+            <span class="text-muted fs-8 fw-semibold">entries</span>
+          </div>
+
+          <div class="search-input-wrapper">
+            <input
+              type="text"
+              class="form-control form-control-sm search-box-input"
+              placeholder="Search type..."
+              formControlName="searchKey"
+              (keyup)="filterData()"
+            />
+          </div>
+        </div>
+      </form>
+
+      <!-- Main Activity Type Table -->
+      <div class="content">
+        <div class="table-responsive rounded-2 border">
+          <table class="table table-hover align-middle mb-0 text-center custom-member-table">
+            <thead class="table-head">
+              <tr>
+                <th class="w-55px text-center">SL</th>
+                <th class="text-start">Type Title</th>
+                <th class="text-start">Display Name</th>
+                <th class="text-center w-150px">Actions</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr
+                *ngFor="let data of activityTypes; let i = index"
+                (dblclick)="careateOrEditModalPopUp(createOrUpdateModal, data)"
+              >
+                <td class="text-center text-muted fs-8 fw-bold">{{ (currentPage - 1) * pageSize + i + 1 }}</td>
+                <td class="text-start fw-bolder text-dark fs-7">
+                  <i class="fas fa-cube text-primary me-2 fs-8"></i>
+                  {{ data.Title }}
+                </td>
+                <td class="text-start">
+                  <span class="badge-type-pill">{{ data.DisplayName }}</span>
+                </td>
+                <td class="text-center">
+                  <div class="d-flex justify-content-center align-items-center gap-2">
+                    <button
+                      class="btn-action-edit"
+                      title="Edit Type"
+                      type="button"
+                      (click)="careateOrEditModalPopUp(createOrUpdateModal, data)"
+                    >
+                      <i class="fas fa-pen"></i>
+                    </button>
+                    <button
+                      class="btn-action-delete"
+                      title="Delete Type"
+                      type="button"
+                      (click)="deleteButtonClick(data.Id)"
+                    >
+                      <i class="far fa-trash-alt"></i>
+                    </button>
+                  </div>
+                </td>
+              </tr>
+            </tbody>
+            <tbody *ngIf="activityTypes?.length < 1 || hasData === false">
+              <tr>
+                <td colspan="4" class="p-4 text-center">
+                  <app-empty [message]="'No Activity Type Records Found'"></app-empty>
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+
+        <!-- Pagination -->
+        <div class="d-flex justify-content-between align-items-center flex-wrap gap-2 mt-3" *ngIf="numberOfEntries > 0">
+          <span class="text-muted fs-8">
+            Showing {{ (currentPage - 1) * pageSize + 1 }} to {{ ((currentPage * pageSize) > numberOfEntries ? numberOfEntries : (currentPage * pageSize)) }} of {{ numberOfEntries }} entries
+          </span>
+          <ngb-pagination
+            class="d-flex justify-content-end"
+            [collectionSize]="numberOfEntries"
+            [(page)]="currentPage"
+            [pageSize]="pageSize"
+            (pageChange)="updatePageWiseTableData($event)"
+            [boundaryLinks]="true"
+            [maxSize]="5"
+          >
+          </ngb-pagination>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- Activity Type Modal -->
+<ng-template #createOrUpdateModal let-modal>
+  <div class="modal-header d-flex justify-content-between align-items-center bg-light">
+    <div class="d-flex align-items-center gap-2">
+      <i class="fas fa-layer-group text-primary fs-4"></i>
+      <h5 class="modal-title fw-bold text-dark mb-0">{{ editId ? 'Update Activity Type' : 'Create New Activity Type' }}</h5>
+    </div>
+    <button
+      type="button"
+      aria-label="Close"
+      class="btn-close"
+      (click)="modal.dismiss('Cross click')"
+    ></button>
+  </div>
+
+  <div class="modal-body p-4">
+    <form [formGroup]="activityTypeForm">
+      <div class="mb-3">
+        <label class="form-label-custom required">Type Title</label>
+        <input
+          type="text"
+          formControlName="Title"
+          class="form-control form-control-sm"
+          placeholder="Enter Type Title..."
+          required
+        />
+        <small
+          [hidden]="handleBlur(activityTypeForm.controls.Title)"
+          class="text-danger"
+        >
+          Title is required
+        </small>
+      </div>
+
+      <div class="mb-2">
+        <label class="form-label-custom required">Display Name</label>
+        <input
+          type="text"
+          formControlName="DisplayName"
+          class="form-control form-control-sm"
+          placeholder="Enter Display Name / Alias..."
+          required
+        />
+        <small
+          [hidden]="handleBlur(activityTypeForm.controls.DisplayName)"
+          class="text-danger"
+        >
+          Display Name is required
+        </small>
+      </div>
+    </form>
+  </div>
+
+  <div class="modal-footer bg-light d-flex justify-content-end gap-2">
+    <button class="btn btn-secondary btn-sm" (click)="modal.dismiss('Cross click')">
+      Discard
+    </button>
+    <button
+      class="primary-btn btn-sm"
+      (click)="onSubmit()"
+      (click)="modal.dismiss('Cross click')"
+    >
+      <i class="fas fa-check me-1"></i> Save Type
+    </button>
+  </div>
+</ng-template>
+
+<ng-template #deleteConfirmation let-c="close" let-d="dismiss">
+  <app-confirmation-modal
+    text="Do You Confirm to delete this activity type?"
+    (closeButtonClicked)="d('Cross click')"
+    (okButtonClicked)="deleteButtonClick()"
+  ></app-confirmation-modal>
+</ng-template>
+
+<swal #noticeSwal [swalOptions]="swalOptions"> </swal>
+<swal
+  #deleteSwal
+  title="Are you sure to delete?"
+  text="This cannot be undone"
+  icon="warning"
+  [showCancelButton]="true"
+  [focusCancel]="true"
+  (confirm)="triggerDelete()"
+  [customClass]="{
+    confirmButton: 'btn btn-danger',
+    cancelButton: 'btn btn-active-light'
+  }"
+>
+</swal>

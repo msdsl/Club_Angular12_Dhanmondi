@@ -1,0 +1,21 @@
+:host {
+  height: 100%;
+}
+.custom_login {
+  background: url(/assets/25.png);
+  background-size: cover;
+  background-repeat: no-repeat;
+  background-color: #eff6fc;
+  height: 100vh;
+}
+
+.bccl__login {
+  background-color: rgba(172, 31, 38, 0.3);
+  padding: 30px;
+  border-radius: 12px;
+  width: 350px;
+  position: absolute;
+  top: 25%;
+  right: 25%;
+  box-shadow: 1px 5px 10px 11px rgba(0, 0, 0, 0.1);
+}

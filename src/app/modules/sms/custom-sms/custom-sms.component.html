@@ -1,0 +1,157 @@
+<div class="feature-section">
+  <div class="feature-section-wrapper">
+    <!-- Modern Header with AI Badge -->
+    <div class="d-flex flex-wrap align-items-center justify-content-between gap-3 mb-4 pb-3 border-bottom border-gray-300">
+      <div class="d-flex align-items-center gap-3">
+        <div class="header-icon-box">
+          <i class="fas fa-sms fs-2"></i>
+        </div>
+        <div>
+          <div class="d-flex align-items-center gap-2 mb-1">
+            <h3 class="fw-bolder text-dark mb-0 fs-4">Custom Bulk SMS Broadcast</h3>
+            <span class="badge-ai-live">
+              <span class="ai-live-dot"></span> SMS Gateway Active
+            </span>
+          </div>
+          <p class="header-desc text-secondary mb-0 fw-semibold">
+            Dispatch urgent SMS notifications and custom announcements to single or comma-separated mobile numbers.
+          </p>
+        </div>
+      </div>
+    </div>
+
+    <!-- Main Content: Composition Form (Left) + Phone Preview Mockup (Right) -->
+    <div class="row g-4">
+      <!-- Left: Form Composition Card -->
+      <div class="col-lg-6">
+        <div class="card form-card shadow-sm border p-4">
+          <div class="d-flex align-items-center gap-2 mb-3 pb-2 border-bottom border-gray-200">
+            <i class="fas fa-edit text-primary fs-5"></i>
+            <h6 class="fw-bold text-dark mb-0 fs-6">Compose Message</h6>
+          </div>
+
+          <form [formGroup]="customSmsForm">
+            <!-- Phone Number Input -->
+            <div class="mb-3">
+              <label for="phone" class="form-label-custom required">Recipient Phone Number(s)</label>
+              <div class="input-group input-group-sm">
+                <span class="input-group-text bg-light border-end-0">
+                  <i class="fas fa-phone-alt text-secondary"></i>
+                </span>
+                <input
+                  type="text"
+                  formControlName="PhoneNo"
+                  id="phone"
+                  class="form-control font-monospace fw-bold text-dark"
+                  placeholder="e.g. 01711000000 or 01711000000, 01811000000"
+                  required
+                />
+              </div>
+              <small
+                [hidden]="handleBlur(customSmsForm.controls.PhoneNo)"
+                class="text-danger fw-semibold mt-1 d-block"
+              >
+                Phone number is required.
+              </small>
+              <small class="text-secondary fw-semibold mt-1 d-block">
+                Separate multiple numbers with commas for bulk dispatch.
+              </small>
+            </div>
+
+            <!-- Message Textarea -->
+            <div class="mb-4">
+              <div class="d-flex justify-content-between align-items-center mb-1">
+                <label for="message" class="form-label-custom required mb-0">Message Content</label>
+                <span class="badge bg-light text-secondary border fs-8">
+                  {{ customSmsForm.get('Message')?.value?.length || 0 }} chars
+                </span>
+              </div>
+              <textarea
+                formControlName="Message"
+                id="message"
+                rows="5"
+                class="form-control text-dark fw-semibold"
+                placeholder="Type your announcement or alert message here..."
+                required
+              ></textarea>
+              <div class="d-flex justify-content-between align-items-center mt-1.5">
+                <small class="text-secondary fw-semibold">
+                  Standard GSM: 160 characters per SMS credit.
+                </small>
+                <span class="badge bg-light-primary text-primary fw-bold fs-8">
+                  1 SMS Part
+                </span>
+              </div>
+            </div>
+
+            <!-- Submit Button -->
+            <div class="d-flex gap-2">
+              <button
+                type="button"
+                class="primary-btn flex-grow-1 py-2.5 fw-bold"
+                (click)="onSubmit()"
+                [disabled]="customSmsForm.invalid"
+              >
+                <i class="fas fa-paper-plane me-1.5"></i> Send SMS Broadcast
+              </button>
+              <button
+                type="button"
+                class="btn btn-secondary btn-sm px-3 fw-bold"
+                (click)="customSmsForm.reset()"
+              >
+                <i class="fas fa-undo"></i>
+              </button>
+            </div>
+          </form>
+        </div>
+      </div>
+
+      <!-- Right: Live SMS Device Preview Mockup -->
+      <div class="col-lg-6">
+        <div class="card preview-card shadow-sm border p-4">
+          <div class="d-flex align-items-center justify-content-between mb-3 pb-2 border-bottom border-gray-200">
+            <div class="d-flex align-items-center gap-2">
+              <i class="fas fa-mobile-alt text-primary fs-5"></i>
+              <h6 class="fw-bold text-dark mb-0 fs-6">Live Handset Preview</h6>
+            </div>
+            <span class="badge bg-success text-white fw-bold fs-8">
+              <i class="fas fa-wifi me-1"></i> Connected
+            </span>
+          </div>
+
+          <!-- Smartphone Shell Mockup -->
+          <div class="sms-mockup-wrapper mx-auto">
+            <div class="sms-screen">
+              <div class="sms-top-bar d-flex justify-content-between align-items-center px-3 py-1">
+                <span class="fs-8 fw-bold text-secondary">9:41 AM</span>
+                <div class="d-flex gap-1 fs-8 text-secondary">
+                  <i class="fas fa-signal"></i>
+                  <i class="fas fa-battery-full"></i>
+                </div>
+              </div>
+              <div class="sms-header text-center py-2 border-bottom bg-light">
+                <div class="sms-avatar-circle mx-auto mb-1">
+                  <i class="fas fa-building text-primary"></i>
+                </div>
+                <div class="fw-bolder text-dark fs-7">DHANMONDI CLUB</div>
+                <div class="text-secondary fs-8">Sender ID: DhanmondiClub</div>
+              </div>
+              <div class="sms-messages-body p-3">
+                <div class="sms-bubble-incoming" *ngIf="customSmsForm.get('Message')?.value">
+                  <p class="mb-0 text-dark fw-semibold fs-7">
+                    {{ customSmsForm.get('Message')?.value }}
+                  </p>
+                  <span class="sms-timestamp text-secondary">Just now</span>
+                </div>
+                <div class="sms-placeholder text-center text-secondary py-5" *ngIf="!customSmsForm.get('Message')?.value">
+                  <i class="far fa-comment-dots fs-1 text-gray-400 mb-2"></i>
+                  <p class="fs-8 mb-0">Type a message on the left to see live preview.</p>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

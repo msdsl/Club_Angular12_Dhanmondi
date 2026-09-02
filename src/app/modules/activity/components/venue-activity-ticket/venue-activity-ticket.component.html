@@ -1,0 +1,168 @@
+<form [formGroup]="venueActivityTicketForm">
+  <div class="row mb-2">
+    <div class="col-md-3">
+      <div class="form-group">
+        <label for="name" class="required fw-semibold fs-6 mb-2">Service</label>
+        <ng-select [items]="serviceTypeList" bindLabel="Title" bindValue="Id"
+          formControlName="MemServiceId"></ng-select>
+      </div>
+      <small [hidden]="handleBlur(venueActivityTicketForm.controls.MemServiceId)" class="text-danger" translate>
+        Service is required
+      </small>
+    </div>
+    <div class="col-md-3">
+      <div class="form-group">
+        <label for="name" class="fw-semibold fs-6 mb-2">Ticket Limit</label>
+        <input type="number" class="form-control" name="TicketLimit" formControlName="TicketLimit" />
+      </div>
+    </div>
+    <div class="col-md-3">
+      <div class="form-group">
+        <label for="name" class="fw-semibold fs-6 mb-2">Location</label>
+        <input type="text" class="form-control" name="Location" formControlName="Location" />
+      </div>
+    </div>
+    <div class="col-md-3">
+      <div class="form-group">
+        <label for="name" class="fw-semibold fs-6 mb-2">Service Charge Percent</label>
+        <input type="text" class="form-control" name="ServiceChargePercent" formControlName="ServiceChargePercent" />
+      </div>
+    </div>
+  </div>
+  <div class="row mb-2">
+
+    <div class="col-md-3">
+      <div class="form-group">
+        <label for="name" class="fw-semibold fs-6 mb-2">Vat Charge Percent</label>
+        <input type="number" class="form-control" name="VatChargePercent" formControlName="VatChargePercent" />
+      </div>
+    </div>
+    <div class="col-md-4">
+      <div class="form-group">
+        <label for="name" class="fw-semibold fs-6 mb-2">Description</label>
+        <textarea name="" id="" formControlName="Description" class="form-control"></textarea>
+      </div>
+    </div>
+
+  </div>
+
+
+
+
+
+  <div class="row mb-2">
+
+    <div class="col-md-3">
+      <div class="form-group">
+        <label for="name" class="required fw-semibold fs-6 mb-2">Availability</label>
+        <ng-select [items]="AvailabilityList" bindLabel="Name" bindValue="Id" formControlName="AvailabilityId"
+          (change)="triggerGetAvailabilityDetail($event)"></ng-select>
+      </div>
+      <small [hidden]="handleBlur(venueActivityTicketForm.controls.AvailabilityId)" class="text-danger" translate>
+        Availability is required
+      </small>
+    </div>
+    <div class="col-md-9" *ngIf="AvailabilityDetail?.length>0">
+      <div class="table-responsive">
+        <table class="mt-1 table table-hover mt-1 text-center customer-list">
+          <thead class="table-head rounded-lg">
+            <tr>
+              <th class="w-55px text-start">Title</th>
+              <th class="text-start">Start</th>
+              <th class="text-start">End</th>
+              <th class="text-start">Day</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr *ngFor="let data of AvailabilityDetail; let i = index" (dblclick)="goToEditPage(data.Id)">
+              <td class="text-start">{{ data.Title }}</td>
+              <td class="text-start">{{ convertTime(data.StartTime) }}</td>
+              <td class="text-start">{{ convertTime(data.EndTime) }}</td>
+              <td class="text-start">
+                <span *ngIf="data.IsWholeDay" class="green-label">Yes</span>
+                <span *ngIf="!data.IsWholeDay" class="red-label">No</span>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+  </div>
+
+  <div class="row mb-2">
+    <div class="col-md-12">
+      <div formArrayName="ServiceTicketDetailReqs" class=" p-1">
+        <div *ngFor="let item of serviceTicketDetailArray; let i = index" class="pt-1">
+          <div [formGroupName]="i" class="section-body">
+            <div class="row mb-2">
+              <div class="col-2">
+                <div class="form-group">
+                  <label for="" *ngIf="i==0">Title</label>
+                  <ng-select [items]="serviceTicketTypeList" bindLabel="Title" bindValue="Id" placeholder="Member Type"
+                    formControlName="ServiceTicketTypeId"></ng-select>
+                </div>
+              </div>
+              <div class="col-2">
+                <div class="form-group">
+                  <label for="" *ngIf="i==0">Unit Price</label>
+                  <input type="number" formControlName="UnitPrice" id="name" class="form-control"
+                    placeholder="UnitPrice" name="UnitPrice" />
+                </div>
+              </div>
+
+              <div class="col-2">
+                <label for="" *ngIf="i==0">Action</label>
+                <div class="form-group d-flex gap-1">
+                  <button [ngClass]="{
+                    hidden: i == 0 && TopUpDetailsArray?.length == 1
+                  }" type="button" class="btn-trash me-1" (click)="removeItem(i)">
+                    <i class="far fa-trash-alt"></i>
+                  </button>
+                  <button [ngClass]="{
+                    hidden: !(i == TopUpDetailsArray?.length - 1)
+                  }" type="button" class="btn-add" (click)="addItemDetail(i)">
+                    <i class="fa fa-plus"></i>
+                  </button>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+
+  <div class="row">
+    <div class="col-6">
+      <div class="col-3">
+        <div class="form-group mt-4">
+          <div class="">
+            <div class="input-group justify-content-center align-items-center">
+              <div class="pic-holder">
+                <img *ngIf="this.venueActivityTicketForm.value.ImgFileUrl" id="profilePic" width="192" height="192"
+                  class="pic ml-5" [src]="this.venueActivityTicketForm.value.ImgFileUrl" />
+                <!-- <img src="../../../../../assets/media/icon/upload-image.png" alt=""> -->
+
+                <div class="rr" *ngIf="!this.venueActivityTicketForm.value.ImgFileUrl">
+                  <Input formControlName="formFile" class="uploadProfileInput" type="file" name="profile_pic"
+                    id="newProfilePhoto" accept="image/*" (change)="imageChangeHandler($event)" />
+                </div>
+                <a (click)="removeImage()" *ngIf="this.venueActivityTicketForm.value.ImgFileUrl"><i
+                    class="fa-solid fa-circle-xmark"></i></a>
+              </div>
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </div>
+
+  <div class="mt-2">
+    <button class="primary-btn" (click)="onSubmit()">Save</button>
+  </div>
+</form>
+
+<swal #noticeSwal [swalOptions]="swalOptions"> </swal>

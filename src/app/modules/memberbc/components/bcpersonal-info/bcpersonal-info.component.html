@@ -1,0 +1,426 @@
+<form [formGroup]="memberForm" class="personal-info-form">
+  <div class="row g-4">
+    <!-- Left Column: Form Sections -->
+    <div class="col-lg-9 col-md-12">
+      <!-- Section 1: Membership Information -->
+      <div class="form-section-card p-4 rounded-3 border mb-4">
+        <div class="section-title-wrap d-flex align-items-center gap-2 mb-3 pb-2 border-bottom border-gray-200">
+          <div class="section-icon-box icon-purple">
+            <i class="fas fa-id-card"></i>
+          </div>
+          <h5 class="fw-bolder text-dark mb-0">Membership Information</h5>
+        </div>
+
+        <div class="row g-3">
+          <div class="col-md-4 col-sm-6">
+            <label class="form-label-custom required">Member Type</label>
+            <ng-select
+              (change)="createMemberFullId()"
+              [items]="memberTypes"
+              bindLabel="Name"
+              bindValue="Id"
+              placeholder="Select Member Type"
+              [appendTo]="'body'"
+              formControlName="MemberTypeId"
+            ></ng-select>
+            <small [hidden]="handleBlur(memberForm.controls.MemberTypeId)" class="text-danger fs-9 mt-1 d-block">
+              Member Type is required
+            </small>
+          </div>
+
+          <div class="col-md-4 col-sm-6">
+            <label class="form-label-custom required">Membership No</label>
+            <input
+              (keyup)="createMemberFullId()"
+              type="text"
+              formControlName="MemberShipNo"
+              placeholder="e.g. 1042"
+              class="form-control form-control-sm"
+            />
+            <small [hidden]="handleBlur(memberForm.controls.MemberShipNo)" class="text-danger fs-9 mt-1 d-block">
+              Membership No is required
+            </small>
+          </div>
+
+          <div class="col-md-4 col-sm-6">
+            <label class="form-label-custom required">Member Full ID</label>
+            <input
+              type="text"
+              formControlName="MemberFullId"
+              placeholder="Auto-generated ID"
+              class="form-control form-control-sm bg-light"
+              readonly
+            />
+          </div>
+
+          <div class="col-md-4 col-sm-6">
+            <label class="form-label-custom required">Member Status</label>
+            <ng-select
+              [items]="memberStatus"
+              bindLabel="Name"
+              bindValue="Id"
+              placeholder="Select Member Status"
+              [appendTo]="'body'"
+              formControlName="MemberStatusId"
+            ></ng-select>
+            <small [hidden]="handleBlur(memberForm.controls.MemberStatusId)" class="text-danger fs-9 mt-1 d-block">
+              Member Status is required
+            </small>
+          </div>
+
+          <div class="col-md-4 col-sm-6">
+            <label class="form-label-custom required">Member Active Status</label>
+            <ng-select
+              [items]="memberActiveStatus"
+              bindLabel="Name"
+              bindValue="Id"
+              placeholder="Select Active Status"
+              [appendTo]="'body'"
+              formControlName="MemberActiveStatusId"
+            ></ng-select>
+            <small [hidden]="handleBlur(memberForm.controls.MemberActiveStatusId)" class="text-danger fs-9 mt-1 d-block">
+              Member Active Status is required
+            </small>
+          </div>
+
+          <div class="col-md-4 col-sm-6">
+            <label class="form-label-custom required">Card No.</label>
+            <input
+              type="text"
+              formControlName="CardNo"
+              placeholder="e.g. CRD-9982"
+              class="form-control form-control-sm"
+            />
+            <small [hidden]="handleBlur(memberForm.controls.CardNo)" class="text-danger fs-9 mt-1 d-block">
+              Card No is required
+            </small>
+          </div>
+
+          <div class="col-md-4 col-sm-6">
+            <label class="form-label-custom">Device Id</label>
+            <input
+              type="text"
+              formControlName="DeviceId"
+              placeholder="Device Terminal ID"
+              class="form-control form-control-sm"
+            />
+          </div>
+
+          <div class="col-md-4 col-sm-6">
+            <label class="form-label-custom required">Pin No.</label>
+            <input
+              [ngClass]="{ disabled: memberId }"
+              type="text"
+              formControlName="PinNo"
+              placeholder="Secret Pin"
+              class="form-control form-control-sm"
+            />
+            <small [hidden]="handleBlur(memberForm.controls.PinNo)" class="text-danger fs-9 mt-1 d-block">
+              Pin No is required
+            </small>
+          </div>
+
+          <div class="col-md-4 col-sm-6">
+            <label class="form-label-custom">Club Join Date</label>
+            <input
+              type="date"
+              formControlName="ClubJoinDate"
+              class="form-control form-control-sm"
+            />
+          </div>
+
+          <div class="col-md-4 col-sm-6">
+            <label class="form-label-custom">Join Date <span class="text-muted fs-9">(University)</span></label>
+            <input
+              type="date"
+              id="joinDate"
+              formControlName="JoinDate"
+              class="form-control form-control-sm"
+            />
+          </div>
+
+          <div class="col-md-4 col-sm-6">
+            <label class="form-label-custom">Leave Date <span class="text-muted fs-9">(University)</span></label>
+            <input
+              type="date"
+              id="leaveDate"
+              formControlName="LeaveDate"
+              class="form-control form-control-sm"
+            />
+          </div>
+
+          <div class="col-md-4 col-sm-6">
+            <label class="form-label-custom">Paid Till</label>
+            <input
+              [ngClass]="{ disabled: memberId }"
+              type="date"
+              formControlName="PaidTill"
+              class="form-control form-control-sm"
+            />
+          </div>
+
+          <div class="col-md-4 col-sm-6">
+            <label class="form-label-custom">Credit Limit (BDT)</label>
+            <input
+              type="number"
+              formControlName="CreditLimit"
+              placeholder="0.00"
+              class="form-control form-control-sm"
+            />
+          </div>
+        </div>
+      </div>
+
+      <!-- Section 2: Contact & Address Information -->
+      <div class="form-section-card p-4 rounded-3 border mb-4">
+        <div class="section-title-wrap d-flex align-items-center gap-2 mb-3 pb-2 border-bottom border-gray-200">
+          <div class="section-icon-box icon-blue">
+            <i class="fas fa-address-book"></i>
+          </div>
+          <h5 class="fw-bolder text-dark mb-0">Contact & Address Details</h5>
+        </div>
+
+        <div class="row g-3">
+          <div class="col-md-4 col-sm-6">
+            <label class="form-label-custom required">Full Name</label>
+            <input
+              type="text"
+              formControlName="FullName"
+              placeholder="Full Name of Member"
+              class="form-control form-control-sm"
+            />
+            <small [hidden]="handleBlur(memberForm.controls.FullName)" class="text-danger fs-9 mt-1 d-block">
+              Full Name is required
+            </small>
+          </div>
+
+          <div class="col-md-4 col-sm-6">
+            <label class="form-label-custom">Phone Number</label>
+            <input
+              type="text"
+              formControlName="Phone"
+              placeholder="e.g. 017XXXXXXXX"
+              class="form-control form-control-sm font-monospace"
+            />
+          </div>
+
+          <div class="col-md-4 col-sm-6">
+            <label class="form-label-custom">Email Address</label>
+            <input
+              type="email"
+              formControlName="Email"
+              placeholder="member@example.com"
+              class="form-control form-control-sm"
+            />
+          </div>
+
+          <div class="col-md-4 col-sm-6">
+            <label class="form-label-custom">Emergency Contact</label>
+            <input
+              type="text"
+              formControlName="EmergencyContact"
+              placeholder="Emergency Contact Name / Phone"
+              class="form-control form-control-sm"
+            />
+          </div>
+
+          <div class="col-md-4 col-sm-6">
+            <label class="form-label-custom">Permanent Address</label>
+            <textarea
+              formControlName="PermanentAddress"
+              placeholder="Permanent Street / Village Address"
+              rows="2"
+              class="form-control form-control-sm"
+            ></textarea>
+          </div>
+
+          <div class="col-md-4 col-sm-6">
+            <label class="form-label-custom">Postal / Present Address</label>
+            <textarea
+              formControlName="PostalAddress"
+              placeholder="Postal Address for Mailing"
+              rows="2"
+              class="form-control form-control-sm"
+            ></textarea>
+          </div>
+        </div>
+      </div>
+
+      <!-- Section 3: Professional & Academic Information -->
+      <div class="form-section-card p-4 rounded-3 border mb-4">
+        <div class="section-title-wrap d-flex align-items-center gap-2 mb-3 pb-2 border-bottom border-gray-200">
+          <div class="section-icon-box icon-green">
+            <i class="fas fa-user-graduate"></i>
+          </div>
+          <h5 class="fw-bolder text-dark mb-0">Professional & Academic Information</h5>
+        </div>
+
+        <div class="row g-3">
+          <div class="col-md-4 col-sm-6">
+            <label class="form-label-custom">Profession</label>
+            <ng-select
+              [items]="memberProfessions"
+              bindLabel="Name"
+              bindValue="Id"
+              placeholder="Select Profession"
+              [appendTo]="'body'"
+              formControlName="MemberProfessionId"
+            ></ng-select>
+          </div>
+
+          <div class="col-md-4 col-sm-6">
+            <label class="form-label-custom">Organization</label>
+            <input
+              type="text"
+              formControlName="Organaization"
+              placeholder="Company / Institution"
+              class="form-control form-control-sm"
+            />
+          </div>
+
+          <div class="col-md-4 col-sm-6">
+            <label class="form-label-custom">Designation</label>
+            <input
+              type="text"
+              formControlName="Designation"
+              placeholder="Job Title"
+              class="form-control form-control-sm"
+            />
+          </div>
+
+          <div class="col-md-4 col-sm-6">
+            <label class="form-label-custom">Specialization</label>
+            <input
+              type="text"
+              formControlName="Specialization"
+              placeholder="Field of Expertise"
+              class="form-control form-control-sm"
+            />
+          </div>
+
+          <div class="col-md-4 col-sm-6">
+            <label class="form-label-custom">Blood Group</label>
+            <ng-select
+              [items]="bloodGroups"
+              bindLabel="Code"
+              bindValue="Id"
+              placeholder="Select Blood Group"
+              [appendTo]="'body'"
+              formControlName="BloodGroupId"
+            ></ng-select>
+          </div>
+
+          <div class="col-md-4 col-sm-6">
+            <label class="form-label-custom">HSC Passing Year</label>
+            <input
+              type="text"
+              formControlName="HscYear"
+              placeholder="e.g. 2005"
+              class="form-control form-control-sm"
+            />
+          </div>
+
+          <div class="col-md-4 col-sm-6">
+            <label class="form-label-custom">National ID (NID)</label>
+            <input
+              type="text"
+              formControlName="NID"
+              placeholder="NID Number"
+              class="form-control form-control-sm"
+            />
+          </div>
+
+          <div class="col-md-4 col-sm-6">
+            <label class="form-label-custom">Date of Birth</label>
+            <input
+              type="date"
+              formControlName="Dob"
+              class="form-control form-control-sm"
+            />
+          </div>
+
+          <div class="col-md-4 col-sm-6">
+            <label class="form-label-custom">Office Address</label>
+            <textarea
+              formControlName="OfficeAddress"
+              placeholder="Office Location"
+              rows="2"
+              class="form-control form-control-sm"
+            ></textarea>
+          </div>
+
+          <div class="col-md-12">
+            <label class="form-label-custom">Home Address</label>
+            <textarea
+              formControlName="HomeAddress"
+              placeholder="Detailed Home Address"
+              rows="2"
+              class="form-control form-control-sm"
+            ></textarea>
+          </div>
+        </div>
+      </div>
+
+      <!-- Action Buttons -->
+      <div class="d-flex align-items-center gap-3 pt-2">
+        <button type="button" class="primary-btn px-5" (click)="onSubmit()">
+          <i class="fas fa-save me-2"></i> Save Member Profile
+        </button>
+      </div>
+    </div>
+
+    <!-- Right Column: Profile Photo Upload Zone -->
+    <div class="col-lg-3 col-md-12">
+      <div class="photo-upload-card p-4 rounded-3 border text-center">
+        <h6 class="fw-bolder text-dark mb-3">Member Photograph</h6>
+
+        <div class="photo-preview-wrapper mb-3">
+          <div class="photo-avatar-ring">
+            <img
+              *ngIf="memberForm.value.ImgFileUrl"
+              id="profilePic"
+              class="photo-preview-img"
+              [src]="memberForm.value.ImgFileUrl"
+              alt="Member Photo"
+            />
+            <div *ngIf="!memberForm.value.ImgFileUrl" class="photo-placeholder-box">
+              <i class="fas fa-user-circle fa-4x text-muted mb-2"></i>
+              <span class="fs-9 fw-semibold text-muted">No Photo Uploaded</span>
+            </div>
+          </div>
+
+          <!-- Remove Image Action Button -->
+          <button
+            type="button"
+            class="btn-photo-remove"
+            (click)="removeImage()"
+            *ngIf="memberForm.value.ImgFileUrl"
+            title="Remove Photo"
+          >
+            <i class="fas fa-times"></i>
+          </button>
+        </div>
+
+        <div class="photo-upload-actions">
+          <label for="newProfilePhoto" class="btn-photo-upload w-100">
+            <i class="fas fa-camera me-1.5"></i>
+            {{ memberForm.value.ImgFileUrl ? 'Change Photo' : 'Upload Photo' }}
+          </label>
+          <input
+            formControlName="ProfileFile"
+            class="d-none"
+            type="file"
+            name="profile_pic"
+            id="newProfilePhoto"
+            accept="image/*"
+            (change)="imageChangeHandler($event)"
+          />
+          <span class="text-muted fs-9 d-block mt-2">
+            Accepted formats: JPG, PNG. Max: 2MB
+          </span>
+        </div>
+      </div>
+    </div>
+  </div>
+</form>
+<swal #noticeSwal [swalOptions]="swalOptions"> </swal>

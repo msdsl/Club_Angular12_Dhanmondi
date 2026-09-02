@@ -1,0 +1,129 @@
+<div class="feature-section">
+  <div class="feature-section-wrapper">
+    <!-- Modern Header with AI Badge -->
+    <div class="d-flex flex-wrap align-items-center justify-content-between gap-3 mb-4 pb-3 border-bottom border-gray-300">
+      <div class="d-flex align-items-center gap-3">
+        <div class="report-header-icon">
+          <i class="fas fa-mobile-alt fs-2"></i>
+        </div>
+        <div>
+          <div class="d-flex align-items-center gap-2 mb-1">
+            <h3 class="fw-bolder text-dark mb-0 fs-4">Mobile App Installation & Adoption Report</h3>
+            <span class="badge-ai-live">
+              <span class="ai-live-dot"></span> BI Telemetry
+            </span>
+          </div>
+          <p class="header-desc text-secondary mb-0 fw-semibold">
+            Track member app registration, active mobile device logins, iOS/Android adoption, and dormant accounts.
+          </p>
+        </div>
+      </div>
+    </div>
+
+    <!-- Main Content: Filter Console (Left) + Document Viewer (Right) -->
+    <div class="row g-4">
+      <!-- Left Filter Console -->
+      <div class="col-lg-4 col-xl-3">
+        <div class="card report-filter-card shadow-sm border p-3.5">
+          <div class="d-flex align-items-center gap-2 mb-3 pb-2 border-bottom border-gray-200">
+            <i class="fas fa-filter text-primary fs-5"></i>
+            <h6 class="fw-bold text-dark mb-0 fs-6">User Status Filter</h6>
+          </div>
+
+          <form [formGroup]="filterForm">
+            <div class="mb-4">
+              <label class="form-label-custom mb-2">Member App Status</label>
+              
+              <div class="status-option-card mb-2" [class.selected]="IsActive === true" (click)="setStatusCriteria(true)">
+                <input
+                  type="radio"
+                  name="status"
+                  id="statusActive"
+                  [checked]="IsActive === true"
+                  (change)="setStatusCriteria(true)"
+                />
+                <label for="statusActive" class="ms-2 mb-0 fw-bold text-dark fs-7 cursor-pointer">
+                  <i class="fas fa-check-circle text-success me-1"></i> Active Users Only
+                </label>
+              </div>
+
+              <div class="status-option-card mb-2" [class.selected]="IsActive === false" (click)="setStatusCriteria(false)">
+                <input
+                  type="radio"
+                  name="status"
+                  id="statusInactive"
+                  [checked]="IsActive === false"
+                  (change)="setStatusCriteria(false)"
+                />
+                <label for="statusInactive" class="ms-2 mb-0 fw-bold text-dark fs-7 cursor-pointer">
+                  <i class="fas fa-times-circle text-danger me-1"></i> Inactive Accounts
+                </label>
+              </div>
+
+              <div class="status-option-card mb-2" [class.selected]="IsActive === null || IsActive === undefined" (click)="setStatusCriteria(null)">
+                <input
+                  type="radio"
+                  name="status"
+                  id="statusBoth"
+                  [checked]="IsActive === null || IsActive === undefined"
+                  (change)="setStatusCriteria(null)"
+                />
+                <label for="statusBoth" class="ms-2 mb-0 fw-bold text-dark fs-7 cursor-pointer">
+                  <i class="fas fa-users text-primary me-1"></i> All Members (Both)
+                </label>
+              </div>
+            </div>
+
+            <div class="d-flex gap-2">
+              <button class="primary-btn flex-grow-1 py-2 fw-bold" type="button" (click)="viewPdfReport()">
+                <i class="fas fa-file-pdf me-1.5"></i> Generate Report
+              </button>
+              <button class="btn btn-secondary btn-sm px-3 fw-bold" type="button" (click)="resetForm()">
+                <i class="fas fa-undo"></i>
+              </button>
+            </div>
+          </form>
+        </div>
+      </div>
+
+      <!-- Right Document Viewer Area -->
+      <div class="col-lg-8 col-xl-9">
+        <div class="card report-viewer-card shadow-sm border p-2 min-h-600px">
+          <!-- When Document URL is loaded -->
+          <div *ngIf="url" class="doc-viewer-container">
+            <div class="doc-viewer-toolbar d-flex justify-content-between align-items-center p-2 mb-2 bg-light rounded-2 border">
+              <span class="badge bg-success text-white fw-bold fs-7">
+                <i class="fas fa-check-circle me-1"></i> App Adoption Report Rendered
+              </span>
+              <a [href]="url" target="_blank" class="btn btn-outline-primary btn-sm fw-bold py-1 px-2.5">
+                <i class="fas fa-external-link-alt me-1"></i> Open in New Tab
+              </a>
+            </div>
+            <ngx-doc-viewer
+              [url]="url"
+              viewer="url"
+              style="width: 100%; height: 750px"
+              class="rounded border"
+            ></ngx-doc-viewer>
+          </div>
+
+          <!-- When No Document is generated yet -->
+          <div *ngIf="!url" class="report-empty-placeholder d-flex flex-column align-items-center justify-content-center text-center p-5">
+            <div class="empty-doc-icon mb-3">
+              <i class="fas fa-mobile-screen fs-1"></i>
+            </div>
+            <h5 class="fw-bolder text-dark mb-2">Ready to Generate App Adoption Report</h5>
+            <p class="text-secondary fw-semibold max-w-450px mb-4 fs-7">
+              Select status criteria from the left console, then click <strong>Generate Report</strong> to inspect mobile downloads and logins.
+            </p>
+            <div class="d-flex flex-wrap gap-2 justify-content-center">
+              <span class="badge-feature-pill"><i class="fas fa-user-check text-success me-1"></i> Active Member Breakdown</span>
+              <span class="badge-feature-pill"><i class="fas fa-chart-line text-primary me-1"></i> Platform Telemetry</span>
+              <span class="badge-feature-pill"><i class="fas fa-print text-primary me-1"></i> Print Ready</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

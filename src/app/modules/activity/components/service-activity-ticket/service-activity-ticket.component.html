@@ -1,0 +1,226 @@
+<form [formGroup]="serviceActivityTicketForm">
+  <!-- General Parameters Section -->
+  <div class="row g-3 mb-4">
+    <div class="col-md-3 col-sm-6">
+      <div class="form-group">
+        <label class="form-label-custom required">Service</label>
+        <ng-select
+          (change)="getallServiceSlotSettings($event)"
+          [items]="serviceTypeList"
+          bindLabel="Title"
+          bindValue="Id"
+          placeholder="Select Service"
+          [appendTo]="'body'"
+          formControlName="MemServiceId"
+        ></ng-select>
+      </div>
+      <small [hidden]="handleBlur(serviceActivityTicketForm.controls.MemServiceId)" class="text-danger" translate>
+        Service is required
+      </small>
+    </div>
+
+    <div class="col-md-3 col-sm-6">
+      <div class="form-group">
+        <label class="form-label-custom">Ticket Limit</label>
+        <input type="number" class="form-control form-control-sm" placeholder="e.g. 50" formControlName="TicketLimit" />
+      </div>
+    </div>
+
+    <div class="col-md-3 col-sm-6">
+      <div class="form-group">
+        <label class="form-label-custom">Location / Venue</label>
+        <input type="text" class="form-control form-control-sm" placeholder="e.g. Tennis Court #1" formControlName="Location" />
+      </div>
+    </div>
+
+    <div class="col-md-3 col-sm-6">
+      <div class="form-group">
+        <label class="form-label-custom">Service Charge (%)</label>
+        <input type="text" class="form-control form-control-sm" placeholder="e.g. 10" formControlName="ServiceChargePercent" />
+      </div>
+    </div>
+
+    <div class="col-md-3 col-sm-6">
+      <div class="form-group">
+        <label class="form-label-custom">VAT Charge (%)</label>
+        <input type="number" class="form-control form-control-sm" placeholder="e.g. 5" formControlName="VatChargePercent" />
+      </div>
+    </div>
+
+    <div class="col-md-9 col-sm-6">
+      <div class="form-group">
+        <label class="form-label-custom">Description</label>
+        <textarea formControlName="Description" rows="1" placeholder="Add service ticket details or terms..." class="form-control form-control-sm"></textarea>
+      </div>
+    </div>
+  </div>
+
+  <!-- Session Slot Matrix (if available) -->
+  <div class="mb-4" *ngIf="groupedServiceSlotSettingsList?.length > 0">
+    <div class="d-flex align-items-center gap-2 mb-2">
+      <i class="fas fa-clock text-primary"></i>
+      <h6 class="fw-bolder text-dark mb-0 fs-7">Session Slots & Day Allocations</h6>
+    </div>
+
+    <div class="table-responsive rounded-2 border slot-matrix-card">
+      <table class="table table-hover align-middle mb-0 text-center custom-slot-table">
+        <thead class="table-head">
+          <tr>
+            <th class="w-150px text-start ps-3">
+              <input class="form-check-input me-2" [checked]="isSelectedAll()" type="checkbox" (change)="onSelectAll($event)" />
+              Select Day
+            </th>
+            <th class="w-120px text-center">Slot Qty</th>
+            <th class="text-center">Start Time</th>
+            <th class="text-center">End Time</th>
+            <th class="text-center w-120px">Whole Day?</th>
+          </tr>
+        </thead>
+        <tbody>
+          <ng-container *ngFor="let dayGroup of groupedServiceSlotSettingsList; let i = index">
+            <tr class="day-group-header-row">
+              <th colspan="5" class="text-start ps-3 py-2 text-primary fw-bolder fs-8">
+                <i class="fas fa-calendar-day me-1.5"></i> {{ dayGroup.key }}
+              </th>
+            </tr>
+            <tr *ngFor="let x of dayGroup.value; index as j">
+              <td class="text-start ps-4">
+                <input class="form-check-input" type="checkbox" [checked]="isSlotSelected(x)" (change)="toggleSlotSelection(x)" />
+              </td>
+              <td class="text-center">
+                <input
+                  type="number"
+                  class="form-control form-control-sm text-center mx-auto w-80px"
+                  name="x.Qty +{{ j }}"
+                  (keyup)="updateSLotQty($event, x)"
+                  [value]="getValue(x)"
+                />
+              </td>
+              <td class="text-center font-monospace text-muted fs-8">
+                <span class="badge-time-pill">{{ convertTime(x.StartTime) }}</span>
+              </td>
+              <td class="text-center font-monospace text-muted fs-8">
+                <span class="badge-time-pill">{{ convertTime(x.EndTime) }}</span>
+              </td>
+              <td class="text-center">
+                <span class="badge-active-yes" *ngIf="x.IsWholeDay">Yes</span>
+                <span class="badge-active-no" *ngIf="!x.IsWholeDay">No</span>
+              </td>
+            </tr>
+          </ng-container>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- Dynamic Pricing Tiers Section -->
+  <div class="mb-4">
+    <div class="d-flex align-items-center gap-2 mb-2">
+      <i class="fas fa-layer-group text-primary"></i>
+      <h6 class="fw-bolder text-dark mb-0 fs-7">Pricing Tiers & Pass Rates</h6>
+    </div>
+
+    <div formArrayName="ServiceTicketDetailReqs" class="p-3 bg-light rounded-3 border">
+      <div *ngFor="let item of serviceTicketDetailArray; let i = index" class="mb-2">
+        <div [formGroupName]="i">
+          <div class="row g-2 align-items-end">
+            <div class="col-md-5 col-sm-6">
+              <label class="form-label-custom" *ngIf="i == 0">Member Type Tier</label>
+              <ng-select
+                [items]="serviceTicketTypeList"
+                bindLabel="Title"
+                bindValue="Id"
+                placeholder="Select Tier / Member Type"
+                [appendTo]="'body'"
+                formControlName="ServiceTicketTypeId"
+                (change)="onTitleChange($event, i)"
+              ></ng-select>
+            </div>
+
+            <div class="col-md-4 col-sm-4">
+              <label class="form-label-custom" *ngIf="i == 0">Unit Price (৳)</label>
+              <input
+                type="number"
+                formControlName="UnitPrice"
+                class="form-control form-control-sm font-monospace"
+                placeholder="0.00"
+                name="UnitPrice"
+              />
+            </div>
+
+            <div class="col-md-3 col-sm-2 d-flex gap-2 align-items-center">
+              <button
+                type="button"
+                class="btn-action-delete"
+                title="Remove Tier"
+                [class.d-none]="i == 0 && serviceTicketDetailArray?.length == 1"
+                (click)="removeItem(i)"
+              >
+                <i class="far fa-trash-alt"></i>
+              </button>
+              <button
+                type="button"
+                class="primary-btn btn-sm px-2.5 py-1"
+                title="Add Another Tier"
+                [class.d-none]="!(i == serviceTicketDetailArray?.length - 1)"
+                (click)="addItemDetail(i)"
+              >
+                <i class="fas fa-plus"></i>
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Image Upload & Preview Section -->
+  <div class="row mb-4">
+    <div class="col-md-6">
+      <label class="form-label-custom">Ticket Banner / Cover Photo</label>
+      <div class="ticket-pic-holder">
+        <img
+          *ngIf="this.serviceActivityTicketForm.value.ImgFileUrl"
+          id="profilePic"
+          class="ticket-preview-img"
+          [src]="this.serviceActivityTicketForm.value.ImgFileUrl"
+        />
+
+        <div class="upload-dropzone" *ngIf="!this.serviceActivityTicketForm.value.ImgFileUrl">
+          <i class="fas fa-cloud-upload-alt fs-2 text-primary mb-2"></i>
+          <span class="fs-8 text-muted fw-semibold">Click to upload photo</span>
+          <input
+            formControlName="formFile"
+            class="uploadProfileInput"
+            type="file"
+            name="profile_pic"
+            id="newProfilePhoto"
+            accept="image/*"
+            (change)="imageChangeHandler($event)"
+          />
+        </div>
+
+        <a
+          class="btn-remove-pic"
+          (click)="removeImage()"
+          *ngIf="this.serviceActivityTicketForm.value.ImgFileUrl"
+          title="Remove photo"
+        >
+          <i class="fas fa-times"></i>
+        </a>
+      </div>
+    </div>
+  </div>
+
+  <!-- Form Submit Actions -->
+  <div class="d-flex justify-content-end gap-2 pt-3 border-top">
+    <a routerLink="/activity/ticket/list" class="btn btn-secondary btn-sm px-4">
+      Cancel
+    </a>
+    <button class="primary-btn btn-sm px-4" (click)="onSubmit()">
+      <i class="fas fa-check me-1.5"></i> Save Service Ticket
+    </button>
+  </div>
+</form>
+
+<swal #noticeSwal [swalOptions]="swalOptions"> </swal>

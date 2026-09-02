@@ -1,0 +1,94 @@
+<div class="ticket-studio-wrapper">
+  <!-- Modern Header with AI Badge & Back Navigation -->
+  <div class="d-flex flex-wrap align-items-center justify-content-between gap-3 mb-4 pb-3 border-bottom border-gray-200">
+    <div class="d-flex align-items-center gap-3">
+      <a routerLink="/activity/ticket/list" class="btn-back-link" title="Back to Tickets">
+        <i class="fas fa-arrow-left"></i>
+      </a>
+      <div class="studio-header-icon">
+        <i class="fas fa-ticket-alt fs-2"></i>
+      </div>
+      <div>
+        <div class="d-flex align-items-center gap-2 mb-1">
+          <h3 class="fw-bolder text-dark mb-0">
+            {{ ticketId ? 'Edit Activity Ticket #' + ticketId : 'Create Activity Ticket' }}
+          </h3>
+          <span class="badge-ai-live">
+            <span class="ai-live-dot"></span> {{ ticketId ? 'Edit Mode' : 'New Configuration' }}
+          </span>
+        </div>
+        <p class="page-header-subtitle mb-0">
+          Configure ticket selling slots, pricing tiers, availability matrices, locations, and promotional rules.
+        </p>
+      </div>
+    </div>
+
+    <div>
+      <a routerLink="/activity/ticket/list" class="btn btn-outline-secondary btn-sm">
+        <i class="fas fa-list me-1"></i> View All Tickets
+      </a>
+    </div>
+  </div>
+
+  <!-- Studio Card Container -->
+  <div class="card shadow-sm border-0 studio-main-card">
+    <!-- Modern Pill Navigation Tabs -->
+    <div class="card-header bg-transparent border-bottom px-4 pt-3 pb-0">
+      <ul class="nav nav-pills custom-studio-pills" id="nav-tab" role="tablist" [ngClass]="{ locked: ticketTypeId !== 0 }">
+        <li class="nav-item">
+          <button
+            (click)="selectTab(1)"
+            [ngClass]="{ active: selectedTab === 1 }"
+            class="nav-link-studio"
+            type="button"
+            role="tab"
+          >
+            <i class="fas fa-landmark me-2"></i> Venue Ticket
+          </button>
+        </li>
+        <li class="nav-item">
+          <button
+            (click)="selectTab(2)"
+            [ngClass]="{ active: selectedTab === 2 }"
+            class="nav-link-studio"
+            type="button"
+            role="tab"
+          >
+            <i class="fas fa-calendar-star me-2"></i> Event Ticket
+          </button>
+        </li>
+        <li class="nav-item">
+          <button
+            (click)="selectTab(3)"
+            [ngClass]="{ active: selectedTab === 3 }"
+            class="nav-link-studio"
+            type="button"
+            role="tab"
+          >
+            <i class="fas fa-concierge-bell me-2"></i> Service Ticket
+          </button>
+        </li>
+      </ul>
+    </div>
+
+    <div class="card-body p-4">
+      <div class="tab-content" id="nav-tabContent">
+        <div *ngIf="selectedTab === 1" class="tab-pane-content" role="tabpanel">
+          <app-venue-activity-ticket
+            [venueTicketId]="ticketId"
+          ></app-venue-activity-ticket>
+        </div>
+        <div *ngIf="selectedTab === 2" class="tab-pane-content" role="tabpanel">
+          <app-event-activity-ticket
+            [eventTicketId]="ticketId"
+          ></app-event-activity-ticket>
+        </div>
+        <div *ngIf="selectedTab === 3" class="tab-pane-content" role="tabpanel">
+          <app-service-activity-ticket
+            [serviceTicketId]="ticketId"
+          ></app-service-activity-ticket>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

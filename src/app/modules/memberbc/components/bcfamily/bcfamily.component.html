@@ -1,0 +1,311 @@
+<form [formGroup]="memberFamilyInfoForm" class="family-info-form">
+  <div class="row g-4">
+    <!-- Left Column: Spouse & Children Details -->
+    <div class="col-lg-9 col-md-12">
+      <!-- Section 1: Spouse Profile Details -->
+      <div class="form-section-card p-4 rounded-3 border mb-4">
+        <div class="section-title-wrap d-flex align-items-center gap-2 mb-3 pb-2 border-bottom border-gray-200">
+          <div class="section-icon-box icon-pink">
+            <i class="fas fa-heart"></i>
+          </div>
+          <div>
+            <h5 class="fw-bolder text-dark mb-0">Spouse Profile & Credentials</h5>
+            <span class="text-muted fs-9">Personal details and identification card for member's spouse</span>
+          </div>
+        </div>
+
+        <div class="row g-3">
+          <div class="col-md-4 col-sm-6">
+            <label class="form-label-custom required">Spouse Full Name</label>
+            <input
+              type="text"
+              formControlName="Spouse"
+              placeholder="e.g. Jane Doe"
+              class="form-control form-control-sm"
+            />
+          </div>
+
+          <div class="col-md-4 col-sm-6">
+            <label class="form-label-custom required">Spouse Card No</label>
+            <input
+              type="text"
+              formControlName="CardNo"
+              placeholder="e.g. SC-1042"
+              class="form-control form-control-sm"
+            />
+          </div>
+
+          <div class="col-md-4 col-sm-6">
+            <label class="form-label-custom required">Spouse Occupation</label>
+            <input
+              type="text"
+              formControlName="SpouseOccupation"
+              placeholder="e.g. Doctor / Teacher / Homemaker"
+              class="form-control form-control-sm"
+            />
+          </div>
+
+          <div class="col-md-4 col-sm-6">
+            <label class="form-label-custom">Spouse Phone Number</label>
+            <input
+              type="text"
+              formControlName="SpousePhone"
+              placeholder="e.g. 017XXXXXXXX"
+              class="form-control form-control-sm font-monospace"
+            />
+          </div>
+
+          <div class="col-md-4 col-sm-6">
+            <label class="form-label-custom">Marriage Anniversary</label>
+            <input
+              type="date"
+              formControlName="Anniversary"
+              class="form-control form-control-sm"
+            />
+          </div>
+
+          <div class="col-md-4 col-sm-6">
+            <label class="form-label-custom">Next of Kin (NOK)</label>
+            <select formControlName="Nok" class="form-select form-select-sm">
+              <option value="N\A">N/A</option>
+              <option *ngFor="let x of noks" [value]="x">{{ x }}</option>
+            </select>
+          </div>
+        </div>
+      </div>
+
+      <!-- Section 2: Children & Dependents -->
+      <div class="form-section-card p-4 rounded-3 border mb-4">
+        <div class="d-flex flex-wrap align-items-center justify-content-between gap-2 mb-3 pb-2 border-bottom border-gray-200">
+          <div class="section-title-wrap d-flex align-items-center gap-2">
+            <div class="section-icon-box icon-amber">
+              <i class="fas fa-child"></i>
+            </div>
+            <div>
+              <h5 class="fw-bolder text-dark mb-0">Children & Dependents</h5>
+              <span class="text-muted fs-9">Registered children and dependent family members</span>
+            </div>
+          </div>
+
+          <button type="button" class="btn-add-child" (click)="addChild(addChildModal)">
+            <i class="fas fa-plus me-1.5"></i> Add Child
+          </button>
+        </div>
+
+        <div class="table-responsive rounded-2 border">
+          <table class="table table-hover align-middle mb-0 custom-member-table">
+            <thead class="table-head">
+              <tr>
+                <th class="w-50px text-center">SL</th>
+                <th class="text-start">Child Name</th>
+                <th class="text-start">Phone Number</th>
+                <th class="text-center">Date Of Birth</th>
+                <th class="text-center">Gender</th>
+                <th class="text-center w-80px">Action</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr *ngFor="let data of childInfoArray; let i = index">
+                <td class="text-center text-muted fs-8 fw-bold">{{ i + 1 }}</td>
+                <td class="text-start fw-bolder text-dark">{{ data.ContactName }}</td>
+                <td class="text-start">
+                  <span *ngIf="data.Phone" class="phone-text fw-bold text-dark fs-8">
+                    <i class="fas fa-phone-alt text-success me-1 fs-9"></i> {{ data.Phone }}
+                  </span>
+                  <span *ngIf="!data.Phone" class="text-muted fs-8">—</span>
+                </td>
+                <td class="text-center text-dark fw-semibold fs-8">
+                  {{ data.Dob ? (data.Dob | date : "dd/MM/yyyy") : '—' }}
+                </td>
+                <td class="text-center">
+                  <span class="badge" [ngClass]="data.Gender === 'F' ? 'badge-gender-daughter' : 'badge-gender-son'">
+                    <i class="fas" [ngClass]="data.Gender === 'F' ? 'fa-female me-1' : 'fa-male me-1'"></i>
+                    {{ data.Gender === 'F' ? 'Daughter' : (data.Gender === 'M' ? 'Son' : data.Gender) }}
+                  </span>
+                </td>
+                <td class="text-center">
+                  <button
+                    class="btn-table-action btn-table-delete"
+                    title="Remove Child"
+                    type="button"
+                    (click)="deleteButtonClick(i)"
+                  >
+                    <i class="far fa-trash-alt"></i>
+                  </button>
+                </td>
+              </tr>
+            </tbody>
+            <tbody *ngIf="childInfoArray?.length < 1 || hasData === false">
+              <tr>
+                <td colspan="6" class="p-4 text-center">
+                  <app-empty [message]="'No Children Added Yet'"></app-empty>
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- Submit Actions -->
+      <div class="d-flex align-items-center gap-3 pt-2">
+        <button type="button" class="primary-btn px-5" (click)="onSubmit()">
+          <i class="fas fa-save me-2"></i> Save Family Information
+        </button>
+      </div>
+    </div>
+
+    <!-- Right Column: Spouse Photograph -->
+    <div class="col-lg-3 col-md-12">
+      <div class="photo-upload-card p-4 rounded-3 border text-center">
+        <h6 class="fw-bolder text-dark mb-3">Spouse Photograph</h6>
+
+        <div class="photo-preview-wrapper mb-3">
+          <div class="photo-avatar-ring ring-pink">
+            <img
+              *ngIf="memberFamilyInfoForm.value.ImgFileUrl"
+              id="profilePic"
+              class="photo-preview-img"
+              [src]="memberFamilyInfoForm.value.ImgFileUrl"
+              alt="Spouse Photo"
+            />
+            <div *ngIf="!memberFamilyInfoForm.value.ImgFileUrl" class="photo-placeholder-box">
+              <i class="fas fa-user-friends fa-3x text-muted mb-2"></i>
+              <span class="fs-9 fw-semibold text-muted">No Spouse Photo</span>
+            </div>
+          </div>
+
+          <!-- Remove Image Button -->
+          <button
+            type="button"
+            class="btn-photo-remove"
+            (click)="removeImage()"
+            *ngIf="memberFamilyInfoForm.value.ImgFileUrl"
+            title="Remove Photo"
+          >
+            <i class="fas fa-times"></i>
+          </button>
+        </div>
+
+        <div class="photo-upload-actions">
+          <label for="spouseProfilePhoto" class="btn-photo-upload w-100">
+            <i class="fas fa-camera me-1.5"></i>
+            {{ memberFamilyInfoForm.value.ImgFileUrl ? 'Change Photo' : 'Upload Photo' }}
+          </label>
+          <input
+            formControlName="SpouseFile"
+            class="d-none"
+            type="file"
+            name="profile_pic"
+            id="spouseProfilePhoto"
+            accept="image/*"
+            (change)="imageChangeHandler($event)"
+          />
+          <span class="text-muted fs-9 d-block mt-2">
+            Accepted formats: JPG, PNG. Max: 2MB
+          </span>
+        </div>
+      </div>
+    </div>
+  </div>
+</form>
+
+<!-- Add Child Modal -->
+<ng-template #addChildModal let-modal>
+  <div class="modal-header d-flex justify-content-between align-items-center bg-light">
+    <div class="d-flex align-items-center gap-2">
+      <i class="fas fa-baby text-primary fs-4"></i>
+      <h5 class="modal-title fw-bold text-dark mb-0">Add Child / Dependent</h5>
+    </div>
+    <button type="button" class="btn-close" (click)="modal.dismiss('Cross click')" aria-label="Close"></button>
+  </div>
+
+  <div class="modal-body p-4">
+    <form [formGroup]="childInfoForm">
+      <div class="mb-3">
+        <label class="form-label-custom required">Child Full Name</label>
+        <input
+          type="text"
+          formControlName="ContactName"
+          class="form-control form-control-sm"
+          placeholder="Enter child full name"
+          required
+        />
+      </div>
+
+      <div class="mb-3">
+        <label class="form-label-custom">Phone Number (Optional)</label>
+        <input
+          type="text"
+          formControlName="Phone"
+          class="form-control form-control-sm font-monospace"
+          placeholder="e.g. 017XXXXXXXX"
+        />
+      </div>
+
+      <div class="mb-3">
+        <label class="form-label-custom">Date Of Birth</label>
+        <input
+          type="date"
+          formControlName="Dob"
+          class="form-control form-control-sm"
+        />
+      </div>
+
+      <div class="mb-2">
+        <label class="form-label-custom required">Gender</label>
+        <div class="d-flex gap-3 mt-1">
+          <div class="form-check form-check-custom">
+            <input
+              class="form-check-input"
+              formControlName="Gender"
+              type="radio"
+              value="M"
+              id="genderMale"
+            />
+            <label class="form-check-label fw-semibold text-dark fs-8" for="genderMale">
+              <i class="fas fa-male text-primary me-1"></i> Son
+            </label>
+          </div>
+          <div class="form-check form-check-custom">
+            <input
+              class="form-check-input"
+              formControlName="Gender"
+              type="radio"
+              value="F"
+              id="genderFemale"
+            />
+            <label class="form-check-label fw-semibold text-dark fs-8" for="genderFemale">
+              <i class="fas fa-female text-pink me-1"></i> Daughter
+            </label>
+          </div>
+          <div class="form-check form-check-custom">
+            <input
+              class="form-check-input"
+              formControlName="Gender"
+              type="radio"
+              value="N/A"
+              id="genderNA"
+            />
+            <label class="form-check-label fw-semibold text-muted fs-8" for="genderNA">
+              N/A
+            </label>
+          </div>
+        </div>
+      </div>
+    </form>
+  </div>
+
+  <div class="modal-footer bg-light d-flex justify-content-end gap-2">
+    <button type="button" class="btn btn-secondary btn-sm" (click)="modal.dismiss('Cross click')">
+      Discard
+    </button>
+    <button
+      type="button"
+      class="primary-btn btn-sm"
+      (click)="onSubmitChildAddForm()"
+      (click)="modal.dismiss('Cross click')"
+    >
+      <i class="fas fa-plus me-1"></i> Add to List
+    </button>
+  </div>
+</ng-template>

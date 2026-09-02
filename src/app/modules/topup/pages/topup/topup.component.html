@@ -1,0 +1,342 @@
+<section>
+  <div class="feature-section">
+    <div class="feature-section-wrapper">
+      <!-- Modern Page Header with AI Pulse Indicator -->
+      <div class="d-flex flex-wrap align-items-center justify-content-between gap-3 mb-4 pb-3 border-bottom border-gray-200">
+        <div class="d-flex align-items-center gap-3">
+          <div class="topup-header-icon">
+            <i class="fas fa-bolt fs-2"></i>
+          </div>
+          <div>
+            <div class="d-flex align-items-center gap-2 mb-1">
+              <h3 class="fw-bolder text-dark mb-0">Member TopUp Management</h3>
+              <span class="badge-ai-live">
+                <span class="ai-live-dot"></span> AI Active
+              </span>
+            </div>
+            <p class="page-header-subtitle mb-0">
+              Real-time member balance recharge, audit ledger, and electronic wallet settlements.
+            </p>
+          </div>
+        </div>
+
+        <div class="d-flex align-items-center gap-2">
+          <button type="button" class="primary-btn" (click)="createTopup()">
+            <i class="fas fa-plus me-1.5"></i> + Add New TopUp
+          </button>
+        </div>
+      </div>
+
+      <!-- AI Cyber Stat Metric Cards -->
+      <div class="row g-3 mb-4">
+        <div class="col-xl-3 col-sm-6">
+          <div class="ai-stat-card ai-stat-blue">
+            <div class="d-flex justify-content-between align-items-center">
+              <div>
+                <span class="ai-stat-label">TOTAL TOPUPS</span>
+                <h4 class="ai-stat-value text-dark">{{ successfulTopupsCount | number }}</h4>
+                <span class="text-muted fs-9">Processed entries</span>
+              </div>
+              <div class="ai-stat-icon-wrap icon-blue">
+                <i class="fas fa-receipt"></i>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="col-xl-3 col-sm-6">
+          <div class="ai-stat-card ai-stat-green">
+            <div class="d-flex justify-content-between align-items-center">
+              <div>
+                <span class="ai-stat-label">PAGE VOLUME</span>
+                <h4 class="ai-stat-value text-success">৳ {{ totalTopUpAmount | number:'1.2-2' }}</h4>
+                <span class="text-muted fs-9">Filtered transaction sum</span>
+              </div>
+              <div class="ai-stat-icon-wrap icon-green">
+                <i class="fas fa-coins"></i>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="col-xl-3 col-sm-6">
+          <div class="ai-stat-card ai-stat-purple">
+            <div class="d-flex justify-content-between align-items-center">
+              <div>
+                <span class="ai-stat-label">SETTLEMENT SPEED</span>
+                <h4 class="ai-stat-value text-purple">100% Instant</h4>
+                <span class="text-muted fs-9">Automated ledger posting</span>
+              </div>
+              <div class="ai-stat-icon-wrap icon-purple">
+                <i class="fas fa-bolt"></i>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="col-xl-3 col-sm-6">
+          <div class="ai-stat-card ai-stat-amber">
+            <div class="d-flex justify-content-between align-items-center">
+              <div>
+                <span class="ai-stat-label">AI FRAUD SHIELD</span>
+                <h4 class="ai-stat-value text-amber">0.00% Risk</h4>
+                <span class="text-muted fs-9">Zero anomalous transactions</span>
+              </div>
+              <div class="ai-stat-icon-wrap icon-amber">
+                <i class="fas fa-shield-alt"></i>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Controls: Page Size, Filter & Search Bar -->
+      <form [formGroup]="filterForm">
+        <div class="d-flex flex-wrap align-items-center justify-content-between gap-3 mb-3">
+          <!-- Page Size Selector -->
+          <div class="d-flex align-items-center gap-2">
+            <span class="text-muted fs-8 fw-semibold">Show</span>
+            <select
+              class="form-select form-select-sm w-80px custom-select"
+              formControlName="pageSize"
+              (change)="filterData()"
+            >
+              <option value="5">5</option>
+              <option value="10">10</option>
+              <option value="25">25</option>
+              <option value="50">50</option>
+              <option value="100">100</option>
+            </select>
+            <span class="text-muted fs-8 fw-semibold">entries</span>
+          </div>
+
+          <!-- Search & Filter Toggle -->
+          <div class="d-flex align-items-center gap-2">
+            <button
+              type="button"
+              class="btn-filter-custom"
+              [class.active]="isShowFilter"
+              (click)="toggleFilter()"
+              title="Toggle Date Filters"
+            >
+              <i class="fas fa-calendar-alt me-1.5"></i> Date Filter
+            </button>
+
+            <div class="search-input-wrapper">
+              <input
+                type="text"
+                class="form-control form-control-sm search-box-input"
+                placeholder="Search Membership No..."
+                formControlName="searchKey"
+                (keyup)="filterData()"
+              />
+            </div>
+          </div>
+        </div>
+
+        <!-- Collapsible Advanced Date Filter Drawer -->
+        <div class="filter-drawer-card mb-4 p-3 rounded-3 border" [class.show]="isShowFilter">
+          <div class="row g-3 align-items-end">
+            <div class="col-md-3 col-sm-6">
+              <label class="filter-label">From Date</label>
+              <div class="input-group input-group-sm">
+                <input
+                  formControlName="FromDate"
+                  placeholder="Start Date"
+                  class="form-control form-control-sm"
+                  ngbDatepicker
+                  #d23="ngbDatepicker"
+                  (click)="d23.toggle()"
+                />
+                <button class="btn btn-outline-secondary" type="button" (click)="d23.toggle()">
+                  <i class="fas fa-calendar-alt"></i>
+                </button>
+              </div>
+            </div>
+
+            <div class="col-md-3 col-sm-6">
+              <label class="filter-label">To Date</label>
+              <div class="input-group input-group-sm">
+                <input
+                  formControlName="ToDate"
+                  placeholder="End Date"
+                  class="form-control form-control-sm"
+                  ngbDatepicker
+                  #d3="ngbDatepicker"
+                  (click)="d3.toggle()"
+                />
+                <button class="btn btn-outline-secondary" type="button" (click)="d3.toggle()">
+                  <i class="fas fa-calendar-alt"></i>
+                </button>
+              </div>
+            </div>
+
+            <div class="col-md-4 col-sm-12 d-flex gap-2">
+              <button type="button" (click)="getFilteredList()" class="primary-btn btn-sm px-4">
+                <i class="fas fa-search me-1"></i> Apply Filter
+              </button>
+              <button type="button" (click)="resetFilterForm()" class="btn btn-secondary btn-sm px-3">
+                <i class="fas fa-undo me-1"></i> Reset
+              </button>
+            </div>
+          </div>
+        </div>
+      </form>
+
+      <!-- Main TopUp Table -->
+      <div class="content">
+        <div class="table-responsive rounded-2 border">
+          <table class="table table-hover align-middle mb-0 text-center custom-topup-table">
+            <thead class="table-head">
+              <tr>
+                <th class="w-50px">SL</th>
+                <th class="text-center">TopUp Date</th>
+                <th class="text-center">Membership No</th>
+                <th class="text-end pe-4">Amount (BDT)</th>
+                <th class="text-start">Created By</th>
+                <th class="text-center">Status</th>
+                <th class="text-center">Payment Info</th>
+                <th class="text-center w-100px">Action</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr *ngFor="let data of topups; let i = index">
+                <td class="text-muted fs-8 fw-bold">{{ (currentPage - 1) * pageSize + i + 1 }}</td>
+                <td class="text-center text-dark fw-semibold fs-8">
+                  {{ data.TopUpDate | date : "dd/MM/yyyy" }}
+                </td>
+                <td class="text-center">
+                  <span class="badge-membership-pill">
+                    {{ data.MemberShipNo }}
+                  </span>
+                </td>
+                <td class="text-end pe-4 fw-bolder text-emerald fs-7">
+                  ৳ {{ data.TotalAmount | number:'1.2-2' }}
+                </td>
+                <td class="text-start text-dark fw-semibold fs-8">
+                  {{ data.CreateByName || 'Administrator' }}
+                </td>
+                <td class="text-center">
+                  <span class="badge-status-completed">
+                    <i class="fas fa-check-circle me-1"></i> {{ data.Status || 'Completed' }}
+                  </span>
+                </td>
+                <td class="text-center">
+                  <div class="d-inline-flex flex-wrap gap-1 justify-content-center">
+                    <button
+                      *ngFor="let y of data.TopUpDetails"
+                      class="btn-payment-pill"
+                      (click)="showTopUpDetail(data.Id, y.Id, paymentDetailModal)"
+                      title="View Payment Breakdown"
+                    >
+                      <i class="fas fa-credit-card me-1 text-primary"></i>
+                      {{ y.PaymentMethodText }}
+                    </button>
+                    <span *ngIf="!data.TopUpDetails || data.TopUpDetails.length === 0" class="text-muted fs-9">—</span>
+                  </div>
+                </td>
+                <td class="text-center">
+                  <button
+                    class="btn-table-action btn-print-pdf"
+                    (click)="openPdfViewerModal(printModal, data.Id)"
+                    title="Print TopUp Voucher"
+                  >
+                    <i class="fas fa-file-pdf me-1"></i> Print
+                  </button>
+                </td>
+              </tr>
+            </tbody>
+            <tbody *ngIf="topups?.length < 1 || hasData === false">
+              <tr>
+                <td colspan="8" class="p-4 text-center">
+                  <app-empty [message]="'No TopUp Transactions Found'"></app-empty>
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+
+        <!-- Pagination -->
+        <div class="d-flex justify-content-between align-items-center flex-wrap gap-2 mt-3" *ngIf="numberOfEntries > 0">
+          <span class="text-muted fs-8">
+            Showing {{ (currentPage - 1) * pageSize + 1 }} to {{ ((currentPage * pageSize) > numberOfEntries ? numberOfEntries : (currentPage * pageSize)) }} of {{ numberOfEntries }} entries
+          </span>
+          <ngb-pagination
+            [collectionSize]="numberOfEntries"
+            [(page)]="currentPage"
+            [pageSize]="pageSize"
+            (pageChange)="updatePageWiseTableData($event)"
+            [boundaryLinks]="true"
+            [maxSize]="5"
+          >
+          </ngb-pagination>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- Payment Detail Breakdown Modal -->
+<ng-template #paymentDetailModal let-modal>
+  <div class="modal-header d-flex justify-content-between align-items-center bg-light">
+    <div class="d-flex align-items-center gap-2">
+      <i class="fas fa-receipt text-primary fs-4"></i>
+      <h5 class="modal-title fw-bold text-dark mb-0">Payment Method Breakdown</h5>
+    </div>
+    <button type="button" class="btn-close" (click)="modal.dismiss('Cross click')" aria-label="Close"></button>
+  </div>
+  <div class="modal-body p-4" *ngIf="paymentInformation">
+    <div class="table-responsive rounded-2 border">
+      <table class="table table-hover align-middle mb-0 text-center">
+        <thead class="table-head">
+          <tr>
+            <th class="text-start">Payment Method</th>
+            <th class="text-end pe-4">Amount (BDT)</th>
+            <th class="text-center">Trx No</th>
+            <th class="text-center">Machine No</th>
+            <th class="text-center">Card No</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td class="text-start fw-bold text-dark">{{ paymentInformation.PaymentMethodText }}</td>
+            <td class="text-end pe-4 fw-bolder text-emerald">৳ {{ paymentInformation.Amount | number:'1.2-2' }}</td>
+            <td class="text-center font-monospace fs-8">{{ paymentInformation.TrxNo || '—' }}</td>
+            <td class="text-center font-monospace fs-8">{{ paymentInformation.MachineNo || '—' }}</td>
+            <td class="text-center font-monospace fs-8">{{ paymentInformation.TrxCardNo || '—' }}</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+  <div class="modal-footer bg-light d-flex justify-content-end">
+    <button type="button" class="btn btn-secondary btn-sm" (click)="modal.dismiss('Cross click')">
+      Close
+    </button>
+  </div>
+</ng-template>
+
+<!-- Print PDF Modal -->
+<ng-template #printModal let-modal>
+  <div class="modal-header d-flex justify-content-between align-items-center bg-light">
+    <div class="d-flex align-items-center gap-2">
+      <i class="fas fa-file-pdf text-danger fs-4"></i>
+      <h5 class="modal-title fw-bold text-dark mb-0">TopUp Voucher Preview</h5>
+    </div>
+    <button type="button" class="btn-close" (click)="modal.dismiss('Cross click')" aria-label="Close"></button>
+  </div>
+  <div class="modal-body p-3">
+    <div *ngIf="url">
+      <ngx-doc-viewer
+        [url]="url"
+        viewer="url"
+        style="width: 100%; height: 75vh"
+      ></ngx-doc-viewer>
+    </div>
+  </div>
+  <div class="modal-footer bg-light d-flex justify-content-end">
+    <button type="button" class="btn btn-secondary btn-sm" (click)="modal.dismiss('Cross click')">
+      Close
+    </button>
+  </div>
+</ng-template>

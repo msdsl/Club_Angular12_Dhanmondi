@@ -1,0 +1,75 @@
+.member-info-cell {
+    text-align: start;
+}
+
+.member-info-cell i {
+    margin-right: 9px;
+    
+}
+
+.filter-container {
+    background: whitesmoke; 
+    overflow: hidden;
+    max-height: 0;
+    padding: 0px;
+    transition: all 0.5s ease-in-out;
+
+}
+.filter-container.show {
+    max-height: 1000px;
+    padding: 10px;
+    overflow: visible;
+}
+
+.search-btn{
+    background: var(--primary-theme-color);
+    border: none;
+    padding: 5px 18px;
+    border-radius: 4px;
+    color: white;
+    font-weight: 500;
+}
+.reset-btn{
+    background: var(--primary-theme-color);
+    border: none;
+    padding: 5px 18px;
+    border-radius: 4px;
+    color: white;
+    font-weight: 500;
+}
+input{
+    color: #333;
+}
+.status-success{
+    background: #32ce13;
+    padding: 4px 13px;
+    font-weight: 500;
+    color: white;
+}
+.status-pending{
+    background: #c21c1c;
+    padding: 4px 13px;
+    font-weight: 500;
+    color: white;
+}
+.make-payment-btn{
+    border: none;
+    padding: 4px 12px;
+    border-radius: 4px;
+    color: #ffffff;
+    font-weight: 500;
+    text-decoration: none;
+    white-space: pre;
+    background: #7c7c7c;
+    font-size: 12px;
+}
+.make-payment-btn:hover{
+    
+    background: #494949;
+}
+.red-label{
+    text-decoration: none;
+}
+.inner-table th{
+    background: #797979 !important;
+}

@@ -1,0 +1,95 @@
+<div
+  *ngIf="navs?.length > 0"
+  id="kt_app_sidebar_menu_scroll"
+  class="scroll-y modern-sidebar-scroll"
+  data-kt-scroll="true"
+  data-kt-scroll-activate="true"
+  data-kt-scroll-height="auto"
+  data-kt-scroll-dependencies="#kt_app_sidebar_logo, #kt_app_sidebar_footer"
+  data-kt-scroll-wrappers="#kt_app_sidebar_menu"
+  data-kt-scroll-offset="5px"
+  data-kt-scroll-save-state="true"
+>
+  <!--begin::Menu Tree-->
+  <div class="modern-menu-tree" id="#kt_app_sidebar_menu">
+    <ng-container *ngFor="let menu of navs">
+      <!-- Item With Submenu (Accordion) -->
+      <div
+        *ngIf="menu.UserSubMenuRess && menu.UserSubMenuRess.length > 0"
+        class="modern-menu-item"
+        [class.show]="isMenuOpen(menu)"
+        [class.is-child-active]="isChildActive(menu)"
+      >
+        <!-- Parent Header -->
+        <div
+          class="parent-menu-link"
+          (click)="toggleMenu(menu, $event)"
+          [class.open]="isMenuOpen(menu)"
+          [class.active-category]="isChildActive(menu)"
+        >
+          <!-- Dynamic Crisp Icon -->
+          <span class="menu-icon-wrap" [ngClass]="getMenuThemeClass(menu.Name)">
+            <app-keenicon
+              [name]="getMenuIcon(menu.Name, menu.Icon)"
+              class="fs-2"
+              type="duotone"
+            ></app-keenicon>
+          </span>
+
+          <!-- Title -->
+          <span class="modern-menu-title">{{ menu.Name }}</span>
+
+          <!-- Submenu Count & Arrow -->
+          <div class="d-flex align-items-center ms-auto">
+            <span class="badge-count" *ngIf="menu.UserSubMenuRess.length > 0">
+              {{ menu.UserSubMenuRess.length }}
+            </span>
+            <span class="modern-menu-arrow" [class.rotated]="isMenuOpen(menu)"></span>
+          </div>
+        </div>
+
+        <!-- Submenu Container -->
+        <div class="modern-menu-sub" [class.show]="isMenuOpen(menu)">
+          <div
+            class="sub-item-wrap"
+            *ngFor="let subMenu of menu.UserSubMenuRess"
+          >
+            <a
+              class="sub-menu-link"
+              [routerLink]="subMenu.Url"
+              routerLinkActive="active"
+              [routerLinkActiveOptions]="{ exact: false }"
+            >
+              <span class="modern-bullet"></span>
+              <span class="sub-title">{{ subMenu.Name }}</span>
+            </a>
+          </div>
+        </div>
+      </div>
+
+      <!-- Item Without Submenu (Direct Link) -->
+      <div
+        *ngIf="!menu.UserSubMenuRess || menu.UserSubMenuRess.length === 0"
+        class="modern-menu-item"
+      >
+        <a
+          class="parent-menu-link direct-link"
+          [routerLink]="menu.Url || '/dashboard'"
+          routerLinkActive="active-category active-direct-link"
+          [routerLinkActiveOptions]="{ exact: false }"
+        >
+          <span class="menu-icon-wrap" [ngClass]="getMenuThemeClass(menu.Name)">
+            <app-keenicon
+              [name]="getMenuIcon(menu.Name, menu.Icon)"
+              class="fs-2"
+              type="duotone"
+            ></app-keenicon>
+          </span>
+          <span class="modern-menu-title">{{ menu.Name }}</span>
+        </a>
+      </div>
+    </ng-container>
+  </div>
+  <!--end::Menu Tree-->
+</div>
+

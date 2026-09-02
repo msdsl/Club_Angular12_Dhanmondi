@@ -1,0 +1,58 @@
+USE [BGCL_DB]
+GO
+
+INSERT INTO [dbo].[mem_User]
+           ([Name]
+           ,[UserName]
+           ,[EmailId]
+           ,[EmailConfirmed]
+           ,[PasswordHash]
+           ,[PasswordSalt]
+           ,[LoginFailedAttemptCount]
+           ,[LastLoginFailedAttemptDate]
+           ,[LastLoginDate]
+           ,[CreatedBy]
+           ,[CreatedByName]
+           ,[CreatedOn]
+           ,[LastModifiedBy]
+           ,[LastModifiedByName]
+           ,[LastModifiedOn]
+           ,[IsActive]
+           ,[PhoneNo]
+           ,[LastPasswordResetBy]
+           ,[LastPasswordResetByName]
+           ,[LastPasswordResetOn]
+           ,[AppId]
+           ,[MemberId]
+           ,[ChangePinCount]
+           ,[Otp]
+           ,[OtpCreatedTime])
+     select
+          FullName,-- (<Name, nvarchar(200),>
+          MemberShipNo, --,<UserName, nvarchar(100),>
+         Email,  --,<EmailId, nvarchar(max),>
+        1 ,  --,<EmailConfirmed, bit,>
+         PinNoHash, -- ,<PasswordHash, nvarchar(max),>
+        PinNoSalt,  -- ,<PasswordSalt, nvarchar(max),>
+         0,--  ,<LoginFailedAttemptCount, int,>
+        GETDATE(), --  ,<LastLoginFailedAttemptDate, datetime2(7),>
+         GETDATE(), -- ,<LastLoginDate, datetime2(7),>
+         7,--  ,<CreatedBy, int,>
+        'system',  -- ,<CreatedByName, nvarchar(max),>
+       GETDATE(),  --  ,<CreatedOn, datetime2(7),>
+        null,  -- ,<LastModifiedBy, int,>
+       null,   -- ,<LastModifiedByName, nvarchar(max),>
+        null,  -- ,<LastModifiedOn, datetime2(7),>
+         1, -- ,<IsActive, bit,>
+        Phone,  -- ,<PhoneNo, nvarchar(20),>
+        0,  -- ,<LastPasswordResetBy, int,>
+       null,    --,<LastPasswordResetByName, nvarchar(100),>
+      null,    -- ,<LastPasswordResetOn, datetime,>
+        'WEBAPP',  -- ,<AppId, nvarchar(50),>
+        Id,  -- ,<MemberId, int,>
+         0, -- ,<ChangePinCount, int,>
+          null,--,<Otp, nvarchar(50),>
+        null  -- ,<OtpCreatedTime, datetime,>)
+		  from Customer
+GO
+

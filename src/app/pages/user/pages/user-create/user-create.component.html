@@ -1,0 +1,52 @@
+<div class="feature-section-wrapper p-4 p-lg-6">
+  <!-- Header -->
+  <div class="d-flex flex-wrap align-items-center justify-content-between gap-3 mb-4 pb-3 border-bottom border-gray-200">
+    <div class="d-flex align-items-center gap-3">
+      <div class="user-avatar-badge">
+        <i class="fas fa-user-shield fs-2 text-primary"></i>
+      </div>
+      <div>
+        <h3 class="fw-bolder text-dark mb-1 d-flex align-items-center gap-2">
+          {{ userId ? 'Edit User Profile' : 'Add New User' }}
+          <span *ngIf="userId" class="badge badge-light-primary fs-8 fw-bold">ID: #{{ userId }}</span>
+        </h3>
+        <p class="page-header-subtitle mb-0">Manage user credentials, assign roles, and configure menu permissions</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- Modern Pill Tabs -->
+  <div class="custom-nav-wrapper mb-4">
+    <nav class="nav nav-pills custom-pills-nav gap-2" id="nav-tab" role="tablist">
+      <button class="nav-link active" id="nav-home-tab" data-bs-toggle="tab" data-bs-target="#nav-home" type="button" role="tab" aria-controls="nav-home" aria-selected="true">
+        <i class="fas fa-id-card me-2"></i> Personal Info
+      </button>
+      <button *ngIf="userId" class="nav-link" id="nav-profile-tab" data-bs-toggle="tab" data-bs-target="#nav-profile" type="button" role="tab" aria-controls="nav-profile" aria-selected="false">
+        <i class="fas fa-shield-alt me-2"></i> Assigned Roles
+      </button>
+      <button *ngIf="userId" class="nav-link" id="nav-contact-tab" data-bs-toggle="tab" data-bs-target="#nav-contact" type="button" role="tab" aria-controls="nav-contact" aria-selected="false">
+        <i class="fas fa-th-large me-2"></i> Menu Permissions
+      </button>
+      <button *ngIf="userId" class="nav-link" id="nav-ledger-tab" data-bs-toggle="tab" data-bs-target="#nav-ledger" type="button" role="tab" aria-controls="nav-ledger" aria-selected="false">
+        <i class="fas fa-history me-2"></i> Activity Logs
+      </button>
+    </nav>
+  </div>
+
+  <!-- Tab Content -->
+  <div class="tab-content custom-tab-content p-4 rounded-3" id="nav-tabContent">
+    <div class="tab-pane fade show active" id="nav-home" role="tabpanel" aria-labelledby="nav-home-tab">
+      <app-user-info [userId]="userId"></app-user-info>
+    </div>
+    <div *ngIf="userId" class="tab-pane fade" id="nav-profile" role="tabpanel" aria-labelledby="nav-profile-tab">
+      <app-user-roles [userId]="userId"></app-user-roles>
+    </div>
+    <div *ngIf="userId" class="tab-pane fade" id="nav-contact" role="tabpanel" aria-labelledby="nav-contact-tab">
+      <app-user-menus [userId]="userId"></app-user-menus>
+    </div>
+    <div *ngIf="userId" class="tab-pane fade" id="nav-ledger" role="tabpanel" aria-labelledby="nav-ledger-tab">
+      <app-user-logs [userId]="userId"></app-user-logs>
+    </div>
+  </div>
+</div>
+

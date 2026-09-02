@@ -1,0 +1,30 @@
+<div >
+  <div class="" style="background-color: #fff; font-size: 14px; font-weight: bold; padding: 5px 10px">
+    Fees Information
+  </div>
+  <hr />
+  <div class="col-md-6">
+    <table class="table">
+      <thead>
+        <tr>
+          <th class="sl-th">Sl</th>
+          <th>Id</th>
+          <th>Title</th>
+          <th>Amount</th>
+        </tr>
+      </thead>
+      
+      <tbody *ngIf="memberFeesData?.length !== 0">
+        <tr *ngFor="let x of memberFeesData">
+          <td><input type="checkbox" [(ngModel)]="x.IsChecked" /></td>
+          <td>{{ x.Id }}</td>
+          <td>{{ x.Title }}</td>
+          <td>{{ x.Amount }}</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+  <button  class="p-btn mt-3 ml-3 primary-btn" (click)="saveRegistrationFees()">
+    Save Fee Information
+  </button>
+</div>

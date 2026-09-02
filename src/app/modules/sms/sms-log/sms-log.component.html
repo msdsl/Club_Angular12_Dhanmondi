@@ -1,0 +1,156 @@
+<div class="feature-section">
+  <div class="feature-section-wrapper">
+    <!-- Modern Header with AI Badge -->
+    <div class="d-flex flex-wrap align-items-center justify-content-between gap-3 mb-4 pb-3 border-bottom border-gray-300">
+      <div class="d-flex align-items-center gap-3">
+        <div class="header-icon-box">
+          <i class="fas fa-history fs-2"></i>
+        </div>
+        <div>
+          <div class="d-flex align-items-center gap-2 mb-1">
+            <h3 class="fw-bolder text-dark mb-0 fs-4">SMS Transmission History & Logs</h3>
+            <span class="badge-ai-live">
+              <span class="ai-live-dot"></span> Live Gateway Audit
+            </span>
+          </div>
+          <p class="header-desc text-secondary mb-0 fw-semibold">
+            Track SMS delivery timestamps, member recipients, message bodies, and telecommunication status.
+          </p>
+        </div>
+      </div>
+    </div>
+
+    <!-- Search & Page Size Toolbar -->
+    <div class="card toolbar-card shadow-sm border p-3 mb-4">
+      <form [formGroup]="searchForm">
+        <div class="row align-items-center g-3">
+          <div class="col-md-4 col-sm-6">
+            <div class="d-flex align-items-center gap-2">
+              <label class="text-secondary fw-bold fs-7 text-nowrap">Show entries:</label>
+              <select
+                class="form-select form-select-sm w-85px fw-bold text-dark"
+                formControlName="pageSize"
+                (change)="filterData()"
+              >
+                <option value="5">5</option>
+                <option value="10">10</option>
+                <option value="25">25</option>
+                <option value="50">50</option>
+                <option value="100">100</option>
+              </select>
+            </div>
+          </div>
+
+          <div class="col-md-8 col-sm-6">
+            <div class="d-flex justify-content-sm-end align-items-center gap-2">
+              <div class="position-relative flex-grow-1 max-w-350px">
+                <i class="fas fa-search position-absolute top-50 start-0 translate-middle-y ms-3 text-secondary"></i>
+                <input
+                  type="text"
+                  class="form-control form-control-sm ps-9 text-dark fw-semibold"
+                  placeholder="Search by name, phone, or membership no..."
+                  formControlName="searchKey"
+                  (keyup)="filterData()"
+                />
+              </div>
+              <button
+                type="button"
+                class="btn btn-outline-secondary btn-sm px-3 fw-bold"
+                (click)="filterData()"
+                title="Refresh Logs"
+              >
+                <i class="fas fa-sync-alt"></i>
+              </button>
+            </div>
+          </div>
+        </div>
+      </form>
+    </div>
+
+    <!-- Table Card -->
+    <div class="card table-card shadow-sm border">
+      <div class="table-responsive">
+        <table class="table modern-table table-hover align-middle mb-0">
+          <thead>
+            <tr>
+              <th class="w-55px text-center">SL.</th>
+              <th>Member Details</th>
+              <th>Phone Number</th>
+              <th>Transmission Date</th>
+              <th>Message Body</th>
+              <th class="text-center">Status</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr *ngFor="let data of dataList; let i = index">
+              <td class="text-center font-monospace text-secondary fw-bold">
+                {{ (currentPage - 1) * pageSize + i + 1 }}
+              </td>
+              <td>
+                <div class="d-flex align-items-center gap-2">
+                  <div class="member-avatar-chip">
+                    {{ data.MemberName?.charAt(0) || 'M' }}
+                  </div>
+                  <div>
+                    <div class="fw-bold text-dark fs-7">{{ data.MemberName || 'Custom Recipient' }}</div>
+                    <span *ngIf="data.MemberShipNo" class="badge bg-light text-primary font-monospace fs-8 border">
+                      {{ data.MemberShipNo }}
+                    </span>
+                  </div>
+                </div>
+              </td>
+              <td>
+                <span class="font-monospace fw-bold text-dark fs-7">
+                  <i class="fas fa-phone-alt text-success me-1 fs-8"></i>{{ data.PhoneNo }}
+                </span>
+              </td>
+              <td>
+                <span class="text-secondary fw-semibold fs-7 font-monospace">
+                  <i class="far fa-clock text-primary me-1"></i>{{ data.SmsDate | date:'medium' }}
+                </span>
+              </td>
+              <td>
+                <div class="sms-log-msg-preview text-dark fs-7" [title]="data.Message">
+                  {{ data.Message }}
+                </div>
+              </td>
+              <td class="text-center">
+                <span class="badge bg-light-success text-success fw-bold fs-8 px-2.5 py-1">
+                  <i class="fas fa-check-circle me-1"></i> Delivered
+                </span>
+              </td>
+            </tr>
+          </tbody>
+          <tbody *ngIf="dataList?.length < 1 || hasData === false">
+            <tr>
+              <td colspan="6" class="text-center py-5">
+                <div class="empty-state-box">
+                  <i class="fas fa-inbox fs-1 text-gray-400 mb-2"></i>
+                  <h6 class="fw-bolder text-dark mb-1">No SMS Transmission Logs Found</h6>
+                  <p class="text-secondary fs-8 mb-0">Logs will appear automatically here as SMS messages are broadcast.</p>
+                </div>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+      <!-- Pagination -->
+      <div class="d-flex flex-wrap justify-content-between align-items-center p-3 border-top gap-2">
+        <span class="text-secondary fs-8 fw-semibold">
+          Showing {{ dataList?.length || 0 }} entries (Page {{ currentPage }})
+        </span>
+        <ngb-pagination
+          class="d-flex justify-content-end mb-0"
+          [collectionSize]="numberOfEntries"
+          [(page)]="currentPage"
+          [pageSize]="pageSize"
+          (pageChange)="updatePageWiseTableData($event)"
+          [boundaryLinks]="true"
+          [maxSize]="4"
+        >
+        </ngb-pagination>
+      </div>
+    </div>
+  </div>
+</div>

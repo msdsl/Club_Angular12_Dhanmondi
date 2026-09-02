@@ -1,0 +1,373 @@
+<section>
+  <div class="feature-section">
+    <div class="feature-section-wrapper">
+      <!-- Modern Page Header with AI Pulse Indicator -->
+      <div class="d-flex flex-wrap align-items-center justify-content-between gap-3 mb-4 pb-3 border-bottom border-gray-200">
+        <div class="d-flex align-items-center gap-3">
+          <div class="venue-header-icon">
+            <i class="fas fa-calendar-check fs-2"></i>
+          </div>
+          <div>
+            <div class="d-flex align-items-center gap-2 mb-1">
+              <h3 class="fw-bolder text-dark mb-0">Venue Booking & Reservations</h3>
+              <span class="badge-ai-live">
+                <span class="ai-live-dot"></span> Live Booking Ledger
+              </span>
+            </div>
+            <p class="page-header-subtitle mb-0">
+              Audit and manage hall bookings, banquet slots, reservation status, payment schedules, and vouchers.
+            </p>
+          </div>
+        </div>
+
+        <div class="d-flex align-items-center gap-2">
+          <button
+            type="button"
+            class="btn-filter-custom"
+            [class.active]="isShowFilter"
+            (click)="toggleFilter()"
+          >
+            <i class="fas fa-filter me-1.5"></i> Date & Status Filter
+          </button>
+          <button
+            type="button"
+            class="primary-btn"
+            (click)="goToCreatePage()"
+          >
+            <i class="fas fa-plus me-1.5"></i> + New Venue Booking
+          </button>
+        </div>
+      </div>
+
+      <!-- Controls: Page Size & Search Filter -->
+      <form [formGroup]="searchForm">
+        <div class="d-flex flex-wrap align-items-center justify-content-between gap-3 mb-3">
+          <div class="d-flex align-items-center gap-2">
+            <span class="text-muted fs-8 fw-semibold">Show</span>
+            <select
+              class="form-select form-select-sm w-80px custom-select"
+              formControlName="pageSize"
+              (change)="filterData()"
+            >
+              <option value="5">5</option>
+              <option value="10">10</option>
+              <option value="25">25</option>
+              <option value="50">50</option>
+              <option value="100">100</option>
+            </select>
+            <span class="text-muted fs-8 fw-semibold">entries</span>
+          </div>
+
+          <div class="search-input-wrapper">
+            <input
+              type="text"
+              class="form-control form-control-sm search-box-input"
+              placeholder="Search member, booking #..."
+              formControlName="searchKey"
+              (keyup)="filterData()"
+            />
+          </div>
+        </div>
+      </form>
+
+      <!-- Collapsible Filter Drawer -->
+      <div class="filter-drawer-card mb-4 p-3 rounded-3 border" [class.show]="isShowFilter">
+        <form [formGroup]="filterForm">
+          <div class="row g-3 align-items-end">
+            <div class="col-md-2 col-sm-6">
+              <label class="filter-label">Start Date</label>
+              <input type="date" formControlName="StartDate" class="form-control form-control-sm" />
+            </div>
+            <div class="col-md-2 col-sm-6">
+              <label class="filter-label">End Date</label>
+              <input type="date" formControlName="EndDate" class="form-control form-control-sm" />
+            </div>
+            <div class="col-md-3 col-sm-6">
+              <label class="filter-label">Ticket Criteria</label>
+              <ng-select
+                [items]="serviceTicketTypeList"
+                bindLabel="Title"
+                bindValue="Id"
+                placeholder="Criteria"
+                [appendTo]="'body'"
+                formControlName="TicketCriteriaId"
+              ></ng-select>
+            </div>
+            <div class="col-md-2 col-sm-6">
+              <label class="filter-label">Status</label>
+              <ng-select
+                [items]="BookingStatusList"
+                placeholder="Status"
+                [appendTo]="'body'"
+                formControlName="BookingStatus"
+              ></ng-select>
+            </div>
+            <div class="col-md-3 col-sm-12 d-flex gap-2 justify-content-end">
+              <button type="button" (click)="getVenueBookingList()" class="primary-btn btn-sm px-3">
+                <i class="fas fa-search me-1"></i> Apply
+              </button>
+              <button type="button" (click)="resetFilterForm()" class="btn btn-secondary btn-sm px-3">
+                <i class="fas fa-undo me-1"></i> Reset
+              </button>
+            </div>
+          </div>
+        </form>
+      </div>
+
+      <!-- Main Venue Booking Table -->
+      <div class="content">
+        <div class="table-responsive rounded-2 border">
+          <table class="table table-hover align-middle mb-0 text-center custom-member-table">
+            <thead class="table-head">
+              <tr>
+                <th class="w-45px text-center">SL</th>
+                <th class="text-start">Member Info</th>
+                <th class="text-start">Booking Details</th>
+                <th class="text-start">Venue & Session</th>
+                <th class="text-end">Total (৳)</th>
+                <th class="text-end">Paid (৳)</th>
+                <th class="text-end">Due (৳)</th>
+                <th class="text-center">Settlement</th>
+                <th class="text-center w-120px">Actions</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr *ngFor="let data of venueBookings; let i = index">
+                <td class="text-center text-dark fs-7 fw-bold">{{ (currentPage - 1) * pageSize + i + 1 }}</td>
+                
+                <!-- Member Details -->
+                <td class="text-start">
+                  <div class="fw-bolder text-dark fs-6">{{ data.MemberName }}</div>
+                  <span class="badge-membership-pill mt-1 d-inline-block">{{ data.MemberShipNo }}</span>
+                </td>
+
+                <!-- Booking Info -->
+                <td class="text-start">
+                  <div class="font-monospace text-primary fw-bold fs-7">#{{ data.BookedNo }}</div>
+                  <div class="booked-date-badge mt-1 d-inline-flex align-items-center">
+                    <i class="far fa-calendar-alt me-1.5 text-primary"></i>
+                    <span class="text-dark fw-bold">Date:</span>&nbsp;<strong class="text-dark">{{ data.BookedDate | date : "dd/MM/yyyy" }}</strong>
+                  </div>
+                  <div class="mt-1.5">
+                    <span class="badge-status-success" *ngIf="data.BookingStatus === 'Success'">
+                      <span class="dot-success"></span> Confirmed
+                    </span>
+                    <span class="badge-status-pending" *ngIf="data.BookingStatus === 'Pending'">
+                      <span class="dot-pending"></span> Pending
+                    </span>
+                  </div>
+                </td>
+
+                <!-- Venue & Session -->
+                <td class="text-start">
+                  <div *ngFor="let detail of data.VenueBookingDetailReqs" class="mb-1">
+                    <span class="fw-bold text-dark fs-7 d-block">
+                      <i class="fas fa-landmark text-primary me-1"></i> {{ detail.VenueTitle }}
+                    </span>
+                    <span class="badge-type-pill mt-1">{{ detail.AvailabilityTitle }}</span>
+                  </div>
+                </td>
+
+                <!-- Financials -->
+                <td class="text-end font-monospace fs-7 fw-bold text-dark">
+                  ৳ {{ data.TotalAmount | number:'1.2-2' }}
+                  <div class="text-danger fw-bold fs-8" *ngIf="data.DiscountAmount > 0">
+                    Disc: -৳{{ data.DiscountAmount }}
+                  </div>
+                </td>
+
+                <td class="text-end font-monospace fs-7 fw-bold text-success">
+                  ৳ {{ data.PaymentAmount | number:'1.2-2' }}
+                </td>
+
+                <td class="text-end font-monospace fs-7 fw-bold" [class.text-danger]="(data.TotalAmount - data.PaymentAmount) > 0" [class.text-dark]="(data.TotalAmount - data.PaymentAmount) <= 0">
+                  ৳ {{ (data.TotalAmount - data.PaymentAmount) | number:'1.2-2' }}
+                </td>
+
+                <!-- Settlement Button -->
+                <td class="text-center">
+                  <button
+                    class="btn-make-payment-custom"
+                    *ngIf="(data.TotalAmount - data.PaymentAmount) > 0"
+                    (click)="openMakePaymentModal(data, makePaymentModal)"
+                  >
+                    <i class="fas fa-credit-card me-1"></i> Settle Due
+                  </button>
+                  <span class="badge-paid-full" *ngIf="(data.TotalAmount - data.PaymentAmount) <= 0">
+                    <i class="fas fa-check-circle me-1"></i> Paid Full
+                  </span>
+                </td>
+
+                <!-- Exposed Action Buttons -->
+                <td class="text-center">
+                  <div class="d-flex justify-content-center align-items-center gap-1.5">
+                    <button
+                      type="button"
+                      class="btn-action-info"
+                      title="Session Details"
+                      triggers="click"
+                      [autoClose]="'outside'"
+                      placement="start"
+                      [ngbTooltip]="tipContent"
+                    >
+                      <i class="fas fa-info"></i>
+                    </button>
+                    <ng-template #tipContent>
+                      <div class="p-3 text-start fs-7">
+                        <p class="text-center mb-2 fw-bold text-primary border-bottom pb-1 fs-6">Venue Session Details</p>
+                        <div class="mb-2" *ngFor="let detail of data.VenueBookingDetailReqs">
+                          <div class="text-dark">Venue: <strong class="text-dark">{{ detail.VenueTitle }}</strong></div>
+                          <div class="text-dark">Slot: <strong class="text-dark">{{ detail.AvailabilityTitle }}</strong></div>
+                          <div class="text-dark">Time: <strong class="text-primary">{{ detail.StartTime | date : "shortTime" }} - {{ detail.EndTime | date : "shortTime" }}</strong></div>
+                        </div>
+                        <div *ngIf="data.Note" class="mt-2 pt-1 border-top fs-7 text-dark fw-semibold">
+                          Note: {{ data.Note }}
+                        </div>
+                      </div>
+                    </ng-template>
+
+                    <button
+                      class="btn-action-pdf"
+                      title="Print Booking Voucher"
+                      type="button"
+                      (click)="viewPdfReport(pdfViewerModal, data.Id)"
+                    >
+                      <i class="fas fa-file-invoice"></i>
+                    </button>
+
+                    <button
+                      type="button"
+                      class="btn-action-cancel"
+                      title="Cancel Booking"
+                      (click)="cancelVenue(data)"
+                    >
+                      <i class="fas fa-ban"></i>
+                    </button>
+                  </div>
+                </td>
+              </tr>
+            </tbody>
+            <tbody *ngIf="venueBookings?.length < 1 || hasData === false">
+              <tr>
+                <td colspan="9" class="p-4 text-center">
+                  <app-empty [message]="'No Venue Reservations Found'"></app-empty>
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+
+        <!-- Pagination -->
+        <div class="d-flex justify-content-between align-items-center flex-wrap gap-2 mt-3" *ngIf="numberOfEntries > 0">
+          <span class="text-muted fs-8">
+            Showing {{ (currentPage - 1) * pageSize + 1 }} to {{ ((currentPage * pageSize) > numberOfEntries ? numberOfEntries : (currentPage * pageSize)) }} of {{ numberOfEntries }} entries
+          </span>
+          <ngb-pagination
+            class="d-flex justify-content-end"
+            [collectionSize]="numberOfEntries"
+            [(page)]="currentPage"
+            [pageSize]="pageSize"
+            (pageChange)="updatePageWiseTableData($event)"
+            [boundaryLinks]="true"
+            [maxSize]="5"
+          >
+          </ngb-pagination>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- Make Payment Modal -->
+<ng-template #makePaymentModal let-modal>
+  <div class="modal-header d-flex justify-content-between align-items-center bg-light">
+    <div class="d-flex align-items-center gap-2">
+      <i class="fas fa-credit-card text-primary fs-4"></i>
+      <h5 class="modal-title fw-bold text-dark mb-0">Settle Venue Due Payment</h5>
+    </div>
+    <button
+      type="button"
+      aria-label="Close"
+      class="btn-close"
+      (click)="modal.dismiss('Cross click')"
+    ></button>
+  </div>
+
+  <div class="modal-body p-4">
+    <form [formGroup]="makePaymentForm">
+      <div class="row g-3">
+        <div class="col-md-6">
+          <label class="form-label-custom">Membership No</label>
+          <input class="form-control form-control-sm bg-light" type="text" formControlName="MemberShipNo" readonly />
+        </div>
+        <div class="col-md-6">
+          <label class="form-label-custom">Current Balance</label>
+          <input class="form-control form-control-sm bg-light font-monospace" type="text" formControlName="CurrentBalance" readonly />
+        </div>
+        <div class="col-md-6">
+          <label class="form-label-custom">Total Amount</label>
+          <input class="form-control form-control-sm bg-light font-monospace" type="text" formControlName="TotalAmount" readonly />
+        </div>
+        <div class="col-md-6">
+          <label class="form-label-custom">Remaining Due</label>
+          <input class="form-control form-control-sm bg-light font-monospace text-danger fw-bold" type="text" formControlName="DueAmount" readonly />
+        </div>
+        <div class="col-12">
+          <label class="form-label-custom required">Payment Amount (৳)</label>
+          <input
+            class="form-control form-control-sm font-monospace text-success fw-bold fs-7"
+            type="number"
+            formControlName="PaymentAmount"
+            placeholder="Enter Amount To Pay..."
+          />
+        </div>
+      </div>
+    </form>
+  </div>
+
+  <div class="modal-footer bg-light d-flex justify-content-end gap-2">
+    <button class="btn btn-secondary btn-sm" (click)="modal.dismiss('Cross click')">
+      Discard
+    </button>
+    <button class="primary-btn btn-sm" (click)="onDueSaveVenuBooking(modal)">
+      <i class="fas fa-check me-1"></i> Submit Payment
+    </button>
+  </div>
+</ng-template>
+
+<!-- PDF Document Viewer Modal -->
+<ng-template #pdfViewerModal let-modal>
+  <div class="modal-header d-flex justify-content-between align-items-center bg-light">
+    <div class="d-flex align-items-center gap-2">
+      <i class="fas fa-file-invoice text-danger fs-4"></i>
+      <h5 class="modal-title fw-bold text-dark mb-0">Venue Booking Receipt</h5>
+    </div>
+    <button
+      type="button"
+      aria-label="Close"
+      class="btn-close"
+      (click)="modal.dismiss('Cross click')"
+    ></button>
+  </div>
+  <div class="modal-body p-0">
+    <div *ngIf="url" style="height: 75vh;">
+      <ngx-doc-viewer [url]="url" viewer="url" style="width: 100%; height: 100%;"></ngx-doc-viewer>
+    </div>
+  </div>
+</ng-template>
+
+<ng-template #deleteConfirmation let-c="close" let-d="dismiss">
+  <app-confirmation-modal
+    text="Do You Confirm to cancel this reservation?"
+    (closeButtonClicked)="d('Cross click')"
+    (okButtonClicked)="deleteButtonClick()"
+  ></app-confirmation-modal>
+</ng-template>
+
+<swal #deleteSwal title="Are you sure to cancel?" text="This booking will be cancelled" icon="warning" [showCancelButton]="true"
+  [focusCancel]="true" (confirm)="triggerCancel()" [customClass]="{
+    confirmButton: 'btn btn-danger',
+    cancelButton: 'btn btn-active-light'
+  }">
+</swal>
+<swal #noticeSwal [swalOptions]="swalOptions"> </swal>

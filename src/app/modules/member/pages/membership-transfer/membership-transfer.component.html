@@ -1,0 +1,300 @@
+<section>
+  <div class="feature-section">
+    <div class="feature-section-wrapper">
+      <!-- Modern Page Header with AI Indicator -->
+      <div class="d-flex flex-wrap align-items-center justify-content-between gap-3 mb-4 pb-3 border-bottom border-gray-200">
+        <div class="d-flex align-items-center gap-3">
+          <div class="transfer-header-icon">
+            <i class="fas fa-exchange-alt fs-2"></i>
+          </div>
+          <div>
+            <div class="d-flex align-items-center gap-2 mb-1">
+              <h3 class="fw-bolder text-dark mb-0">Membership Category Transfer History</h3>
+              <span class="badge-ai-live">
+                <span class="ai-live-dot"></span> AI Audit Trail
+              </span>
+            </div>
+            <p class="page-header-subtitle mb-0">
+              Audit log of member classification transitions, card replacements, and category promotions.
+            </p>
+          </div>
+        </div>
+
+        <div>
+          <button
+            type="button"
+            class="primary-btn"
+            (click)="careateOrEditModalPopUp(createOrUpdateModal)"
+          >
+            <i class="fas fa-sync-alt me-1.5"></i> + Transfer Category
+          </button>
+        </div>
+      </div>
+
+      <!-- Search & Page Size Form -->
+      <form [formGroup]="searchForm">
+        <div class="d-flex flex-wrap align-items-center justify-content-between gap-3 mb-3">
+          <div class="d-flex align-items-center gap-2">
+            <span class="text-muted fs-8 fw-semibold">Show</span>
+            <select
+              class="form-select form-select-sm w-80px custom-select"
+              formControlName="pageSize"
+              (change)="filterData()"
+            >
+              <option value="5">5</option>
+              <option value="10">10</option>
+              <option value="25">25</option>
+              <option value="50">50</option>
+              <option value="100">100</option>
+            </select>
+            <span class="text-muted fs-8 fw-semibold">entries</span>
+          </div>
+
+          <div class="search-input-wrapper">
+            <input
+              type="text"
+              class="form-control form-control-sm search-box-input"
+              placeholder="Search member, card..."
+              formControlName="searchKey"
+              (keyup)="filterData()"
+            />
+          </div>
+        </div>
+      </form>
+
+      <!-- Main Transfer History Table -->
+      <div class="content">
+        <div class="table-responsive rounded-2 border">
+          <table class="table table-hover align-middle mb-0 text-center custom-member-table">
+            <thead class="table-head">
+              <tr>
+                <th class="w-50px">SL</th>
+                <th class="text-start">Member Name</th>
+                <th class="text-center">Membership No (Old ➔ New)</th>
+                <th class="text-center">Card No (Old ➔ New)</th>
+                <th class="text-center">Category Transition</th>
+                <th class="text-start">Changed By & Date</th>
+                <th class="text-start">Remarks</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr *ngFor="let data of dataList; let i = index">
+                <td class="text-muted fs-8 fw-bold">{{ (currentPage - 1) * pageSize + i + 1 }}</td>
+                <td class="text-start fw-bolder text-dark fs-7">
+                  {{ data.MemberName }}
+                </td>
+                <td class="text-center">
+                  <div class="d-inline-flex align-items-center gap-1.5">
+                    <span class="badge-old-pill">{{ data.PreMembershipNo }}</span>
+                    <i class="fas fa-arrow-right text-muted fs-9"></i>
+                    <span class="badge-new-pill">{{ data.NewMembershipNo }}</span>
+                  </div>
+                </td>
+                <td class="text-center">
+                  <div class="d-inline-flex align-items-center gap-1.5">
+                    <span class="font-monospace fs-8 text-muted">{{ data.PreCardNo || '—' }}</span>
+                    <i class="fas fa-arrow-right text-muted fs-9" *ngIf="data.NewCardNo"></i>
+                    <span class="font-monospace fs-8 fw-bold text-dark" *ngIf="data.NewCardNo">{{ data.NewCardNo }}</span>
+                  </div>
+                </td>
+                <td class="text-center">
+                  <div class="d-inline-flex align-items-center gap-1.5">
+                    <span class="badge-type-pill">{{ data.PreTypeText }}</span>
+                    <i class="fas fa-arrow-right text-primary fs-9"></i>
+                    <span class="badge-type-upgrade">{{ data.NewTypeText }}</span>
+                  </div>
+                </td>
+                <td class="text-start">
+                  <div class="text-dark fw-semibold fs-8">{{ data.CreatedByName || 'System Admin' }}</div>
+                  <span class="text-muted fs-9">{{ data.CreatedOn | date:'dd/MM/yyyy, h:mm a' }}</span>
+                </td>
+                <td class="text-start text-muted fs-8">
+                  {{ data.Note || '—' }}
+                </td>
+              </tr>
+            </tbody>
+            <tbody *ngIf="dataList?.length < 1 || hasData === false">
+              <tr>
+                <td colspan="7" class="p-4 text-center">
+                  <app-empty [message]="'No Transfer History Records Found'"></app-empty>
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+
+        <!-- Pagination -->
+        <div class="d-flex justify-content-between align-items-center flex-wrap gap-2 mt-3" *ngIf="numberOfEntries > 0">
+          <span class="text-muted fs-8">
+            Showing {{ (currentPage - 1) * pageSize + 1 }} to {{ ((currentPage * pageSize) > numberOfEntries ? numberOfEntries : (currentPage * pageSize)) }} of {{ numberOfEntries }} entries
+          </span>
+          <ngb-pagination
+            class="d-flex justify-content-end"
+            [collectionSize]="numberOfEntries"
+            [(page)]="currentPage"
+            [pageSize]="pageSize"
+            (pageChange)="updatePageWiseTableData($event)"
+            [boundaryLinks]="true"
+            [maxSize]="5"
+          >
+          </ngb-pagination>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- Modern Category Transfer Modal -->
+<ng-template #createOrUpdateModal let-modal>
+  <div class="modal-header d-flex justify-content-between align-items-center bg-light">
+    <div class="d-flex align-items-center gap-2">
+      <i class="fas fa-exchange-alt text-primary fs-4"></i>
+      <h5 class="modal-title fw-bold text-dark mb-0">Membership Category Transfer</h5>
+    </div>
+    <button
+      type="button"
+      aria-label="Close"
+      class="btn-close"
+      (click)="modal.dismiss('Cross click')"
+    ></button>
+  </div>
+
+  <div class="modal-body p-4">
+    <form [formGroup]="createForm" autocomplete="off">
+      <div class="row g-4 mb-3">
+        <!-- Current Profile Column -->
+        <div class="col-md-6">
+          <div class="form-section-card p-3 rounded-3 border h-100">
+            <div class="d-flex align-items-center gap-2 mb-3 pb-2 border-bottom border-gray-200">
+              <i class="fas fa-history text-muted"></i>
+              <h6 class="fw-bold text-dark mb-0">Current Member Details</h6>
+            </div>
+
+            <div class="mb-3">
+              <label class="form-label-custom required">Current Membership No</label>
+              <input
+                type="text"
+                formControlName="PreMembershipNo"
+                class="form-control form-control-sm font-monospace"
+                placeholder="Enter Membership No and press Enter..."
+                (keydown.enter)="getMemberInfo(createForm.controls.PreMembershipNo.value, $event)"
+                required
+              />
+              <span class="text-muted fs-9 d-block mt-1">Press Enter to fetch member details</span>
+            </div>
+
+            <div class="mb-3">
+              <label class="form-label-custom">Member Full Name</label>
+              <input
+                type="text"
+                formControlName="MemberName"
+                class="form-control form-control-sm bg-light fw-bold text-dark"
+                readonly
+              />
+            </div>
+
+            <div class="mb-3">
+              <label class="form-label-custom">Current Card No</label>
+              <input
+                type="text"
+                formControlName="PreCardNo"
+                class="form-control form-control-sm bg-light font-monospace"
+                readonly
+              />
+            </div>
+
+            <div class="mb-2">
+              <label class="form-label-custom">Current Member Type</label>
+              <ng-select
+                [items]="memberTypeList"
+                bindLabel="Name"
+                bindValue="Id"
+                placeholder="Current Type"
+                [appendTo]="'body'"
+                formControlName="PreTypeId"
+              ></ng-select>
+            </div>
+          </div>
+        </div>
+
+        <!-- Target Upgrade Column -->
+        <div class="col-md-6">
+          <div class="form-section-card p-3 rounded-3 border border-primary border-opacity-25 h-100 bg-light-primary bg-opacity-10">
+            <div class="d-flex align-items-center gap-2 mb-3 pb-2 border-bottom border-gray-200">
+              <i class="fas fa-arrow-circle-up text-primary"></i>
+              <h6 class="fw-bold text-primary mb-0">Target Category & New Card</h6>
+            </div>
+
+            <div class="mb-3">
+              <label class="form-label-custom required">New Membership No</label>
+              <input
+                type="text"
+                formControlName="NewMembershipNo"
+                class="form-control form-control-sm font-monospace"
+                placeholder="Enter new Membership No..."
+                required
+              />
+            </div>
+
+            <div class="mb-3">
+              <label class="form-label-custom required">New Card No</label>
+              <input
+                type="text"
+                formControlName="NewCardNo"
+                class="form-control form-control-sm font-monospace"
+                placeholder="Enter new RFID / Card No..."
+                required
+              />
+            </div>
+
+            <div class="mb-2">
+              <label class="form-label-custom required">New Member Type</label>
+              <ng-select
+                [items]="memberTypeList"
+                bindLabel="Name"
+                bindValue="Id"
+                placeholder="Select New Member Type"
+                [appendTo]="'body'"
+                formControlName="NewTypeId"
+              ></ng-select>
+            </div>
+          </div>
+        </div>
+
+        <!-- Remarks -->
+        <div class="col-12">
+          <label class="form-label-custom">Transfer Note / Reason</label>
+          <textarea
+            formControlName="Note"
+            class="form-control form-control-sm"
+            placeholder="Enter reason for membership category change..."
+            rows="2"
+          ></textarea>
+        </div>
+      </div>
+    </form>
+  </div>
+
+  <div class="modal-footer bg-light d-flex justify-content-end gap-2">
+    <button class="btn btn-secondary btn-sm" (click)="modal.dismiss('Cross click')">
+      Discard
+    </button>
+    <button
+      class="primary-btn btn-sm"
+      (click)="onSubmit()"
+      (click)="modal.dismiss('Cross click')"
+    >
+      <i class="fas fa-check me-1"></i> Confirm Transfer
+    </button>
+  </div>
+</ng-template>
+
+<ng-template #deleteConfirmation let-c="close" let-d="dismiss">
+  <app-confirmation-modal
+    text="Do You Confirm to delete this record?"
+    (closeButtonClicked)="d('Cross click')"
+    (okButtonClicked)="deleteButtonClick()"
+  ></app-confirmation-modal>
+</ng-template>
+
+<swal #noticeSwal [swalOptions]="swalOptions"> </swal>

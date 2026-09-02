@@ -1,0 +1,45 @@
+.user-avatar-badge {
+    width: 48px;
+    height: 48px;
+    border-radius: 14px;
+    background: linear-gradient(135deg, rgba(37, 99, 235, 0.1) 0%, rgba(124, 58, 237, 0.12) 100%);
+    border: 1px solid rgba(124, 58, 237, 0.2);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.custom-nav-wrapper {
+    background: #f8fafc;
+    padding: 6px;
+    border-radius: 14px;
+    border: 1px solid #e2e8f0;
+}
+
+.custom-pills-nav .nav-link {
+    color: #64748b;
+    font-size: 13.5px;
+    font-weight: 600;
+    padding: 10px 20px;
+    border-radius: 10px;
+    border: none;
+    background: transparent;
+    transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+
+    &:hover {
+        color: #7c3aed;
+        background: rgba(124, 58, 237, 0.06);
+    }
+
+    &.active {
+        color: #ffffff !important;
+        background: linear-gradient(135deg, #2563eb 0%, #7c3aed 100%) !important;
+        box-shadow: 0 4px 14px rgba(124, 58, 237, 0.3) !important;
+    }
+}
+
+.custom-tab-content {
+    background: #ffffff;
+    border: 1px solid #e2e8f0;
+    box-shadow: 0 1px 3px rgba(15, 23, 42, 0.02);
+}

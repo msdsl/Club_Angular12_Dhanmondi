@@ -1,0 +1,183 @@
+<section>
+  <div class="feature-section">
+    <div class="feature-section-wrapper">
+      <div class="feature-list-header-wrapper">
+        <div class="feature-list-header">
+          <h3>User List</h3>
+        </div>
+        <div>
+          <span class="float-right">
+            <button type="button" class="primary-btn" (click)="goToCreatePage()">
+              + Add New
+            </button>
+          </span>
+        </div>
+      </div>
+      <div class="feature-list-search-filter"></div>
+      <form [formGroup]="searchForm">
+        <div class="row">
+          <div class="col-md-5 col-lg-4 col-xl-6">
+            <div class="row">
+              <div class="col-sm-12">
+                <div class="d-flex justify-content-between align-items-center">
+                  <label class="d-flex align-items-center gap-2">
+                    <select style="width: 5rem" class="form-control mx-25 w-100px py-2 custom-select"
+                      formControlName="pageSize" (change)="filterData()">
+                      <option value="5">5</option>
+                      <option value="10">10</option>
+                      <option value="25">25</option>
+                      <option value="50">50</option>
+                      <option value="100">100</option>
+                    </select>
+                  </label>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="col-md-7 col-lg-8 col-xl-6">
+            <div class="filter-search-option">
+              <div class="input-group justify-content-end gap-3">
+                <button [ngClass]="{ hide: isFilter === false }" type="button" class="btn-filter">
+                  <i class="fas fa-filter filter-icon me-2"></i>
+                </button>
+
+                <div class="d-flex align-items-center position-relative w-50">
+                  <app-keenicon name="magnifier" class="fs-3 search-input-icon"></app-keenicon>
+                  <input type="text" data-action="filter" class="form-control form-control-solid ps-12 search-input"
+                    placeholder="Search ..." formControlName="searchKey" (keyup)="filterData()" />
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </form>
+
+      <div class="content mt-2">
+        <div class="table-responsive">
+          <table class="mt-1 table table-hover mt-1 text-center customer-list">
+            <thead class="table-head rounded-lg">
+              <tr>
+                <th class="w-55px">SL.</th>
+                <th class="text-start">Name</th>
+                <th class="text-start">Username</th>
+                <th class="text-start">Email</th>
+                <th class="text-start">Phone</th>
+
+                <th>Action</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr *ngFor="let data of users; let i = index"
+                (dblclick)="goToEdit(data.Id)">
+                <td>{{ (currentPage - 1) * pageSize + i + 1 }}</td>
+                <td class="text-start">{{ data.Name }}</td>
+                <td class="text-start">{{ data.UserName }}</td>
+                <td class="text-start">{{ data.EmailId }}</td>
+                <td class="text-start">{{ data.PhoneNo }}</td>
+                <td class="w-100px text-center">
+                  <div class="table-action-group">
+                    <button class="btn-table-action btn-table-edit" title="Edit User" type="button" (click)="goToEdit(data.Id)">
+                      <i class="fas fa-edit"></i>
+                    </button>
+                    <button class="btn-table-action btn-table-view" title="Reset Password" type="button" (click)="resetPasswordConfirmation(data.Id)">
+                      <i class="fa-solid fa-key"></i>
+                    </button>
+                  </div>
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+        <div class="row">
+          <div class="col-sm-12">
+            <ngb-pagination class="d-flex justify-content-end" [collectionSize]="numberOfEntries" [(page)]="currentPage"
+              [pageSize]="pageSize" (pageChange)="updatePageWiseTableData($event)" [boundaryLinks]="true" [maxSize]="4">
+            </ngb-pagination>
+          </div>
+        </div>
+      </div>
+
+      <!-- <app-crud [datatableConfig]="datatableConfig" route="/apps/users" (deleteEvent)="delete($event)" (editEvent)="edit($event)" (createEvent)="create()" [reload]="reloadEvent" [modal]="formModal"></app-crud>
+  </div> -->
+
+      <swal #noticeSwal [swalOptions]="swalOptions"> </swal>
+
+      <ng-template #createOrUpdateModal let-modal>
+        <form [formGroup]="userForm" (ngSubmit)="onSubmit($event, userForm)">
+          <div class="modal-header">
+            <h4 class="modal-title" id="modal-basic-title">User Details</h4>
+            <button type="button" class="btn-close" aria-label="Close" (click)="modal.dismiss('Cross click')"></button>
+          </div>
+          <div class="modal-body">
+            <div class="row mb-3">
+              <div class="col-md-12">
+                <div class="form-group">
+                  <label for="name" class="required fw-semibold fs-6 mb-2">Name</label>
+                  <input type="text" formControlName="Name" id="name" class="form-control" placeholder="Name"
+                    required />
+                  <small [hidden]="handleBlur(userForm.controls.Name)" class="text-danger" translate>
+                    Name is required
+                  </small>
+                </div>
+              </div>
+            </div>
+            <div class="row mb-3">
+              <div class="col-md-12">
+                <div class="form-group">
+                  <label for="username" class="required fw-semibold fs-6 mb-2">Username</label>
+                  <input type="text" formControlName="UserName" id="username" class="form-control"
+                    placeholder="Username" required />
+                  <small [hidden]="handleBlur(userForm.controls.UserName)" class="text-danger" translate>
+                    UserName is required
+                  </small>
+                </div>
+              </div>
+            </div>
+            <div class="row mb-3">
+              <div class="col-md-12">
+                <div class="form-group">
+                  <label for="email" class="required fw-semibold fs-6 mb-2">Email</label>
+                  <input type="text" formControlName="EmailId" id="email" class="form-control" placeholder="Email" />
+                </div>
+              </div>
+            </div>
+            <div class="row mb-3">
+              <div class="col-md-12">
+                <div class="form-group">
+                  <label for="phone" class="required fw-semibold fs-6 mb-2">Phone</label>
+                  <input type="text" formControlName="PhoneNo" id="phone" class="form-control" placeholder="Phone" />
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="modal-footer flex-center">
+            <!--begin::Button-->
+            <button type="reset" id="kt_modal_update_customer_cancel" class="btn btn-light me-3"
+              (click)="modal.dismiss('cancel')">
+              Discard
+            </button>
+            <!--end::Button-->
+
+            <!--begin::Button-->
+            <button type="submit" id="kt_modal_update_customer_submit" class="btn btn-primary"
+              [attr.data-kt-indicator]="isLoading ? 'on' : 'off'">
+              <span class="indicator-label"> Submit </span>
+              <span class="indicator-progress">
+                Please wait...
+                <span class="spinner-border spinner-border-sm align-middle ms-2"></span>
+              </span>
+            </button>
+            <!--end::Button-->
+          </div>
+        </form>
+      </ng-template>
+    </div>
+  </div>
+</section>
+
+<swal #resetPasswordSwal title="Are you sure you want to reset password?" text="This cannot be undone" icon="warning" [showCancelButton]="true"
+    [focusCancel]="true" (confirm)="resetPassword()" [customClass]="{
+      confirmButton: 'btn btn-danger',
+      cancelButton: 'btn btn-active-light'
+    }">
+</swal>

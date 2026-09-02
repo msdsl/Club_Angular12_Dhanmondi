@@ -1,0 +1,263 @@
+<section>
+  <div class="feature-section">
+    <div class="feature-section-wrapper">
+      <!-- Modern Page Header with AI Pulse Indicator -->
+      <div class="d-flex flex-wrap align-items-center justify-content-between gap-3 mb-4 pb-3 border-bottom border-gray-200">
+        <div class="d-flex align-items-center gap-3">
+          <div class="charge-header-icon">
+            <i class="fas fa-file-invoice-dollar fs-2"></i>
+          </div>
+          <div>
+            <div class="d-flex align-items-center gap-2 mb-1">
+              <h3 class="fw-bolder text-dark mb-0">Manage Subscription Charges</h3>
+              <span class="badge-ai-live">
+                <span class="ai-live-dot"></span> Active Billing Matrix
+              </span>
+            </div>
+            <p class="page-header-subtitle mb-0">
+              Configure annual and monthly subscription fee schedules, late fine percentages, and overseas dues.
+            </p>
+          </div>
+        </div>
+
+        <div>
+          <button
+            type="button"
+            class="primary-btn"
+            (click)="careateOrEditModalPopUp(createOrUpdateModal)"
+          >
+            <i class="fas fa-plus me-1.5"></i> + Add New Schedule
+          </button>
+        </div>
+      </div>
+
+      <!-- Search & Page Size Form -->
+      <form [formGroup]="searchForm">
+        <div class="d-flex flex-wrap align-items-center justify-content-between gap-3 mb-3">
+          <div class="d-flex align-items-center gap-2">
+            <span class="text-muted fs-8 fw-semibold">Show</span>
+            <select
+              class="form-select form-select-sm w-80px custom-select"
+              formControlName="pageSize"
+              (change)="filterData()"
+            >
+              <option value="5">5</option>
+              <option value="10">10</option>
+              <option value="25">25</option>
+              <option value="50">50</option>
+              <option value="100">100</option>
+            </select>
+            <span class="text-muted fs-8 fw-semibold">entries</span>
+          </div>
+
+          <div class="search-input-wrapper">
+            <input
+              type="text"
+              class="form-control form-control-sm search-box-input"
+              placeholder="Search year..."
+              formControlName="searchKey"
+              (keyup)="filterData()"
+            />
+          </div>
+        </div>
+      </form>
+
+      <!-- Main Manage Charge Table -->
+      <div class="content">
+        <div class="table-responsive rounded-2 border">
+          <table class="table table-hover align-middle mb-0 text-center custom-member-table">
+            <thead class="table-head">
+              <tr>
+                <th class="w-55px text-center">SL</th>
+                <th class="text-start">Subscribed Year</th>
+                <th class="text-center w-150px">Actions</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr
+                *ngFor="let data of manageCharges; let i = index"
+                (dblclick)="careateOrEditModalPopUp(createOrUpdateModal, data)"
+              >
+                <td class="text-center text-muted fs-8 fw-bold">{{ (currentPage - 1) * pageSize + i + 1 }}</td>
+                <td class="text-start">
+                  <span class="badge-year-pill">
+                    <i class="far fa-calendar-alt text-primary me-1.5"></i>
+                    {{ data.SubscribedYear }}
+                  </span>
+                </td>
+                <td class="text-center">
+                  <div class="d-flex justify-content-center align-items-center gap-2">
+                    <button
+                      class="btn-action-edit"
+                      title="Edit Charge Schedule"
+                      type="button"
+                      (click)="careateOrEditModalPopUp(createOrUpdateModal, data)"
+                    >
+                      <i class="fas fa-pen"></i>
+                    </button>
+                    <button
+                      class="btn-action-delete"
+                      title="Delete Charge Schedule"
+                      type="button"
+                      (click)="deleteButtonClick(data.Id)"
+                    >
+                      <i class="far fa-trash-alt"></i>
+                    </button>
+                  </div>
+                </td>
+              </tr>
+            </tbody>
+            <tbody *ngIf="manageCharges?.length < 1 || hasData === false">
+              <tr>
+                <td colspan="3" class="p-4 text-center">
+                  <app-empty [message]="'No Subscription Charge Schedules Found'"></app-empty>
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+
+        <!-- Pagination -->
+        <div class="d-flex justify-content-between align-items-center flex-wrap gap-2 mt-3" *ngIf="numberOfEntries > 0">
+          <span class="text-muted fs-8">
+            Showing {{ (currentPage - 1) * pageSize + 1 }} to {{ ((currentPage * pageSize) > numberOfEntries ? numberOfEntries : (currentPage * pageSize)) }} of {{ numberOfEntries }} entries
+          </span>
+          <ngb-pagination
+            class="d-flex justify-content-end"
+            [collectionSize]="numberOfEntries"
+            [(page)]="currentPage"
+            [pageSize]="pageSize"
+            (pageChange)="updatePageWiseTableData($event)"
+            [boundaryLinks]="true"
+            [maxSize]="5"
+          >
+          </ngb-pagination>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- Manage Charge Modal -->
+<ng-template #createOrUpdateModal let-modal>
+  <div class="modal-header d-flex justify-content-between align-items-center bg-light">
+    <div class="d-flex align-items-center gap-2">
+      <i class="fas fa-file-invoice-dollar text-primary fs-4"></i>
+      <h5 class="modal-title fw-bold text-dark mb-0">Configure Subscription Charges</h5>
+    </div>
+    <button
+      type="button"
+      aria-label="Close"
+      class="btn-close"
+      (click)="modal.dismiss('Cross click')"
+    ></button>
+  </div>
+
+  <div class="modal-body p-4">
+    <form [formGroup]="subscriptionForm" (ngSubmit)="onSubmit()">
+      <div class="mb-4">
+        <label class="form-label-custom required">Subscribed Year</label>
+        <ng-select
+          [items]="yearList"
+          bindLabel="Name"
+          bindValue="Id"
+          placeholder="Select Year"
+          [appendTo]="'body'"
+          formControlName="SubscribedYear"
+        ></ng-select>
+      </div>
+
+      <div class="table-responsive rounded-2 border" formArrayName="Model">
+        <table class="table table-sm table-hover align-middle mb-0 text-center">
+          <thead class="bg-light">
+            <tr>
+              <th class="text-start ps-3">Month</th>
+              <th class="text-center">Subscription Fee (৳)</th>
+              <th class="text-center">Late Fee (%)</th>
+              <th class="text-center">Abroad Fee (%)</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr
+              *ngFor="let month of modelArray.controls; let i = index"
+              [formGroupName]="i"
+            >
+              <td class="text-start ps-3">
+                <input
+                  id="Title"
+                  readonly
+                  class="form-control form-control-sm bg-light fw-bold text-dark border-0"
+                  formControlName="Title"
+                />
+              </td>
+              <td>
+                <input
+                  id="SubscriptionFee"
+                  type="number"
+                  class="form-control form-control-sm text-center"
+                  placeholder="0.00"
+                  formControlName="SubscriptionFee"
+                />
+              </td>
+              <td>
+                <input
+                  id="LateFee"
+                  type="number"
+                  class="form-control form-control-sm text-center"
+                  placeholder="0%"
+                  formControlName="LateFee"
+                />
+              </td>
+              <td>
+                <input
+                  id="AbroadFee"
+                  type="number"
+                  class="form-control form-control-sm text-center"
+                  placeholder="0%"
+                  formControlName="AbroadFee"
+                />
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </form>
+  </div>
+
+  <div class="modal-footer bg-light d-flex justify-content-end gap-2">
+    <button class="btn btn-secondary btn-sm" (click)="modal.dismiss('Cross click')">
+      Discard
+    </button>
+    <button
+      class="primary-btn btn-sm"
+      (click)="onSubmit()"
+      (click)="modal.dismiss('Cross click')"
+    >
+      <i class="fas fa-check me-1"></i> Save Charges
+    </button>
+  </div>
+</ng-template>
+
+<ng-template #deleteConfirmation let-c="close" let-d="dismiss">
+  <app-confirmation-modal
+    text="Do You Confirm to delete this subscription charge schedule?"
+    (closeButtonClicked)="d('Cross click')"
+    (okButtonClicked)="deleteButtonClick()"
+  ></app-confirmation-modal>
+</ng-template>
+
+<swal #noticeSwal [swalOptions]="swalOptions"> </swal>
+<swal
+  #deleteSwal
+  title="Are you sure to delete?"
+  text="This cannot be undone"
+  icon="warning"
+  [showCancelButton]="true"
+  [focusCancel]="true"
+  (confirm)="triggerDelete()"
+  [customClass]="{
+    confirmButton: 'btn btn-danger',
+    cancelButton: 'btn btn-active-light'
+  }"
+>
+</swal>

@@ -1,0 +1,262 @@
+<form [formGroup]="memberForm">
+  <h5>Membership Information</h5>
+  <div class="row">
+    <div class="col-9">
+      <div class="row mb-3">
+        <div class="col-4">
+          <label for="">College <sup>*</sup></label>
+          <ng-select (change)="createMemberFullId()" [items]="colleges" bindLabel="Name" bindValue="Id"
+            placeholder="College" formControlName="CollegeId"></ng-select>
+          <small [hidden]="handleBlur(memberForm.controls.CollegeId)" class="text-danger">
+            College is required
+          </small>
+        </div>
+        <div class="col-4">
+          <label for="">Batch No <sup>*</sup></label>
+          <input (keyup)="createMemberFullId()" type="text" formControlName="BatchNo" placeholder="Batch No"
+            class="form-control">
+            <small [hidden]="handleBlur(memberForm.controls.BatchNo)" class="text-danger">
+              Batch No is required
+            </small>
+        </div>
+        <div class="col-4">
+          <label for="">Cadet No <sup>*</sup></label>
+          <input (keyup)="createMemberFullId()" type="text" formControlName="CadetNo" placeholder="Cadet No"
+            class="form-control">
+            <small [hidden]="handleBlur(memberForm.controls.CadetNo)" class="text-danger">
+              Cadet No is required
+            </small>
+        </div>
+      </div>
+      <div class="row mb-3">
+        <div class="col-4">
+          <label for="">Member Type <sup>*</sup></label>
+          <ng-select (change)="createMemberFullId()" [items]="memberTypes" bindLabel="Name" bindValue="Id"
+            placeholder="Member Type" formControlName="MemberTypeId"></ng-select>
+            <small [hidden]="handleBlur(memberForm.controls.MemberTypeId)" class="text-danger">
+              Member Type is required
+            </small>
+        </div>
+        <div class="col-4">
+          <label for="">MemberShip No <sup>*</sup></label>
+          <input (keyup)="createMemberFullId()" type="text" formControlName="MemberShipNo" placeholder="MemberShip No"
+            class="form-control">
+            <small [hidden]="handleBlur(memberForm.controls.MemberShipNo)" class="text-danger">
+              MemberShipNo  is required
+            </small>
+        </div>
+        <div class="col-4">
+          <label for="">Member Full ID <sup>*</sup></label>
+          <input type="text" formControlName="MemberFullId" placeholder="Member Full ID" class="form-control disabled">
+          <small [hidden]="handleBlur(memberForm.controls.MemberFullId)" class="text-danger">
+            Member Full Id  is required
+          </small>
+        </div>
+      </div>
+      <div class="row mb-3">
+        <div class="col-4">
+          <label for="">Member Status <sup>*</sup></label>
+          <ng-select [items]="memberStatus" bindLabel="Name" bindValue="Id" placeholder="Member Status"
+            formControlName="MemberStatusId"></ng-select>
+            <small [hidden]="handleBlur(memberForm.controls.MemberStatusId)" class="text-danger">
+              Member Status Id  is required
+            </small>
+        </div>
+        <div class="col-4">
+          <label for="">Member Active Status <sup>*</sup></label>
+          <ng-select [items]="memberActiveStatus" bindLabel="Name" bindValue="Id" placeholder="Member Active Status"
+            formControlName="MemberActiveStatusId"></ng-select>
+            <small [hidden]="handleBlur(memberForm.controls.MemberActiveStatusId)" class="text-danger">
+              Member Active Status is required
+            </small>
+        </div>
+        <div class="col-4">
+          <label for="">Card No. <sup>*</sup></label>
+          <input type="text" formControlName="CardNo" placeholder="Card No." class="form-control">
+          <small [hidden]="handleBlur(memberForm.controls.CardNo)" class="text-danger">
+            Card No  is required
+          </small>
+        </div>
+      </div>
+      <div class="row mb-3">
+        <div class="col-4">
+          <label for="">Device Id</label>
+          <input type="text" formControlName="DeviceId" placeholder="Device Id" class="form-control">
+        </div>
+        <div class="col-4">
+          <label for="">Pin No. <sup>*</sup></label>
+          <input [ngClass]="{'disabled':memberId}" type="text" formControlName="PinNo" placeholder="Pin No"
+            class="form-control">
+            <small [hidden]="handleBlur(memberForm.controls.PinNo)" class="text-danger">
+              Pin No  is required
+            </small>
+        </div>
+        <div class="col-4">
+          <label for="">Club Join Date</label>
+          <input type="date" formControlName="ClubJoinDate" placeholder="Member Full ID" class="form-control">
+        </div>
+      </div>
+      <div class="row mb-3">
+        <div class="col-4">
+          <label for="">College Join Date</label>
+          <input type="date" formControlName="JoinDate" class="form-control">
+        </div>
+        <div class="col-4">
+          <label for="">College Leave Date</label>
+          <input type="date" formControlName="LeaveDate" class="form-control">
+        </div>
+        <div class="col-4">
+          <label for="">Paid Till</label>
+          <input [ngClass]="{'disabled':memberId}" type="date" formControlName="PaidTill" class="form-control">
+        </div>
+      </div>
+      <div class="row mb-3">
+        <div class="col-4">
+          <label for="">Credit Limit</label>
+          <input type="number" formControlName="CreditLimit" placeholder="Credit Limit" class="form-control">
+        </div>
+        <div class="col-4">
+          <label for="">QB Customer Name</label>
+          <input type="text" formControlName="QBCusName" placeholder="QB Customer Name" class="form-control">
+        </div>
+      </div>
+
+      <hr>
+      <h5>Contact Information</h5>
+      <div class="row mb-3">
+        <div class="col-4">
+          <label for="">Full Name <sup>*</sup></label>
+          <input type="text" formControlName="FullName" placeholder="Full Name" class="form-control">
+          <small [hidden]="handleBlur(memberForm.controls.FullName)" class="text-danger">
+            Full Name  is required
+          </small>
+        </div>
+        <div class="col-4">
+          <label for="">Cadet Name</label>
+          <input type="text" formControlName="CadetName" placeholder="Cadet Name" class="form-control">
+        </div>
+        <div class="col-4">
+          <label for="">Phone</label>
+          <input type="text" formControlName="Phone" placeholder="Phone" class="form-control">
+        </div>
+      </div>
+      <div class="row mb-3">
+        <div class="col-4">
+          <label for="">Email</label>
+          <input type="text" formControlName="Email" placeholder="Email" class="form-control">
+        </div>
+        <div class="col-4">
+          <label for="">Emergency Contact</label>
+          <input type="text" formControlName="EmergencyContact" placeholder="Emergency Contact" class="form-control">
+        </div>
+        <div class="col-4">
+          <label for="">Permanent Address</label>
+          <textarea name="" id="" formControlName="PermanentAddress" placeholder="Permanent Address"
+            class="form-control"></textarea>
+
+        </div>
+      </div>
+      <div class="row mb-3">
+        <div class="col-4">
+          <label for="">Postal Address</label>
+          <textarea name="" id="" formControlName="PostalAddress" placeholder="Postal Address"
+            class="form-control"></textarea>
+        </div>
+      </div>
+
+      <hr>
+      <h5>Basic Information</h5>
+      <div class="row mb-3">
+        <div class="col-4">
+          <label for="">Profession</label>
+          <ng-select [items]="memberProfessions" bindLabel="Name" bindValue="Id" placeholder="Member Profession"
+            formControlName="MemberProfessionId"></ng-select>
+        </div>
+        <div class="col-4">
+          <label for="">Organaization</label>
+          <input type="text" formControlName="Organaization" placeholder="Organaization" class="form-control">
+        </div>
+        <div class="col-4">
+          <label for="">Designation</label>
+          <input type="text" formControlName="Designation" placeholder="Designation" class="form-control">
+        </div>
+      </div>
+      <div class="row mb-3">
+        <div class="col-4">
+          <label for="">Specialization</label>
+          <input type="text" formControlName="Specialization" placeholder="Specialization" class="form-control">
+        </div>
+        <div class="col-4">
+          <label for="">Blood Group <sup>*</sup></label>
+
+          <ng-select [items]="bloodGroups" bindLabel="Code" bindValue="Id" placeholder="Blood Group"
+            formControlName="BloodGroupId"></ng-select>
+
+            <small [hidden]="handleBlur(memberForm.controls.BloodGroupId)" class="text-danger">
+              Blood Group  is required
+            </small>
+        </div>
+        <div class="col-4">
+          <label for="">HSC Year <sup>*</sup></label>
+          <input type="text" formControlName="HscYear" placeholder="HSC Year" class="form-control">
+          <small [hidden]="handleBlur(memberForm.controls.HscYear)" class="text-danger">
+            Hsc Year  is required
+          </small>
+        </div>
+      </div>
+      <div class="row mb-3">
+        <div class="col-4">
+          <label for="">NID</label>
+          <input type="text" formControlName="NID" placeholder="NID" class="form-control">
+        </div>
+        <div class="col-4">
+          <label for="">Date Of Birth</label>
+          <input type="date" formControlName="Dob" placeholder="Date Of Birth" class="form-control">
+        </div>
+        <div class="col-4">
+          <label for="">Office Address</label>
+          <textarea name="" id="" formControlName="OfficeAddress" placeholder="Office Address"
+            class="form-control"></textarea>
+        </div>
+      </div>
+      <div class="row mb-3">
+        <div class="col-4">
+          <label for="">Home Address</label>
+          <textarea name="" id="" formControlName="HomeAddress" placeholder="Home Address"
+            class="form-control"></textarea>
+        </div>
+      </div>
+      <div class="row mb-3">
+        <div class="col-4">
+          <button class="primary-btn" (click)="onSubmit()">
+            Submit
+          </button>
+        </div>
+      </div>
+
+    </div>
+    <div class="col-3">
+
+
+      <div class="form-group mt-4">
+        <div class="">
+          <div class="input-group justify-content-center align-items-center">
+            <div class="pic-holder">
+              <img *ngIf="this.memberForm.value.ImgFileUrl" id="profilePic" width="192" height="192" class="pic ml-5"
+                [src]="this.memberForm.value.ImgFileUrl" />
+              <!-- <img src="../../../../../assets/media/icon/upload-image.png" alt=""> -->
+
+              <div class="rr" *ngIf="!this.memberForm.value.ImgFileUrl">
+                <Input formControlName="ProfileFile" class="uploadProfileInput" type="file" name="profile_pic"
+                  id="newProfilePhoto" accept="image/*" (change)="imageChangeHandler($event)" />
+              </div>
+              <a (click)="removeImage()" *ngIf="this.memberForm.value.ImgFileUrl"><i
+                  class="fa-solid fa-circle-xmark"></i></a>
+            </div>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</form>

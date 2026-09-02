@@ -1,0 +1,194 @@
+<div class="feature-section">
+  <div class="feature-section-wrapper">
+    <!-- Modern Header with AI Badge -->
+    <div class="d-flex flex-wrap align-items-center justify-content-between gap-3 mb-4 pb-3 border-bottom border-gray-300">
+      <div class="d-flex align-items-center gap-3">
+        <div class="header-icon-box">
+          <i class="fas fa-mail-bulk fs-2"></i>
+        </div>
+        <div>
+          <div class="d-flex align-items-center gap-2 mb-1">
+            <h3 class="fw-bolder text-dark mb-0 fs-4">Custom Email Broadcast & Excel Dispatcher</h3>
+            <span class="badge-ai-live">
+              <span class="ai-live-dot"></span> SMTP Server Active
+            </span>
+          </div>
+          <p class="header-desc text-secondary mb-0 fw-semibold">
+            Compose rich HTML emails with multiple file attachments, or parse bulk email addresses directly from Excel sheets.
+          </p>
+        </div>
+      </div>
+    </div>
+
+    <!-- Main Content: Composition Console (Left) + Recipient Queue (Right) -->
+    <div class="row g-4">
+      <!-- Left: Email Composition Card -->
+      <div class="col-lg-7">
+        <div class="card form-card shadow-sm border p-4">
+          <div class="d-flex align-items-center gap-2 mb-3 pb-2 border-bottom border-gray-200">
+            <i class="fas fa-edit text-primary fs-5"></i>
+            <h6 class="fw-bold text-dark mb-0 fs-6">Compose Email Message</h6>
+          </div>
+
+          <form [formGroup]="emailForm" enctype="multipart/form-data">
+            <!-- Subject Input -->
+            <div class="mb-3">
+              <label class="form-label-custom required">Email Subject</label>
+              <div class="input-group input-group-sm">
+                <span class="input-group-text bg-light border-end-0">
+                  <i class="fas fa-heading text-secondary"></i>
+                </span>
+                <input
+                  type="text"
+                  formControlName="subject"
+                  class="form-control text-dark fw-bold"
+                  placeholder="e.g. Club Executive Committee Notice / Event Invitation"
+                />
+              </div>
+              <small
+                *ngIf="!handleBlur(emailForm.controls.subject)"
+                class="text-danger fw-semibold mt-1 d-block"
+              >
+                Subject is required.
+              </small>
+            </div>
+
+            <!-- Body Textarea -->
+            <div class="mb-3">
+              <label class="form-label-custom required">Message Body</label>
+              <textarea
+                formControlName="body"
+                rows="6"
+                class="form-control text-dark fw-semibold"
+                placeholder="Write the full email announcement or content here..."
+              ></textarea>
+            </div>
+
+            <!-- Excel Import & File Attachments -->
+            <div class="row g-3 mb-4">
+              <!-- Excel Upload -->
+              <div class="col-md-6">
+                <div class="upload-zone-box p-3 rounded-2 border text-center">
+                  <i class="far fa-file-excel fs-2 text-success mb-1.5 d-block"></i>
+                  <label class="form-label-custom mb-1 text-dark">Import Recipient Excel</label>
+                  <p class="text-secondary fs-8 mb-2">Upload .xlsx with emails in Column A</p>
+                  <input
+                    class="form-control form-control-sm"
+                    type="file"
+                    (change)="onExcelUpload($event)"
+                    accept=".xlsx, .xls"
+                  />
+                </div>
+              </div>
+
+              <!-- Attachments -->
+              <div class="col-md-6">
+                <div class="upload-zone-box p-3 rounded-2 border text-center">
+                  <i class="fas fa-paperclip fs-2 text-primary mb-1.5 d-block"></i>
+                  <label class="form-label-custom mb-1 text-dark">Attach Documents</label>
+                  <p class="text-secondary fs-8 mb-2">{{ files.length || 0 }} files attached</p>
+                  <input
+                    class="form-control form-control-sm"
+                    type="file"
+                    (change)="onFileChange($event)"
+                    multiple
+                  />
+                </div>
+              </div>
+            </div>
+
+            <!-- Attached Files Preview Chips -->
+            <div *ngIf="files.length" class="mb-4 p-2 bg-light rounded border">
+              <span class="text-secondary fs-8 fw-bold d-block mb-1.5">Attached Files:</span>
+              <div class="d-flex flex-wrap gap-1.5">
+                <span *ngFor="let file of files" class="badge bg-white text-dark border shadow-xs py-1.5 px-2 fw-semibold fs-8">
+                  <i class="fas fa-file-alt text-primary me-1"></i> {{ file.name }}
+                </span>
+              </div>
+            </div>
+
+            <!-- Submit Button -->
+            <div class="d-flex gap-2">
+              <button
+                class="primary-btn flex-grow-1 py-2.5 fw-bold"
+                type="button"
+                (click)="onSubmit()"
+                [disabled]="emailForm.invalid || emailList.length === 0"
+              >
+                <i class="fas fa-paper-plane me-1.5"></i> Send Email to {{ emailList.length }} Recipients
+              </button>
+            </div>
+          </form>
+        </div>
+      </div>
+
+      <!-- Right: Recipient Queue Management Card -->
+      <div class="col-lg-5">
+        <div class="card queue-card shadow-sm border p-4">
+          <div class="d-flex align-items-center justify-content-between mb-3 pb-2 border-bottom border-gray-200">
+            <div class="d-flex align-items-center gap-2">
+              <i class="fas fa-envelope-open-text text-primary fs-5"></i>
+              <h6 class="fw-bold text-dark mb-0 fs-6">Recipient Queue</h6>
+            </div>
+            <button
+              class="btn btn-sm btn-outline-primary fw-bold py-1 px-2.5"
+              type="button"
+              (click)="addEmailField()"
+            >
+              <i class="fas fa-plus me-1"></i> Add Email
+            </button>
+          </div>
+
+          <div class="d-flex justify-content-between align-items-center mb-2 px-1">
+            <span class="text-secondary fs-8 fw-bold text-uppercase">Parsed Email List</span>
+            <span class="badge bg-primary text-white fw-bold fs-8">
+              {{ emailList.length }} Entries
+            </span>
+          </div>
+
+          <!-- Dynamic FormArray Email List -->
+          <div [formGroup]="emailForm">
+            <div formArrayName="emailList" class="email-list-scroll-base pe-1">
+              <div
+                *ngFor="let email of emailList.controls; let i = index"
+                class="input-group input-group-sm mb-2"
+              >
+                <span class="input-group-text bg-light text-secondary font-monospace fs-8 w-35px justify-content-center">
+                  {{ i + 1 }}
+                </span>
+                <input
+                  type="email"
+                  [formControlName]="i"
+                  class="form-control text-dark fw-semibold"
+                  placeholder="recipient@example.com"
+                />
+                <button
+                  type="button"
+                  class="btn btn-outline-danger"
+                  (click)="removeEmailField(i)"
+                  title="Remove Email"
+                >
+                  <i class="fas fa-times"></i>
+                </button>
+              </div>
+
+              <!-- Empty State -->
+              <div *ngIf="emailList.length === 0" class="text-center py-5 text-secondary">
+                <i class="fas fa-inbox fs-1 text-gray-400 mb-2 d-block"></i>
+                <h6 class="fw-bolder text-dark mb-1">Queue is Empty</h6>
+                <p class="fs-8 mb-3">Upload an Excel sheet or click 'Add Email' to add addresses manually.</p>
+                <button
+                  type="button"
+                  class="btn btn-sm btn-light-primary fw-bold"
+                  (click)="addEmailField()"
+                >
+                  <i class="fas fa-plus me-1"></i> Add First Email
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

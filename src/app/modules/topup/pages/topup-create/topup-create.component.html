@@ -1,0 +1,261 @@
+<div class="feature-section">
+  <div class="feature-section-wrapper">
+    <!-- Header with AI Indicator -->
+    <div class="d-flex flex-wrap align-items-center justify-content-between gap-3 mb-4 pb-3 border-bottom border-gray-200">
+      <div class="d-flex align-items-center gap-3">
+        <div class="topup-header-icon">
+          <i class="fas fa-bolt fs-2"></i>
+        </div>
+        <div>
+          <div class="d-flex align-items-center gap-2 mb-1">
+            <h3 class="fw-bolder text-dark mb-0">Member Wallet TopUp</h3>
+            <span class="badge-ai-live">
+              <span class="ai-live-dot"></span> AI Recharge Terminal
+            </span>
+          </div>
+          <p class="page-header-subtitle mb-0">
+            Instant credit reload, multi-method payment splits, and electronic ledger settlement.
+          </p>
+        </div>
+      </div>
+
+      <div>
+        <button type="button" class="action-outline-btn" (click)="goToListPage()">
+          <i class="fas fa-arrow-left me-2"></i> Back to TopUp List
+        </button>
+      </div>
+    </div>
+
+    <div class="content">
+      <div class="row g-4">
+        <!-- Left Column: Member Identification & Hologram Card -->
+        <div class="col-lg-4 col-md-12">
+          <!-- Member Search Card -->
+          <div class="form-section-card p-4 rounded-3 border mb-4">
+            <div class="d-flex align-items-center gap-2 mb-3 pb-2 border-bottom border-gray-200">
+              <i class="fas fa-id-card text-primary fs-5"></i>
+              <h5 class="fw-bolder text-dark mb-0">Find Member</h5>
+            </div>
+
+            <form [formGroup]="memberSearchForm">
+              <label class="form-label-custom required">Membership No.</label>
+              <div class="input-group">
+                <input
+                  type="text"
+                  class="form-control form-control-sm font-monospace fs-7"
+                  formControlName="MemberShipNo"
+                  placeholder="Enter Membership No..."
+                  (keyup.enter)="showMemberInfo()"
+                />
+                <button type="button" class="btn btn-primary btn-sm px-3" (click)="showMemberInfo()">
+                  <i class="fas fa-search"></i>
+                </button>
+              </div>
+              <span class="text-muted fs-9 d-block mt-1">Press Enter or click Search to scan</span>
+            </form>
+          </div>
+
+          <!-- Hologram Member Profile & Wallet Card (when member found) -->
+          <div class="member-cyber-card p-4 rounded-3 border" *ngIf="member">
+            <div class="text-center mb-3">
+              <div class="member-avatar-ring mb-2">
+                <img
+                  *ngIf="member.ImgFileUrl"
+                  [src]="member.ImgFileUrl"
+                  alt="Member Avatar"
+                  class="member-avatar-img"
+                />
+                <div *ngIf="!member.ImgFileUrl" class="member-avatar-placeholder">
+                  <i class="fas fa-user fs-1 text-muted"></i>
+                </div>
+              </div>
+              <h5 class="fw-bolder text-dark mb-1">{{ member.FullName }}</h5>
+              <span class="badge-membership-pill">{{ memberSearchForm.value.MemberShipNo }}</span>
+            </div>
+
+            <!-- Cyber Hologram Current Balance Box -->
+            <div class="wallet-hologram-box p-3 rounded-3 mb-3 text-center">
+              <div class="d-flex align-items-center justify-content-center gap-2 mb-1">
+                <i class="fas fa-wallet text-emerald"></i>
+                <span class="wallet-hologram-label">CURRENT WALLET BALANCE</span>
+              </div>
+              <h2 class="wallet-hologram-balance mb-0">
+                ৳ {{ member.CurrentBalance | number:'1.2-2' }}
+              </h2>
+            </div>
+
+            <!-- Member Details Grid -->
+            <div class="member-specs-list border-top pt-3">
+              <div class="d-flex justify-content-between py-1.5 border-bottom border-gray-100">
+                <span class="text-muted fs-8">Member Type</span>
+                <span class="fw-bold text-dark fs-8">{{ member.MemberTypeText || 'Regular' }}</span>
+              </div>
+              <div class="d-flex justify-content-between py-1.5 border-bottom border-gray-100">
+                <span class="text-muted fs-8">Active Status</span>
+                <span class="badge-status-completed">{{ member.MemberActiveStatusText || 'Active' }}</span>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Right Column: Payment Settlement Matrix -->
+        <div class="col-lg-8 col-md-12">
+          <div class="form-section-card p-4 rounded-3 border">
+            <div class="d-flex align-items-center justify-content-between mb-3 pb-2 border-bottom border-gray-200">
+              <div class="d-flex align-items-center gap-2">
+                <i class="fas fa-money-check-alt text-primary fs-5"></i>
+                <h5 class="fw-bolder text-dark mb-0">Payment Settlement Details</h5>
+              </div>
+              <span class="badge badge-light-primary fs-9 fw-semibold" *ngIf="member">Verified Member</span>
+            </div>
+
+            <div *ngIf="!member" class="p-5 text-center text-muted">
+              <i class="fas fa-user-search fa-3x mb-3 text-gray-400"></i>
+              <h6 class="fw-bold text-gray-600">No Member Selected</h6>
+              <p class="fs-8 text-muted mb-0">Search a Membership Number on the left to begin wallet reload.</p>
+            </div>
+
+            <!-- Payment Form -->
+            <form [formGroup]="topUpForm" *ngIf="member">
+              <div formArrayName="TopUpDetails">
+                <div
+                  *ngFor="let item of TopUpDetailsArray; let i = index"
+                  [formGroupName]="i"
+                  class="payment-row-card p-3 rounded-3 border mb-3"
+                >
+                  <div class="row g-3">
+                    <div class="col-md-4 col-sm-6">
+                      <label class="form-label-custom required">Payment Type</label>
+                      <ng-select
+                        [items]="paymentMethodList"
+                        bindLabel="Title"
+                        placeholder="Select Payment Method"
+                        [appendTo]="'body'"
+                        (change)="changePaymentType($event, i, item)"
+                        bindValue="Id"
+                        formControlName="PaymentMethodId"
+                      ></ng-select>
+                    </div>
+
+                    <div class="col-md-4 col-sm-6" *ngIf="isCard">
+                      <label class="form-label-custom required">Credit Card Type</label>
+                      <ng-select
+                        [items]="creditCardList"
+                        bindLabel="CardName"
+                        placeholder="Select Card"
+                        [appendTo]="'body'"
+                        bindValue="slno"
+                        formControlName="CreditCardId"
+                      ></ng-select>
+                    </div>
+
+                    <div class="col-md-4 col-sm-6" *ngIf="isBank">
+                      <label class="form-label-custom required">Bank Name</label>
+                      <ng-select
+                        [items]="bankInfoList"
+                        bindLabel="BANKNAME"
+                        placeholder="Select Bank"
+                        [appendTo]="'body'"
+                        bindValue="slno"
+                        formControlName="BankId"
+                      ></ng-select>
+                    </div>
+
+                    <div class="col-md-4 col-sm-6">
+                      <label class="form-label-custom required">TopUp Amount (BDT)</label>
+                      <input
+                        type="number"
+                        formControlName="Amount"
+                        class="form-control form-control-sm fw-bolder text-emerald"
+                        placeholder="0.00"
+                      />
+                    </div>
+
+                    <div class="col-md-4 col-sm-6" *ngIf="isCard || isBank">
+                      <label class="form-label-custom">Transaction No.</label>
+                      <input
+                        type="text"
+                        formControlName="TrxNo"
+                        class="form-control form-control-sm font-monospace"
+                        placeholder="Trx / Slip No."
+                      />
+                    </div>
+
+                    <div class="col-md-4 col-sm-6" *ngIf="isCard || isBank">
+                      <label class="form-label-custom">Machine / POS No.</label>
+                      <input
+                        type="text"
+                        formControlName="MachineNo"
+                        class="form-control form-control-sm font-monospace"
+                        placeholder="POS Machine ID"
+                      />
+                    </div>
+
+                    <div class="col-md-4 col-sm-6" *ngIf="isCard || isBank">
+                      <label class="form-label-custom">Card / Account No.</label>
+                      <input
+                        type="text"
+                        formControlName="TrxCardNo"
+                        class="form-control form-control-sm font-monospace"
+                        placeholder="Last 4 digits / Card No."
+                      />
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Note -->
+              <div class="mb-4">
+                <label class="form-label-custom">Remarks / Note</label>
+                <input
+                  type="text"
+                  formControlName="Note"
+                  class="form-control form-control-sm"
+                  placeholder="Optional transaction remarks..."
+                />
+              </div>
+
+              <!-- Action Submit -->
+              <div class="d-flex justify-content-end gap-3 pt-2">
+                <button
+                  type="button"
+                  class="primary-btn px-5"
+                  (click)="onSubmit(printModal)"
+                >
+                  <i class="fas fa-check-circle me-2"></i> Submit & Process TopUp
+                </button>
+              </div>
+            </form>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <swal #noticeSwal [swalOptions]="swalOptions"> </swal>
+</div>
+
+<!-- Print Modal -->
+<ng-template #printModal let-modal>
+  <div class="modal-header d-flex justify-content-between align-items-center bg-light">
+    <div class="d-flex align-items-center gap-2">
+      <i class="fas fa-file-pdf text-danger fs-4"></i>
+      <h5 class="modal-title fw-bold text-dark mb-0">TopUp Voucher Preview</h5>
+    </div>
+    <button type="button" class="btn-close" (click)="modal.dismiss('Cross click')" aria-label="Close"></button>
+  </div>
+  <div class="modal-body p-3">
+    <div *ngIf="url">
+      <ngx-doc-viewer
+        [url]="url"
+        viewer="url"
+        style="width: 100%; height: 75vh"
+      ></ngx-doc-viewer>
+    </div>
+  </div>
+  <div class="modal-footer bg-light d-flex justify-content-end">
+    <button type="button" class="btn btn-secondary btn-sm" (click)="modal.dismiss('Cross click')">
+      Close
+    </button>
+  </div>
+</ng-template>

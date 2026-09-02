@@ -1,0 +1,137 @@
+.card{
+    border: none;
+}
+.card-header{
+    align-content: center;
+    border: navajowhite;
+    min-height: 48px;
+}
+.card-header p{
+    font-size: 19px;
+    margin: 0;
+    color: #5a5a5a;
+    font-weight: 500;
+}
+.nav-link{
+    color: #4a4a4a;
+    font-size: 14px;
+    font-weight: 500;
+}
+.active.nav-link{
+    color: var(--primary-theme-color) !important;
+}
+.member-img{
+    width: 70px;
+    height: 70px;
+    border-radius: 50%;
+    object-fit: cover;
+}
+.green-label{
+    background: #36dd22;
+    padding: 4px 13px;
+    font-weight: 500;
+    color: white;
+}
+.red-label{
+    background: #c21c1c;
+    padding: 4px 13px;
+    font-weight: 500;
+    color: white;
+}
+td{
+    vertical-align: middle;
+}
+
+img {
+    /* border-radius: 4px; */
+    object-fit: scale-down;
+  }
+  .uploadProfileInput {
+    position: absolute;
+
+    width: 15rem;
+    height: 15rem;
+    opacity: 0;
+    cursor: pointer;
+  }
+.pic-holder{
+    width: 15rem;
+    height: 15rem;
+    border: 1px solid rgb(156, 156, 156);
+    position: relative;
+}
+  
+.pic-holder a{
+    position: absolute;
+    top: -9px;
+    right: -7px;
+    cursor: pointer;
+}
+.pic-holder a i{
+    font-size: 18px;
+    color: #6a5d5d;
+    background: white;
+    border-radius: 50%;
+}
+
+.rr{
+    background-image: url("../../../../../assets/media/icon/upload-image.png");
+    width: 26rem;
+    height: 15rem;
+    background-size: contain;
+    background-repeat: no-repeat;
+}
+.custom-btn {
+    background-color: var(--primary-theme-color);
+    ;
+    color: #fff;
+    border: none;
+    padding: 0.5rem 0.8rem;
+    border-radius: 0.2rem;
+    outline: none;
+    cursor: pointer;
+}
+
+.custom-btn:hover,
+.custom-btn:focus,
+.custom-btn:active {
+    background-color: #6b6b6b;
+    color: #fff;
+    border: none;
+    outline: none;
+    transition: all 0.2s ease-out;
+}
+.tooltip-content:hover {
+    pointer-events: auto;
+  }
+.tooltip-content {
+    max-height: 500px;
+    /* overflow: scroll; */
+  }
+
+.delete-btn{
+    padding: 5px 8px;
+    background: #6e6e6e;
+    border-radius: 3px;
+}
+.delete-btn i{
+    color: white;
+}
+.cell-overflow{
+    max-height: 150px;
+    overflow-y: scroll;
+}
+
+.action-btn-remove {
+    border: none;
+    background-color: #c3434f;
+    width: 1.5rem;
+    height: 1.5rem;
+    color: #fff;
+    border-radius: 2px;
+  }
+.action-btn-remove i{
+   
+    color: #fff;
+
+  }

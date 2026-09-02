@@ -1,0 +1,15 @@
+.search-btn{
+    background: var(--primary-theme-color);
+    padding: 6px 9px;
+    border-radius: 3px;
+}
+.search-btn i{
+    color: white;
+}
+.img-container{
+    width: 50%;
+}
+.img-container img{
+    width: 100%;
+    border-radius: 50%;
+}

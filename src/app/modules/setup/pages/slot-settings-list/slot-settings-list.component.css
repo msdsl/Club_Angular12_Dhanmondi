@@ -1,0 +1,35 @@
+
+
+.filter-container {
+    background: whitesmoke; 
+    overflow: hidden;
+    max-height: 0;
+    padding: 0px;
+    transition: all 0.5s ease-in-out;
+
+}
+.filter-container.show {
+    max-height: 1000px;
+    padding: 10px;
+    overflow: visible;
+}
+
+.search-btn{
+    background: var(--primary-theme-color);
+    border: none;
+    padding: 5px 18px;
+    border-radius: 4px;
+    color: white;
+    font-weight: 500;
+}
+.reset-btn{
+    background: var(--primary-theme-color);
+    border: none;
+    padding: 5px 18px;
+    border-radius: 4px;
+    color: white;
+    font-weight: 500;
+}
+input{
+    color: #333;
+}

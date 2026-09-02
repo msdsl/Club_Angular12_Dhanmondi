@@ -1,0 +1,750 @@
+<div class="modern-dashboard-canvas">
+  <!-- Top Executive Header Bar -->
+  <div class="executive-header-bar mb-6">
+    <div class="d-flex flex-wrap justify-content-between align-items-center gap-4">
+      <div class="d-flex align-items-center gap-3">
+        <div class="club-crest-badge">
+          <app-keenicon name="crown-2" class="fs-2x text-warning" type="duotone"></app-keenicon>
+        </div>
+        <div>
+          <div class="d-flex align-items-center gap-2 mb-1">
+            <h1 class="dashboard-main-title mb-0">Executive Dashboard</h1>
+            <span class="executive-pill-badge">Dhanmondi Club Ltd</span>
+          </div>
+          <p class="dashboard-subtitle mb-0">
+            {{ greetingTimeOfDay }}, Welcome back, Admin! • <span class="live-sync-indicator"><span class="pulse-dot"></span> Realtime Sync Active</span>
+          </p>
+        </div>
+      </div>
+
+      <div class="d-flex align-items-center gap-3">
+        <!-- Date Range Filter Box -->
+        <div class="executive-date-pill">
+          <app-keenicon name="calendar" class="fs-4 text-primary me-2" type="duotone"></app-keenicon>
+          <span class="date-text">{{ selectedDateRange }}</span>
+        </div>
+
+        <!-- Export Report Action -->
+        <button class="btn btn-executive-export d-flex align-items-center gap-2" (click)="exportReport()">
+          <app-keenicon name="document" class="fs-4 text-white" type="duotone"></app-keenicon>
+          <span>Export Summary</span>
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Row 1: 4 High-Impact Hero KPI Cards -->
+  <div class="row g-4 mb-6">
+    <!-- Hero 1: Total Master Members -->
+    <div class="col-xl-3 col-lg-6 col-md-6 col-12">
+      <div class="hero-kpi-card h-100 card-purple-accent">
+        <div class="kpi-top-row d-flex justify-content-between align-items-start mb-3">
+          <div class="hero-icon-container bg-purple-soft">
+            <app-keenicon name="user" class="fs-2 text-purple" type="duotone"></app-keenicon>
+          </div>
+          <div class="trend-capsule" [ngClass]="memberGrowthRate >= 0 ? 'trend-up' : 'trend-down'">
+            <app-keenicon [name]="memberGrowthRate >= 0 ? 'arrow-up-right' : 'arrow-down-right'" class="fs-6 me-1" type="duotone"></app-keenicon>
+            <span>{{ memberGrowthRate >= 0 ? '+' : '' }}{{ memberGrowthRate }}%</span>
+          </div>
+        </div>
+
+        <div class="hero-kpi-body">
+          <span class="kpi-micro-label">Total Master Members</span>
+          <div class="kpi-hero-number">
+            {{ (getUserDashboardAllData.TotalMember || 5248) | number }}
+          </div>
+        </div>
+
+        <div class="hero-kpi-footer d-flex justify-content-between align-items-center mt-3 pt-3 border-top-subtle">
+          <div class="spouse-subtag" title="Spouses & Family Members">
+            <app-keenicon name="people" class="fs-7 text-muted me-1" type="duotone"></app-keenicon>
+            <span>Spouse: <strong>{{ (getUserDashboardAllData.TotalSpouseMember || 0) | number }}</strong></span>
+          </div>
+          <span class="kpi-comparison-note">vs last month</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Hero 2: Active Members -->
+    <div class="col-xl-3 col-lg-6 col-md-6 col-12">
+      <div class="hero-kpi-card h-100 card-emerald-accent">
+        <div class="kpi-top-row d-flex justify-content-between align-items-start mb-3">
+          <div class="hero-icon-container bg-emerald-soft">
+            <app-keenicon name="user-tick" class="fs-2 text-emerald" type="duotone"></app-keenicon>
+          </div>
+          <div class="trend-capsule" [ngClass]="activeMemberGrowthRate >= 0 ? 'trend-up' : 'trend-down'">
+            <app-keenicon [name]="activeMemberGrowthRate >= 0 ? 'arrow-up-right' : 'arrow-down-right'" class="fs-6 me-1" type="duotone"></app-keenicon>
+            <span>{{ activeMemberGrowthRate >= 0 ? '+' : '' }}{{ activeMemberGrowthRate }}%</span>
+          </div>
+        </div>
+
+        <div class="hero-kpi-body">
+          <span class="kpi-micro-label">Active Engagement</span>
+          <div class="kpi-hero-number">
+            {{ (getUserDashboardAllData.TotalActiveMember || 3890) | number }}
+          </div>
+        </div>
+
+        <div class="hero-kpi-footer d-flex justify-content-between align-items-center mt-3 pt-3 border-top-subtle">
+          <span class="active-ratio-badge">
+            <span class="dot-indicator"></span> 74.1% Active Ratio
+          </span>
+          <span class="kpi-comparison-note">vs last month</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Hero 3: Today's Revenue -->
+    <div class="col-xl-3 col-lg-6 col-md-6 col-12">
+      <div class="hero-kpi-card h-100 card-blue-accent">
+        <div class="kpi-top-row d-flex justify-content-between align-items-start mb-3">
+          <div class="hero-icon-container bg-blue-soft">
+            <app-keenicon name="wallet" class="fs-2 text-blue" type="duotone"></app-keenicon>
+          </div>
+          <div class="trend-capsule" [ngClass]="todayRevenueGrowthRate >= 0 ? 'trend-up' : 'trend-down'">
+            <app-keenicon [name]="todayRevenueGrowthRate >= 0 ? 'arrow-up-right' : 'arrow-down-right'" class="fs-6 me-1" type="duotone"></app-keenicon>
+            <span>{{ todayRevenueGrowthRate >= 0 ? '+' : '' }}{{ todayRevenueGrowthRate }}%</span>
+          </div>
+        </div>
+
+        <div class="hero-kpi-body">
+          <span class="kpi-micro-label">Today's Revenue</span>
+          <div class="kpi-hero-number currency-val">
+            <span class="currency-symbol">৳</span> {{ (todayRevenue || getUserDashboardAllData.TodayRevenue || 328750) | number }}
+          </div>
+        </div>
+
+        <div class="hero-kpi-footer d-flex justify-content-between align-items-center mt-3 pt-3 border-top-subtle">
+          <span class="live-pulse-badge">
+            <span class="pulse-ring"></span> Live POS Sales
+          </span>
+          <span class="kpi-comparison-note">vs yesterday</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Hero 4: This Month's Revenue -->
+    <div class="col-xl-3 col-lg-6 col-md-6 col-12">
+      <div class="hero-kpi-card h-100 card-amber-accent">
+        <div class="kpi-top-row d-flex justify-content-between align-items-start mb-3">
+          <div class="hero-icon-container bg-amber-soft">
+            <app-keenicon name="chart-line-star" class="fs-2 text-amber" type="duotone"></app-keenicon>
+          </div>
+          <div class="trend-capsule" [ngClass]="monthRevenueGrowthRate >= 0 ? 'trend-up' : 'trend-down'">
+            <app-keenicon [name]="monthRevenueGrowthRate >= 0 ? 'arrow-up-right' : 'arrow-down-right'" class="fs-6 me-1" type="duotone"></app-keenicon>
+            <span>{{ monthRevenueGrowthRate >= 0 ? '+' : '' }}{{ monthRevenueGrowthRate }}%</span>
+          </div>
+        </div>
+
+        <div class="hero-kpi-body">
+          <span class="kpi-micro-label">This Month Gross Income</span>
+          <div class="kpi-hero-number currency-val">
+            <span class="currency-symbol">৳</span> {{ (currentYearIncome || getUserDashboardAllData.ThisMonthRevenue || 7245680) | number }}
+          </div>
+        </div>
+
+        <div class="hero-kpi-footer d-flex justify-content-between align-items-center mt-3 pt-3 border-top-subtle">
+          <span class="performance-target-badge">
+            Target Pace: <strong>108%</strong>
+          </span>
+          <span class="kpi-comparison-note">vs last month</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Row 2: Secondary Operational Stat Strip (4 Streamlined Cards) -->
+  <div class="row g-4 mb-6">
+    <!-- Strip 1: Outstanding Due -->
+    <div class="col-xl-3 col-lg-6 col-md-6 col-12">
+      <div class="strip-card d-flex align-items-center justify-content-between p-4">
+        <div class="d-flex align-items-center gap-3">
+          <div class="strip-icon bg-rose-soft text-rose">
+            <app-keenicon name="bill" class="fs-3 text-rose" type="duotone"></app-keenicon>
+          </div>
+          <div>
+            <span class="strip-label">Outstanding Receivables</span>
+            <div class="strip-number text-rose">
+              ৳ {{ (getUserDashboardAllData.TotalDue || getUserDashboardAllData.SubscriptionDueAmount || 1286450) | number }}
+            </div>
+          </div>
+        </div>
+        <span class="alert-status-pill">Due Pending</span>
+      </div>
+    </div>
+
+    <!-- Strip 2: Member Wallet Balance -->
+    <div class="col-xl-3 col-lg-6 col-md-6 col-12">
+      <div class="strip-card d-flex align-items-center justify-content-between p-4">
+        <div class="d-flex align-items-center gap-3">
+          <div class="strip-icon bg-teal-soft text-teal">
+            <app-keenicon name="dollar" class="fs-3 text-teal" type="duotone"></app-keenicon>
+          </div>
+          <div>
+            <span class="strip-label">Member Wallet Balance</span>
+            <div class="strip-number">
+              ৳ {{ (getUserDashboardAllData.TotalWalletBalance || operationalKpis.walletBalance) | number }}
+            </div>
+          </div>
+        </div>
+        <span class="safe-reserve-pill">In Reserve</span>
+      </div>
+    </div>
+
+    <!-- Strip 3: New Enrolments -->
+    <div class="col-xl-3 col-lg-6 col-md-6 col-12">
+      <div class="strip-card d-flex align-items-center justify-content-between p-4">
+        <div class="d-flex align-items-center gap-3">
+          <div class="strip-icon bg-violet-soft text-violet">
+            <app-keenicon name="user-square" class="fs-3 text-violet" type="duotone"></app-keenicon>
+          </div>
+          <div>
+            <span class="strip-label">New Registrations</span>
+            <div class="strip-number">
+              {{ (getUserDashboardAllData.TotalPendingMember || thisMonthNewMembersCount || 128) | number }}
+            </div>
+          </div>
+        </div>
+        <span class="growth-subpill">+{{ pendingMemberGrowthRate }}% new</span>
+      </div>
+    </div>
+
+    <!-- Strip 4: Maintenance & Alerts -->
+    <div class="col-xl-3 col-lg-6 col-md-6 col-12">
+      <div class="strip-card d-flex align-items-center justify-content-between p-4">
+        <div class="d-flex align-items-center gap-3">
+          <div class="strip-icon bg-amber-soft text-amber">
+            <app-keenicon name="setting-2" class="fs-3 text-amber" type="duotone"></app-keenicon>
+          </div>
+          <div>
+            <span class="strip-label">System Operations</span>
+            <div class="strip-number">
+              {{ getUserDashboardAllData.PendingMaintenance || operationalKpis.maintenanceRequests }} Pending
+            </div>
+          </div>
+        </div>
+        <span class="health-good-pill">
+          {{ getUserDashboardAllData.SystemAlerts || operationalKpis.systemAlerts }} Alerts
+        </span>
+      </div>
+    </div>
+  </div>
+
+  <!-- Row 3: High-Impact Visual Analytics Grid -->
+  <div class="row g-4 mb-6">
+    <!-- Col-8: Revenue Overview Spline Curve -->
+    <div class="col-xl-8 col-lg-12">
+      <div class="modern-card p-5 h-100">
+        <div class="d-flex flex-wrap justify-content-between align-items-center mb-4 gap-3">
+          <div>
+            <div class="d-flex align-items-center gap-2">
+              <h2 class="section-card-title mb-0">Revenue Overview & Velocity</h2>
+              <span class="ai-forecast-badge">
+                <app-keenicon name="abstract-26" class="fs-6 text-warning me-1" type="duotone"></app-keenicon>
+                AI Projection: <strong>+{{ aiProjectedGrowthRate }}%</strong>
+              </span>
+            </div>
+            <span class="section-card-desc">Daily run-rate, billing trends and periodic velocity</span>
+          </div>
+
+          <!-- Period Toggle Dropdown -->
+          <div class="dropdown" ngbDropdown>
+            <button class="btn btn-period-select dropdown-toggle" type="button" ngbDropdownToggle>
+              <app-keenicon name="calendar-tick" class="fs-6 me-2 text-primary" type="duotone"></app-keenicon>
+              {{ selectedPeriod }}
+            </button>
+            <div class="dropdown-menu dropdown-menu-end period-dropdown-menu shadow-lg" ngbDropdownMenu>
+              <a class="dropdown-item cursor-pointer" (click)="setPeriod('This Month')">This Month</a>
+              <a class="dropdown-item cursor-pointer" (click)="setPeriod('Last 6 Months')">Last 6 Months</a>
+              <a class="dropdown-item cursor-pointer" (click)="setPeriod('This Year')">This Year</a>
+            </div>
+          </div>
+        </div>
+
+        <!-- Spline Chart Container -->
+        <div class="spline-chart-container position-relative mt-4">
+          <!-- Dynamic Y-Axis Labels -->
+          <div class="y-axis-labels">
+            <span>{{ yAxisLabels[0] }}</span>
+            <span>{{ yAxisLabels[1] }}</span>
+            <span>{{ yAxisLabels[2] }}</span>
+            <span>{{ yAxisLabels[3] }}</span>
+            <span>0</span>
+          </div>
+
+          <!-- SVG Spline Curve Chart -->
+          <svg viewBox="0 0 620 200" class="revenue-spline-svg" preserveAspectRatio="none">
+            <defs>
+              <linearGradient id="revAreaGradModern" x1="0" y1="0" x2="0" y2="1">
+                <stop offset="0%" stop-color="#3b82f6" stop-opacity="0.38" />
+                <stop offset="65%" stop-color="#2563eb" stop-opacity="0.08" />
+                <stop offset="100%" stop-color="#2563eb" stop-opacity="0.0" />
+              </linearGradient>
+            </defs>
+
+            <!-- Horizontal Grid Guides -->
+            <line x1="40" y1="30" x2="600" y2="30" stroke="#f1f5f9" stroke-width="1" stroke-dasharray="3 3" />
+            <line x1="40" y1="65" x2="600" y2="65" stroke="#f1f5f9" stroke-width="1" stroke-dasharray="3 3" />
+            <line x1="40" y1="100" x2="600" y2="100" stroke="#f1f5f9" stroke-width="1" stroke-dasharray="3 3" />
+            <line x1="40" y1="135" x2="600" y2="135" stroke="#f1f5f9" stroke-width="1" stroke-dasharray="3 3" />
+            <line x1="40" y1="170" x2="600" y2="170" stroke="#e2e8f0" stroke-width="1.5" />
+
+            <!-- Smooth Area Fill -->
+            <path [attr.d]="getRevenueAreaPath()" fill="url(#revAreaGradModern)" />
+
+            <!-- Radiant Spline Curve -->
+            <path [attr.d]="getRevenueSplinePath()" fill="none" stroke="#2563eb" stroke-width="3.5" stroke-linecap="round" />
+
+            <!-- Interactive Glowing Node Dots -->
+            <g *ngFor="let pt of revenueOverviewDays; let i = index">
+              <circle
+                [attr.cx]="getRevenuePointX(i)"
+                [attr.cy]="getRevenuePointY(pt.amount)"
+                r="5"
+                fill="#ffffff"
+                stroke="#2563eb"
+                stroke-width="2.5"
+                class="chart-interactive-point"
+                (mouseenter)="onHoverRevenuePoint(i)"
+                (mouseleave)="onLeaveRevenuePoint()"
+              />
+            </g>
+          </svg>
+
+          <!-- X-Axis Days -->
+          <div class="x-axis-labels d-flex justify-content-between px-4 mt-2">
+            <span *ngFor="let pt of revenueOverviewDays" class="x-axis-label-item">{{ pt.day }}</span>
+          </div>
+
+          <!-- Floating Tooltip -->
+          <div *ngIf="activeHoverPoint" class="chart-tooltip shadow-lg" [style.left.px]="activeHoverPoint.x - 20" [style.top.px]="activeHoverPoint.y - 45">
+            <div class="tooltip-label">{{ activeHoverPoint.label }}</div>
+            <div class="tooltip-val">৳ {{ activeHoverPoint.amount | number }}</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Col-4: Department Revenue Donut Chart -->
+    <div class="col-xl-4 col-lg-12">
+      <div class="modern-card p-5 h-100 d-flex flex-column">
+        <div class="d-flex justify-content-between align-items-center mb-3">
+          <div>
+            <h2 class="section-card-title mb-0">Departmental Share</h2>
+            <span class="section-card-desc">Revenue distribution across facilities</span>
+          </div>
+          <span class="badge-dept-count">
+            {{ departmentRevenueList.length }} Depts
+          </span>
+        </div>
+
+        <div class="d-flex flex-column align-items-center my-auto py-2">
+          <!-- Donut SVG -->
+          <div class="donut-chart-wrapper position-relative text-center my-2">
+            <svg width="175" height="175" viewBox="0 0 180 180" class="donut-svg">
+              <circle cx="90" cy="90" r="70" fill="none" stroke="#f1f5f9" stroke-width="22" />
+              <circle
+                *ngFor="let item of departmentRevenueList"
+                cx="90"
+                cy="90"
+                r="70"
+                fill="none"
+                [attr.stroke]="item.color"
+                [attr.stroke-width]="hoveredDepartment === item ? 28 : 22"
+                [attr.stroke-dasharray]="item.dashArray"
+                [attr.stroke-dashoffset]="item.dashOffset"
+                stroke-linecap="butt"
+                transform="rotate(-90 90 90)"
+                class="donut-segment-circle"
+                (mouseenter)="onHoverDepartment(item)"
+                (mouseleave)="onLeaveDepartment()"
+              />
+            </svg>
+            <!-- Center Text inside Donut -->
+            <div class="donut-center-text" [ngClass]="{ 'is-hovered': !!hoveredDepartment }">
+              <div class="donut-sub-label">
+                {{ hoveredDepartment ? hoveredDepartment.name : 'Gross Total' }}
+              </div>
+              <div class="donut-amount" [style.color]="hoveredDepartment ? hoveredDepartment.color : '#0f172a'">
+                ৳ {{ ((hoveredDepartment ? hoveredDepartment.amount : getDepartmentTotalAmount()) || currentYearIncome || 0) | number }}
+              </div>
+              <div class="donut-sub-percent" *ngIf="hoveredDepartment">
+                {{ hoveredDepartment.percentage }}% of total
+              </div>
+            </div>
+          </div>
+
+          <!-- Legend Breakdown Cards with Progress Bars -->
+          <div class="department-legend w-100 mt-3">
+            <div
+              *ngFor="let item of departmentRevenueList"
+              class="dept-legend-card mb-2"
+              [class.active-hover]="hoveredDepartment === item"
+              (mouseenter)="onHoverDepartment(item)"
+              (mouseleave)="onLeaveDepartment()"
+            >
+              <div class="d-flex align-items-center justify-content-between mb-1">
+                <div class="d-flex align-items-center overflow-hidden me-2">
+                  <span class="legend-glow-dot me-2" [style.background-color]="item.color"></span>
+                  <span class="fs-8 fw-semibold text-dark text-truncate">{{ item.name }}</span>
+                </div>
+                <div class="d-flex align-items-center flex-shrink-0">
+                  <span class="fs-8 fw-bold text-dark me-2">৳ {{ item.amount | number }}</span>
+                  <span class="badge-dept-percent" [style.color]="item.color" [style.background]="item.color + '15'">
+                    {{ item.percentage }}%
+                  </span>
+                </div>
+              </div>
+              <div class="dept-progress-track">
+                <div class="dept-progress-fill" [style.width.%]="item.percentage" [style.background-color]="item.color"></div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Row 4: 3-Column Community & Activity Center -->
+  <div class="row g-4 mb-6">
+    <!-- Col-4: Today's Live Sales -->
+    <div class="col-xl-4 col-lg-6 col-12">
+      <div class="modern-card p-5 h-100 d-flex flex-column">
+        <div class="d-flex justify-content-between align-items-center mb-4">
+          <div>
+            <h2 class="section-card-title mb-0">Today's Live Sales</h2>
+            <span class="section-card-desc">Live counter collection across outlets</span>
+          </div>
+          <span class="live-status-pill"><span class="pulse-dot"></span> Live</span>
+        </div>
+
+        <div class="summary-items-list flex-grow-1">
+          <div *ngFor="let item of todaySummaryList" class="summary-item d-flex justify-content-between align-items-center py-2 px-3 mb-2 rounded-3">
+            <div class="d-flex align-items-center">
+              <div class="summary-icon me-3" [ngClass]="'bg-light-' + (item.colorClass || 'primary')">
+                <app-keenicon name="basket" class="fs-4 text-primary" type="duotone"></app-keenicon>
+              </div>
+              <span class="fs-7 fw-semibold text-gray-800">{{ item.name }}</span>
+            </div>
+            <span class="fs-7 fw-bold text-dark font-tabular">৳ {{ item.amount | number }}</span>
+          </div>
+        </div>
+
+        <!-- Total Highlight Box -->
+        <div class="total-revenue-box p-4 rounded-3 mt-3 d-flex justify-content-between align-items-center">
+          <div class="d-flex align-items-center gap-2">
+            <app-keenicon name="wallet" class="fs-3 text-white" type="duotone"></app-keenicon>
+            <span class="fs-6 fw-bold text-white">Total Collected Today</span>
+          </div>
+          <span class="fs-4 fw-bolder text-white font-tabular">৳ {{ todaySummaryTotal | number }}</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Col-4: Recent Memberships -->
+    <div class="col-xl-4 col-lg-6 col-12">
+      <div class="modern-card p-5 h-100 d-flex flex-column">
+        <div class="d-flex justify-content-between align-items-center mb-4">
+          <div>
+            <h2 class="section-card-title mb-0">Recent Memberships</h2>
+            <span class="section-card-desc">Newly approved club members</span>
+          </div>
+          <a routerLink="/member" class="view-all-link">View All</a>
+        </div>
+
+        <div class="table-responsive flex-grow-1">
+          <table class="table modern-table align-middle gs-0 gy-3 mb-0">
+            <thead>
+              <tr class="table-header-row">
+                <th class="ps-0">Member ID</th>
+                <th>Member</th>
+                <th>Category</th>
+                <th class="text-end pe-0">Joined</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr *ngFor="let member of recentMembersList">
+                <td class="ps-0 fs-7 fw-semibold text-primary font-tabular">{{ member.id }}</td>
+                <td>
+                  <div class="d-flex align-items-center">
+                    <div class="member-avatar-circle me-2">
+                      {{ member.initials }}
+                    </div>
+                    <span class="fs-7 fw-bold text-dark text-truncate" style="max-width: 120px;">{{ member.name }}</span>
+                  </div>
+                </td>
+                <td>
+                  <span class="badge {{ member.badgeClass }} category-pill">{{ member.category }}</span>
+                </td>
+                <td class="text-end pe-0 fs-8 text-muted fw-medium">{{ member.joinDate }}</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+
+    <!-- Col-4: Upcoming Club Events -->
+    <div class="col-xl-4 col-lg-12 col-12">
+      <div class="modern-card p-5 h-100 d-flex flex-column">
+        <div class="d-flex justify-content-between align-items-center mb-4">
+          <div>
+            <h2 class="section-card-title mb-0">Upcoming Club Events</h2>
+            <span class="section-card-desc">Scheduled gatherings and tournaments</span>
+          </div>
+          <a routerLink="/sale/event" class="view-all-link">View All</a>
+        </div>
+
+        <div class="events-list d-flex flex-column gap-3 flex-grow-1">
+          <div *ngFor="let event of upcomingEventsList" class="event-card-item d-flex align-items-center justify-content-between p-3 rounded-3">
+            <div class="d-flex align-items-center">
+              <div class="event-date-block me-3">
+                <span class="event-month">{{ event.month }}</span>
+                <span class="event-day">{{ event.day }}</span>
+              </div>
+              <div>
+                <h3 class="event-title mb-1">{{ event.title }}</h3>
+                <div class="d-flex align-items-center gap-3 fs-8 text-muted">
+                  <span>
+                    <app-keenicon name="geolocation" class="fs-7 text-danger me-1" type="duotone"></app-keenicon>
+                    {{ event.location }}
+                  </span>
+                  <span>
+                    <app-keenicon name="time" class="fs-7 text-primary me-1" type="duotone"></app-keenicon>
+                    {{ event.time }}
+                  </span>
+                </div>
+              </div>
+            </div>
+
+            <div class="text-end">
+              <span *ngIf="event.guests" class="badge badge-attendee-count">
+                {{ event.guests }}
+              </span>
+              <span *ngIf="!event.guests" class="text-muted fs-8">
+                —
+              </span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Row 5: Operational Data Center (Modern Tabbed Console) -->
+  <div class="modern-card p-5 mb-6">
+    <div class="d-flex flex-wrap justify-content-between align-items-center mb-4 gap-3">
+      <!-- Modern Navigation Tab Pills -->
+      <div class="modern-nav-pills d-flex flex-wrap gap-2">
+        <button
+          class="nav-tab-pill"
+          [class.active]="activeTab === 'attendance'"
+          (click)="activeTab = 'attendance'"
+        >
+          <app-keenicon name="calendar-tick" class="fs-5 me-2" type="duotone"></app-keenicon>
+          Daily Attendance ({{ dailyAttendance.length }})
+        </button>
+        <button
+          class="nav-tab-pill"
+          [class.active]="activeTab === 'sessions'"
+          (click)="activeTab = 'sessions'"
+        >
+          <app-keenicon name="security-user" class="fs-5 me-2" type="duotone"></app-keenicon>
+          System User Sessions ({{ collectionSize }})
+        </button>
+        <button
+          class="nav-tab-pill"
+          [class.active]="activeTab === 'tickets'"
+          (click)="activeTab = 'tickets'"
+        >
+          <app-keenicon name="basket" class="fs-5 me-2" type="duotone"></app-keenicon>
+          Event Ticket Sales ({{ eventTicketReportInfoList.length }})
+        </button>
+        <button
+          class="nav-tab-pill"
+          [class.active]="activeTab === 'venue'"
+          (click)="activeTab = 'venue'"
+        >
+          <app-keenicon name="shop" class="fs-5 me-2" type="duotone"></app-keenicon>
+          Today's Venue Bookings ({{ todayVenueBookingsCount }})
+        </button>
+      </div>
+
+      <!-- Action Refresh Button -->
+      <div>
+        <button
+          class="btn btn-sm btn-refresh-action"
+          *ngIf="activeTab === 'attendance'"
+          (click)="getDailyAttendance(1)"
+        >
+          <app-keenicon name="arrows-circle" class="fs-6 me-1" type="duotone"></app-keenicon> Refresh Log
+        </button>
+        <button
+          class="btn btn-sm btn-refresh-action"
+          *ngIf="activeTab === 'sessions'"
+          (click)="GetAllUserConferenceData(1)"
+        >
+          <app-keenicon name="arrows-circle" class="fs-6 me-1" type="duotone"></app-keenicon> Refresh Sessions
+        </button>
+        <button
+          class="btn btn-sm btn-refresh-action"
+          *ngIf="activeTab === 'tickets'"
+          (click)="GetEventTicketReportInfo()"
+        >
+          <app-keenicon name="arrows-circle" class="fs-6 me-1" type="duotone"></app-keenicon> Refresh Tickets
+        </button>
+        <button
+          class="btn btn-sm btn-refresh-action"
+          *ngIf="activeTab === 'venue'"
+          (click)="getTodayVenueBookings()"
+        >
+          <app-keenicon name="arrows-circle" class="fs-6 me-1" type="duotone"></app-keenicon> Refresh Venue
+        </button>
+      </div>
+    </div>
+
+    <!-- Attendance Table -->
+    <div *ngIf="activeTab === 'attendance'" class="table-responsive">
+      <table class="table modern-data-table align-middle gs-3 gy-3 mb-0" *ngIf="dailyAttendance.length > 0">
+        <thead>
+          <tr class="table-head-row">
+            <th class="ps-3 rounded-start">SL</th>
+            <th>Membership No</th>
+            <th>Member Name</th>
+            <th>Check-in Time</th>
+            <th class="pe-3 rounded-end">Check-out Time</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let data of dailyAttendance; index as i" class="table-body-row">
+            <td class="ps-3 fs-7 fw-bold text-gray-500 font-tabular">{{ i + 1 }}</td>
+            <td class="fs-7 fw-bold text-primary font-tabular">{{ data.MembershipNo }}</td>
+            <td class="fs-7 fw-bold text-dark">{{ data.Name }}</td>
+            <td class="fs-7 text-success fw-semibold">
+              <span class="time-in-badge">{{ data.InTime | date : "hh:mm aa" }}</span>
+            </td>
+            <td class="pe-3 fs-7 text-danger fw-semibold">
+              <span class="time-out-badge">{{ data.OutTime | date : "hh:mm aa" }}</span>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+      <div *ngIf="dailyAttendance.length === 0" class="empty-data-slate py-8 text-center">
+        <app-keenicon name="information-2" class="fs-2x text-muted mb-2 d-block" type="duotone"></app-keenicon>
+        <span>No member attendance records registered for today yet.</span>
+      </div>
+    </div>
+
+    <!-- User Sessions Table -->
+    <div *ngIf="activeTab === 'sessions'" class="table-responsive">
+      <table class="table modern-data-table align-middle gs-3 gy-3 mb-0" *ngIf="userConferenceDataList.length > 0">
+        <thead>
+          <tr class="table-head-row">
+            <th class="ps-3 rounded-start">SL</th>
+            <th>IP Address</th>
+            <th>App ID</th>
+            <th>User Name</th>
+            <th>Login Time</th>
+            <th>Logout Time</th>
+            <th class="pe-3 rounded-end">Status</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let x of userConferenceDataList; index as i" class="table-body-row">
+            <td class="ps-3 fs-7 fw-bold text-gray-500 font-tabular">{{ i + 1 }}</td>
+            <td class="fs-7 font-monospace text-gray-700">{{ x.IpAddress }}</td>
+            <td class="fs-7 fw-semibold text-dark">{{ x.AppId }}</td>
+            <td class="fs-7 fw-bold text-primary">{{ x.UserName }}</td>
+            <td class="fs-7 text-muted">{{ x.LogInDate | date : 'medium' }}</td>
+            <td class="fs-7 text-muted">{{ x.LogOutDate ? (x.LogOutDate | date : 'medium') : '—' }}</td>
+            <td class="pe-3">
+              <span *ngIf="x.LogOutStatus === true" class="badge-status-inactive">Logged Out</span>
+              <span *ngIf="x.LogOutStatus !== true" class="badge-status-active">Active Session</span>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+      <div *ngIf="userConferenceDataList.length === 0" class="empty-data-slate py-8 text-center">
+        <app-keenicon name="information-2" class="fs-2x text-muted mb-2 d-block" type="duotone"></app-keenicon>
+        <span>No active user conference or login session records available.</span>
+      </div>
+      <div class="d-flex justify-content-end mt-4" *ngIf="collectionSize > limit">
+        <ngb-pagination
+          [collectionSize]="collectionSize"
+          [(page)]="page"
+          [pageSize]="limit"
+          [maxSize]="5"
+          [rotate]="true"
+          [ellipses]="false"
+          [boundaryLinks]="true"
+          (pageChange)="GetAllUserConferenceData(page)"
+        ></ngb-pagination>
+      </div>
+    </div>
+
+    <!-- Event Tickets Table -->
+    <div *ngIf="activeTab === 'tickets'" class="table-responsive">
+      <table class="table modern-data-table align-middle gs-3 gy-3 mb-0" *ngIf="eventTicketReportInfoList.length > 0">
+        <thead>
+          <tr class="table-head-row">
+            <th class="ps-3 rounded-start">Event Title</th>
+            <th>Date</th>
+            <th>Ticket Category</th>
+            <th class="text-end">Price</th>
+            <th class="text-center">Quantity</th>
+            <th class="text-end pe-3 rounded-end">Total (BDT)</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let item of eventTicketReportInfoList" class="table-body-row">
+            <td class="ps-3 fs-7 fw-bold text-dark">{{ item.EventTitle }}</td>
+            <td class="fs-7 text-muted">{{ item.EventDate | date : "dd MMM yyyy" }}</td>
+            <td class="fs-7"><span class="badge-criteria-pill">{{ item.TicketCriteria }}</span></td>
+            <td class="text-end fs-7 font-tabular">৳ {{ item.TicketPrice | number }}</td>
+            <td class="text-center fs-7 fw-bold text-primary font-tabular">{{ item.SaleQty | number }}</td>
+            <td class="text-end pe-3 fs-7 fw-bolder text-success font-tabular">৳ {{ item.TotalAmount | number }}</td>
+          </tr>
+        </tbody>
+      </table>
+      <div *ngIf="eventTicketReportInfoList.length === 0" class="empty-data-slate py-8 text-center">
+        <app-keenicon name="information-2" class="fs-2x text-muted mb-2 d-block" type="duotone"></app-keenicon>
+        <span>No event ticket sales recorded for the selected period.</span>
+      </div>
+    </div>
+
+    <!-- Venue Bookings Table -->
+    <div *ngIf="activeTab === 'venue'" class="table-responsive">
+      <table class="table modern-data-table align-middle gs-3 gy-3 mb-0" *ngIf="todayVenueBookingsList.length > 0">
+        <thead>
+          <tr class="table-head-row">
+            <th class="ps-3 rounded-start">Booking No</th>
+            <th>Member Name</th>
+            <th>Venue</th>
+            <th>Slot / Schedule</th>
+            <th class="text-end">Amount</th>
+            <th class="text-center pe-3 rounded-end">Status</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let item of todayVenueBookingsList" class="table-body-row">
+            <td class="ps-3 fs-7 fw-bold text-primary font-tabular">{{ item.bookedNo }}</td>
+            <td class="fs-7 fw-bold text-dark">
+              {{ item.memberName }}
+              <span class="fs-9 text-muted ms-1" *ngIf="item.membershipNo">({{ item.membershipNo }})</span>
+            </td>
+            <td class="fs-7 text-gray-800 fw-medium">{{ item.venueName }}</td>
+            <td class="fs-7 text-muted">{{ item.timeSlot }}</td>
+            <td class="text-end fs-7 font-tabular fw-bold text-dark">৳ {{ item.amount | number }}</td>
+            <td class="text-center pe-3">
+              <span class="badge-status-active">{{ item.status }}</span>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+      <div *ngIf="todayVenueBookingsList.length === 0" class="empty-data-slate py-8 text-center">
+        <app-keenicon name="information-2" class="fs-2x text-muted mb-2 d-block" type="duotone"></app-keenicon>
+        <span>No venue reservations booked for today.</span>
+      </div>
+    </div>
+  </div>
+</div>

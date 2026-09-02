@@ -1,0 +1,142 @@
+<div class="feature-section">
+  <div class="feature-section-wrapper">
+    <!-- Modern Header with AI Badge -->
+    <div class="d-flex flex-wrap align-items-center justify-content-between gap-3 mb-4 pb-3 border-bottom border-gray-300">
+      <div class="d-flex align-items-center gap-3">
+        <div class="report-header-icon">
+          <i class="fas fa-concierge-bell fs-2"></i>
+        </div>
+        <div>
+          <div class="d-flex align-items-center gap-2 mb-1">
+            <h3 class="fw-bolder text-dark mb-0 fs-4">Service & Activity Sales Report</h3>
+            <span class="badge-ai-live">
+              <span class="ai-live-dot"></span> BI Analytics
+            </span>
+          </div>
+          <p class="header-desc text-secondary mb-0 fw-semibold">
+            Track service ticket revenue, facility usage breakdown, slot bookings, and member usage reports.
+          </p>
+        </div>
+      </div>
+    </div>
+
+    <!-- Main Content: Filter Console (Left) + Document Viewer (Right) -->
+    <div class="row g-4">
+      <!-- Left Filter Console -->
+      <div class="col-lg-4 col-xl-3">
+        <div class="card report-filter-card shadow-sm border p-3.5">
+          <div class="d-flex align-items-center gap-2 mb-3 pb-2 border-bottom border-gray-200">
+            <i class="fas fa-sliders-h text-primary fs-5"></i>
+            <h6 class="fw-bold text-dark mb-0 fs-6">Filter Criteria</h6>
+          </div>
+
+          <form [formGroup]="filterForm">
+            <div class="mb-3">
+              <label class="form-label-custom required">From Date</label>
+              <div class="input-group input-group-sm">
+                <input
+                  class="form-control font-monospace fw-bold text-dark"
+                  placeholder="YYYY-MM-DD"
+                  formControlName="fromDate"
+                  ngbDatepicker
+                  #d2="ngbDatepicker"
+                />
+                <button class="btn btn-outline-secondary" type="button" (click)="d2.toggle()">
+                  <i class="far fa-calendar-alt"></i>
+                </button>
+              </div>
+            </div>
+
+            <div class="mb-3">
+              <label class="form-label-custom required">To Date</label>
+              <div class="input-group input-group-sm">
+                <input
+                  class="form-control font-monospace fw-bold text-dark"
+                  placeholder="YYYY-MM-DD"
+                  formControlName="toDate"
+                  ngbDatepicker
+                  #d3="ngbDatepicker"
+                />
+                <button class="btn btn-outline-secondary" type="button" (click)="d3.toggle()">
+                  <i class="far fa-calendar-alt"></i>
+                </button>
+              </div>
+            </div>
+
+            <div class="mb-3">
+              <label class="form-label-custom">Select Service</label>
+              <ng-select
+                [items]="eventList"
+                bindLabel="Title"
+                bindValue="Id"
+                placeholder="All Services or Select Specific..."
+                [appendTo]="'body'"
+                formControlName="serviceId"
+                (change)="setEventTicketCount($event)"
+              ></ng-select>
+            </div>
+
+            <div class="mb-4">
+              <label class="form-label-custom">Membership No</label>
+              <input
+                class="form-control form-control-sm font-monospace fw-bold text-dark"
+                type="text"
+                placeholder="e.g. M-10492 (Optional)"
+                formControlName="membershipNo"
+              />
+              <small class="text-secondary fw-semibold mt-1 d-block">Filter for a specific member.</small>
+            </div>
+
+            <div class="d-flex gap-2">
+              <button class="primary-btn flex-grow-1 py-2 fw-bold" type="button" (click)="viewPdfReport()">
+                <i class="fas fa-file-pdf me-1.5"></i> Generate Report
+              </button>
+              <button class="btn btn-secondary btn-sm px-3 fw-bold" type="button" (click)="resetForm()">
+                <i class="fas fa-undo"></i>
+              </button>
+            </div>
+          </form>
+        </div>
+      </div>
+
+      <!-- Right Document Viewer Area -->
+      <div class="col-lg-8 col-xl-9">
+        <div class="card report-viewer-card shadow-sm border p-2 min-h-600px">
+          <!-- When Document URL is loaded -->
+          <div *ngIf="url" class="doc-viewer-container">
+            <div class="doc-viewer-toolbar d-flex justify-content-between align-items-center p-2 mb-2 bg-light rounded-2 border">
+              <span class="badge bg-success text-white fw-bold fs-7">
+                <i class="fas fa-check-circle me-1"></i> Service Report Rendered
+              </span>
+              <a [href]="url" target="_blank" class="btn btn-outline-primary btn-sm fw-bold py-1 px-2.5">
+                <i class="fas fa-external-link-alt me-1"></i> Open in New Tab
+              </a>
+            </div>
+            <ngx-doc-viewer
+              [url]="url"
+              viewer="url"
+              style="width: 100%; height: 750px"
+              class="rounded border"
+            ></ngx-doc-viewer>
+          </div>
+
+          <!-- When No Document is generated yet -->
+          <div *ngIf="!url" class="report-empty-placeholder d-flex flex-column align-items-center justify-content-center text-center p-5">
+            <div class="empty-doc-icon mb-3">
+              <i class="fas fa-swimming-pool fs-1"></i>
+            </div>
+            <h5 class="fw-bolder text-dark mb-2">Ready to Generate Service Sales Statement</h5>
+            <p class="text-secondary fw-semibold max-w-450px mb-4 fs-7">
+              Select date ranges and service filters from the left console, then click <strong>Generate Report</strong> to inspect sales.
+            </p>
+            <div class="d-flex flex-wrap gap-2 justify-content-center">
+              <span class="badge-feature-pill"><i class="fas fa-receipt text-primary me-1"></i> Service Passes</span>
+              <span class="badge-feature-pill"><i class="fas fa-chart-bar text-primary me-1"></i> Usage Metrics</span>
+              <span class="badge-feature-pill"><i class="fas fa-print text-primary me-1"></i> Print Ready</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

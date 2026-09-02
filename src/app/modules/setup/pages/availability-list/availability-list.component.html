@@ -1,0 +1,209 @@
+<section>
+  <div class="feature-section">
+    <div class="feature-section-wrapper">
+      <div class="feature-list-header-wrapper">
+        <div class="feature-list-header">
+          <h3>Availability List</h3>
+        </div>
+        <div>
+          <span class="float-right">
+            <button
+              type="button"
+              class="primary-btn"
+              (click)="goToCreatePage()"
+            >
+              + Add New
+            </button>
+          </span>
+        </div>
+      </div>
+      <div class="feature-list-search-filter"></div>
+      <form [formGroup]="searchForm">
+        <div class="row">
+          <div class="col-md-5 col-lg-4 col-xl-6">
+            <div class="row">
+              <div class="col-sm-12">
+                <div class="d-flex justify-content-between align-items-center">
+                  <label class="d-flex align-items-center gap-2">
+                    <select
+                      style="width: 5rem"
+                      class="form-control mx-25 w-100px py-2 custom-select"
+                      formControlName="pageSize"
+                      (change)="filterData()"
+                    >
+                      <option value="5">5</option>
+                      <option value="10">10</option>
+                      <option value="25">25</option>
+                      <option value="50">50</option>
+                      <option value="100">100</option>
+                    </select>
+                  </label>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="col-md-7 col-lg-8 col-xl-6">
+            <div class="filter-search-option">
+              <div class="input-group justify-content-end gap-3">
+                <button
+                  [ngClass]="{ hide: isFilter === false }"
+                  type="button"
+                  class="btn-filter"
+                  (click)="toggleFilter()"
+                >
+                  <i class="fas fa-filter filter-icon me-2"></i>
+                </button>
+
+                <div class="d-flex align-items-center position-relative w-50">
+                  <app-keenicon
+                    name="magnifier"
+                    class="fs-3 search-input-icon"
+                  ></app-keenicon>
+                  <input
+                    type="text"
+                    data-action="filter"
+                    class="form-control form-control-solid ps-12 search-input"
+                    placeholder="Search ..."
+                    formControlName="searchKey"
+                    (keyup)="filterData()"
+                  />
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </form>
+
+      <!-- <div class="filter-container" [ngClass]="{'show':isShowFilter}">
+        <form [formGroup]="filterForm">
+          <div class="row mb-2">
+            
+           
+         
+            <div class="col-2">
+              <ng-select [items]="YearList" placeholder="Member Type"
+                formControlName="Year"></ng-select>
+            </div>
+            <div class="col-4">
+              <div>
+                  <button (click)="getAvailability()" class="search-btn">Search</button>
+                  <button (click)="resetFilterForm()" class="reset-btn ms-3">Reset</button>
+              </div>
+          </div>
+           
+          
+          </div>
+        </form>
+      </div> -->
+
+      <div class="content mt-2">
+        <div class="table-responsive">
+          <table class="mt-1 table table-hover mt-1 text-center customer-list">
+            <thead class="table-head rounded-lg">
+              <tr>
+                <th class="w-55px">SL.</th>
+
+                <th class="text-start">Date</th>
+                <th class="text-start">Name</th>
+                <th class="text-start">Life Time</th>
+
+                <th>Action</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr
+                *ngFor="let data of AvailabilityList; let i = index"
+                (dblclick)="goToEditPage(data.Id)"
+              >
+                <td>{{ (currentPage - 1) * pageSize + i + 1 }}</td>
+                <td class="text-start">{{ data.AvailabilityDate | date:'dd-MM-YYYY' }}</td>
+                <td class="text-start">{{ data.Name }}</td>
+                <td class="text-start">
+                  <span class="ai-status-badge ai-status-active" *ngIf="data.IsLifeTime">
+                    <span class="ai-pulse-dot"></span>
+                    <i class="fas fa-check fs-9"></i> YES
+                  </span>
+                  <span class="ai-status-badge ai-status-inactive" *ngIf="!data.IsLifeTime">
+                    <span class="ai-static-dot"></span>
+                    <i class="fas fa-times fs-9"></i> NO
+                  </span>
+                </td>
+                
+
+                <td class="w-100px text-center">
+                  <div class="table-action-group">
+                    <button
+                      class="btn-table-action btn-table-edit"
+                      title="Edit Item"
+                      type="button"
+                      (click)="goToEditPage(data.Id)"
+                    >
+                      <i class="fas fa-edit"></i>
+                    </button>
+                    <button
+                      class="btn-table-action btn-table-delete"
+                      title="Delete Item"
+                      type="button"
+                      (click)="deleteButtonClick(data.Id)"
+                    >
+                      <i class="far fa-trash-alt"></i>
+                    </button>
+                  </div>
+                </td>
+              </tr>
+            </tbody>
+      
+            <tbody *ngIf="AvailabilityList?.length < 1 || hasData === false">
+              <tr>
+                <td colspan="5" class="p-0">
+                  <app-empty [message]="'No Data Found'"></app-empty>
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+        <div class="row">
+          <div class="col-sm-12">
+            <ngb-pagination
+              class="d-flex justify-content-end"
+              [collectionSize]="numberOfEntries"
+              [(page)]="currentPage"
+              [pageSize]="pageSize"
+              (pageChange)="updatePageWiseTableData($event)"
+              [boundaryLinks]="true"
+              [maxSize]="4"
+            >
+            </ngb-pagination>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+
+
+<ng-template #deleteConfirmation let-c="close" let-d="dismiss">
+  <app-confirmation-modal
+    text="Do You Confirm to delete this profession?"
+    (closeButtonClicked)="d('Cross click')"
+    (okButtonClicked)="deleteButtonClick()"
+  ></app-confirmation-modal>
+</ng-template>
+
+<swal #noticeSwal [swalOptions]="swalOptions"> </swal>
+
+<swal
+  #deleteSwal
+  title="Are you sure to delete?"
+  text="This cannot be undone"
+  icon="warning"
+  [showCancelButton]="true"
+  [focusCancel]="true"
+  (confirm)="triggerDelete()"
+  [customClass]="{
+    confirmButton: 'btn btn-danger',
+    cancelButton: 'btn btn-active-light'
+  }"
+>
+</swal>

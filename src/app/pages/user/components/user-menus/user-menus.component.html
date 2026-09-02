@@ -1,0 +1,63 @@
+<div class="py-2">
+  <div class="d-flex align-items-center justify-content-between mb-3">
+    <div>
+      <h5 class="fw-bold text-dark mb-1">Menu Access Permissions</h5>
+      <p class="section-subtitle mb-0">Configure which navigation modules and sub-pages this user can access</p>
+    </div>
+  </div>
+
+  <div class="menu-permission-container mb-4">
+    <div class="menu-group-card mb-3" *ngFor="let x of userMenusData; index as i">
+      <!-- Parent Menu Header -->
+      <div class="menu-group-header d-flex align-items-center justify-content-between p-3" [class.menu-group-active]="x.IsChecked">
+        <div class="d-flex align-items-center gap-3">
+          <div class="menu-icon-indicator" [class.menu-icon-indicator-active]="x.IsChecked">
+            <i class="fas fa-folder"></i>
+          </div>
+          <div>
+            <span class="fw-bold text-dark fs-7">{{ x.Name }}</span>
+            <span class="badge badge-light-secondary ms-2 fs-9">{{ x.UserSubMenuRess?.length || 0 }} Sub-menus</span>
+          </div>
+        </div>
+
+        <div class="d-flex align-items-center gap-2" (click)="$event.stopPropagation()">
+          <input
+            type="checkbox"
+            class="form-check-input smart-switch"
+            [checked]="x.IsChecked"
+            (change)="toggleCheckBoxMenu(x)"
+          />
+        </div>
+      </div>
+
+      <!-- Child Submenus Pills Grid -->
+      <div class="menu-subitems-grid p-3" *ngIf="x.UserSubMenuRess && x.UserSubMenuRess.length > 0">
+        <div class="row g-2">
+          <div class="col-sm-6 col-md-4 col-lg-3" *ngFor="let item of x.UserSubMenuRess; index as j">
+            <div
+              class="submenu-pill d-flex align-items-center justify-content-between p-2 rounded-2"
+              [class.submenu-pill-active]="item.IsChecked"
+              (click)="toggleCheckBoxSubMenu(item)"
+            >
+              <span class="fs-8 fw-semibold text-truncate pe-2" [class.text-primary]="item.IsChecked">{{ item.Name }}</span>
+              <input
+                type="checkbox"
+                class="form-check-input mt-0"
+                style="width: 16px; height: 16px; min-height: 16px; border-radius: 4px;"
+                [checked]="item.IsChecked"
+                (click)="$event.stopPropagation()"
+                (change)="toggleCheckBoxSubMenu(item)"
+              />
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="d-flex justify-content-end align-items-center pt-3 border-top border-gray-200">
+    <button type="button" class="primary-btn" (click)="saveUserMenu()">
+      <i class="fas fa-save me-1"></i> Save Menu Permissions
+    </button>
+  </div>
+</div>
