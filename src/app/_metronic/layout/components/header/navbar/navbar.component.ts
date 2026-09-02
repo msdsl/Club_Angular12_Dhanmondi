@@ -18,8 +18,21 @@ export class NavbarComponent implements OnInit {
   constructor() {}
 
   ngOnInit(): void {
+    const stored = localStorage.getItem('currentBgclUser');
+    if (stored) {
+      try {
+        this.user = JSON.parse(stored);
+      } catch (e) {
+        this.user = null;
+      }
+    }
+  }
 
-    this.user = JSON.parse(localStorage.getItem("currentBgclUser"));
-    
+  get userDisplayName(): string {
+    return this.user?.FullName || this.user?.Name || this.user?.UserName || 'Admin User';
+  }
+
+  get userRole(): string {
+    return this.user?.Role || this.user?.UserRole || 'Club Admin';
   }
 }

@@ -296,9 +296,14 @@
                 Download the multi-sheet template containing pre-formatted <strong>Members</strong>, <strong>Spouse</strong>, and <strong>Children</strong> sheets.
               </p>
             </div>
-            <button type="button" class="btn btn-outline-primary btn-sm w-100 font-weight-bold fw-bold" (click)="downloadMultiSheetTemplate()">
+            <a
+              href="./assets/templates/DhanmondiClub_Member_Registration_MultiSheet_Template.xlsx"
+              download="DhanmondiClub_Member_Registration_MultiSheet_Template.xlsx"
+              class="btn btn-outline-primary btn-sm w-100 font-weight-bold fw-bold"
+              (click)="onTemplateDownloadClick($event)"
+            >
               <i class="fas fa-download me-1"></i> Download Multi-Sheet Template (.xlsx)
-            </button>
+            </a>
           </div>
         </div>
 

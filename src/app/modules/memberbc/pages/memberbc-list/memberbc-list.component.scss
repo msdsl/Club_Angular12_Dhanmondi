@@ -547,3 +547,134 @@
   .extra-small { font-size: 0.75rem; }
   .font-weight-500 { font-weight: 500; }
 }
+
+/* ===================================================
+   MOBILE & UNIVERSAL RESPONSIVE ENHANCEMENTS
+   =================================================== */
+
+@media (max-width: 991.98px) {
+  .feature-section-wrapper {
+    padding: 12px !important;
+  }
+
+  .ai-stat-card {
+    padding: 14px;
+
+    .ai-stat-value {
+      font-size: 1.45rem;
+    }
+  }
+}
+
+@media (max-width: 767.98px) {
+  .feature-section-wrapper {
+    padding: 8px !important;
+    overflow-x: hidden;
+  }
+
+  /* Header Bar */
+  .d-flex.flex-wrap.align-items-center.justify-content-between.gap-3.mb-4.pb-3 {
+    flex-direction: column;
+    align-items: stretch !important;
+    gap: 12px !important;
+
+    .action-outline-btn,
+    .primary-btn {
+      flex: 1 1 calc(50% - 6px);
+      justify-content: center;
+      font-size: 12px;
+      padding: 8px 12px;
+      text-align: center;
+      white-space: nowrap;
+    }
+  }
+
+  .member-header-icon {
+    width: 40px;
+    height: 40px;
+  }
+
+  .page-header-subtitle {
+    font-size: 12px;
+  }
+
+  /* AI Stat Cards */
+  .ai-stat-card {
+    padding: 12px 14px;
+    border-radius: 12px;
+
+    .ai-stat-label {
+      font-size: 10px;
+    }
+
+    .ai-stat-value {
+      font-size: 1.3rem;
+    }
+
+    .ai-stat-sub {
+      font-size: 10px !important;
+    }
+
+    .ai-stat-icon-wrap {
+      width: 36px;
+      height: 36px;
+      font-size: 14px;
+    }
+  }
+
+  /* Search & Filter Controls */
+  .modern-search-box {
+    width: 100%;
+  }
+
+  .btn-filter-toggle {
+    flex-shrink: 0;
+    padding: 7px 12px;
+    font-size: 12px;
+  }
+
+  .advanced-filter-card {
+    padding: 16px !important;
+
+    .btn-filter-reset,
+    .btn-filter-apply {
+      flex: 1;
+      justify-content: center;
+      text-align: center;
+      padding: 8px 12px;
+    }
+  }
+
+  /* Member Table Responsive Wrapper */
+  .custom-member-table-wrapper {
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+
+    .custom-member-table {
+      min-width: 880px;
+
+      th, td {
+        padding: 9px 8px;
+        font-size: 12px;
+      }
+    }
+  }
+}
+
+@media (max-width: 480px) {
+  .d-flex.flex-wrap.align-items-center.justify-content-between.gap-3.mb-4.pb-3 {
+    .action-outline-btn,
+    .primary-btn {
+      flex: 1 1 100%;
+      font-size: 12px;
+    }
+  }
+
+  .ai-stat-card {
+    padding: 10px 12px;
+
+    .ai-stat-value {
+      font-size: 1.15rem;
+    }
+  }
+}

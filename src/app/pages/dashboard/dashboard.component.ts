@@ -245,12 +245,32 @@ export class DashboardComponent implements OnInit, OnDestroy {
     }
   }
 
-  public todayRevenue = 328750;
-  public currentYearIncome = 7245680;
+  public todayRevenue = 0;
+  public currentYearIncome = 0;
   public todayCheckInCount = 0;
   public thisMonthCheckInCount = 0;
   public thisMonthNewMembersCount = 128;
 
+  get displayTodayRevenue(): number {
+    if (this.todayRevenue !== undefined && this.todayRevenue !== null && this.todayRevenue > 0) {
+      return this.todayRevenue;
+    }
+    if (this.getUserDashboardAllData?.TodayRevenue !== undefined && this.getUserDashboardAllData?.TodayRevenue !== null && this.getUserDashboardAllData.TodayRevenue > 0) {
+      return this.getUserDashboardAllData.TodayRevenue;
+    }
+    if (this.todaySummaryTotal !== undefined && this.todaySummaryTotal !== null && this.todaySummaryTotal > 0) {
+      return this.todaySummaryTotal;
+    }
+    return this.todayRevenue || 0;
+  }
+
+  get todayTargetPercent(): number {
+    const target = 200000;
+    const current = this.displayTodayRevenue;
+    if (!current || current <= 0) return 0;
+    const percent = (current / target) * 100;
+    return Number(percent.toFixed(1));
+  }
 
   // Dynamic Department Revenue
   public departmentRevenueList: DepartmentRevenue[] = [
@@ -297,10 +317,9 @@ export class DashboardComponent implements OnInit, OnDestroy {
     { name: 'Others', amount: 17250, icon: 'fa-handshake', colorClass: 'secondary' },
   ];
 
-
   get todaySummaryTotal(): number {
     if (!this.todaySummaryList || this.todaySummaryList.length === 0) {
-      return this.todayRevenue || 328750;
+      return this.todayRevenue || 0;
     }
     return this.todaySummaryList.reduce((sum, item) => sum + (Number(item.amount) || 0), 0);
   }
@@ -439,9 +458,17 @@ export class DashboardComponent implements OnInit, OnDestroy {
         next: (res: any) => {
           if (res) {
             let rawData: any = res;
-            if (res.Data) rawData = res.Data;
-            else if (res.DataList && res.DataList.length > 0) rawData = res.DataList[0];
-            else if (Array.isArray(res) && res.length > 0) rawData = res[0];
+            if (res.Data !== undefined && res.Data !== null) {
+              rawData = Array.isArray(res.Data) ? (res.Data[0] || {}) : res.Data;
+            } else if (res.data !== undefined && res.data !== null) {
+              rawData = Array.isArray(res.data) ? (res.data[0] || {}) : res.data;
+            } else if (res.DataList && Array.isArray(res.DataList) && res.DataList.length > 0) {
+              rawData = res.DataList[0];
+            } else if (res.dataList && Array.isArray(res.dataList) && res.dataList.length > 0) {
+              rawData = res.dataList[0];
+            } else if (Array.isArray(res) && res.length > 0) {
+              rawData = res[0];
+            }
 
             console.log('Dynamic Dashboard Raw Data:', rawData);
 
@@ -476,13 +503,30 @@ export class DashboardComponent implements OnInit, OnDestroy {
             if (rawData.TodayRevenueGrowthRate != null) this.todayRevenueGrowthRate = Number(rawData.TodayRevenueGrowthRate);
             if (rawData.MonthRevenueGrowthRate != null) this.monthRevenueGrowthRate = Number(rawData.MonthRevenueGrowthRate);
 
-            // Revenues
-            if (rawData.TodayRevenue != null || rawData.TodayIncome != null) {
-              this.todayRevenue = Number(rawData.TodayRevenue ?? rawData.TodayIncome ?? 328750);
+            // Revenues (Check all casing variations)
+            const rawTodayRev = rawData.TodayRevenue ?? rawData.todayRevenue ??
+                                rawData.TodayTotalRevenue ?? rawData.todayTotalRevenue ??
+                                rawData.TodayIncome ?? rawData.todayIncome ??
+                                rawData.TodayTotalIncome ?? rawData.todayTotalIncome ??
+                                rawData.TodaySale ?? rawData.todaySale ??
+                                rawData.TodayTotalSale ?? rawData.todayTotalSale ??
+                                rawData.TotalTodayRevenue ?? rawData.totalTodayRevenue ??
+                                rawData.TodayAmount ?? rawData.todayAmount ??
+                                rawData.TodayCollection ?? rawData.todayCollection;
+
+            if (rawTodayRev !== undefined && rawTodayRev !== null) {
+              this.todayRevenue = Number(rawTodayRev);
               this.getUserDashboardAllData.TodayRevenue = this.todayRevenue;
             }
-            if (rawData.ThisMonthRevenue != null || rawData.TotalIncome != null) {
-              this.currentYearIncome = Number(rawData.ThisMonthRevenue ?? rawData.TotalIncome ?? 7245680);
+
+            const rawMonthRev = rawData.ThisMonthRevenue ?? rawData.thisMonthRevenue ??
+                                rawData.TotalIncome ?? rawData.totalIncome ??
+                                rawData.MonthRevenue ?? rawData.monthRevenue ??
+                                rawData.ThisMonthIncome ?? rawData.thisMonthIncome ??
+                                rawData.MonthIncome ?? rawData.monthIncome;
+
+            if (rawMonthRev !== undefined && rawMonthRev !== null) {
+              this.currentYearIncome = Number(rawMonthRev);
               this.getUserDashboardAllData.ThisMonthRevenue = this.currentYearIncome;
             }
 
@@ -524,11 +568,17 @@ export class DashboardComponent implements OnInit, OnDestroy {
             const todayList = rawData.TodaySummaries ?? rawData.todaySummaries;
             if (todayList && Array.isArray(todayList) && todayList.length > 0) {
               this.todaySummaryList = todayList.map((s: any) => ({
-                name: s.DepartmentName || s.departmentName || 'Sales Item',
-                amount: Number(s.Amount || s.amount || 0),
+                name: s.DepartmentName || s.departmentName || s.Name || s.name || 'Sales Item',
+                amount: Number(s.Amount ?? s.amount ?? s.Total ?? s.total ?? 0),
                 icon: s.Icon || s.icon || 'fa-coins',
                 colorClass: s.ColorClass || s.colorClass || 'primary',
               }));
+
+              const summarySum = this.todaySummaryList.reduce((sum, item) => sum + (Number(item.amount) || 0), 0);
+              if ((rawTodayRev === undefined || rawTodayRev === null) && summarySum > 0) {
+                this.todayRevenue = summarySum;
+                this.getUserDashboardAllData.TodayRevenue = summarySum;
+              }
             }
 
             // Dynamic Recent Memberships
@@ -667,23 +717,32 @@ export class DashboardComponent implements OnInit, OnDestroy {
       .pipe(takeUntil(this.destroy$))
       .subscribe({
         next: (res: any) => {
-          if (res && (res.Data || Array.isArray(res))) {
-            const todayTxList = Array.isArray(res.Data) ? res.Data : Array.isArray(res) ? res : [];
-            const todaySaleItem = todayTxList.find((t: any) => {
-              const type = (t.TransactionType || t.Type || '')?.trim().toLowerCase();
-              return type === 'sale' || type.includes('sale') || type.includes('f & b');
+          const todayTxList = res?.Data ? (Array.isArray(res.Data) ? res.Data : [res.Data]) :
+                              res?.data ? (Array.isArray(res.data) ? res.data : [res.data]) :
+                              Array.isArray(res) ? res : [];
+
+          if (todayTxList && todayTxList.length > 0) {
+            let totalTxAmount = 0;
+            todayTxList.forEach((t: any) => {
+              const amt = Number(t.Amount ?? t.amount ?? t.NetAmt ?? t.netAmt ?? t.TotalAmount ?? t.totalAmount ?? 0);
+              totalTxAmount += amt;
+
+              const type = (t.TransactionType || t.type || '')?.trim().toLowerCase();
+              if (type === 'sale' || type.includes('sale') || type.includes('f & b')) {
+                const fbToday = this.todaySummaryList.find(
+                  (s) => s.name === 'F & B Sales' || s.name?.toLowerCase().includes('f & b')
+                );
+                if (fbToday) {
+                  fbToday.amount = amt;
+                }
+              }
             });
 
-            if (todaySaleItem) {
-              const todaySaleAmount = Number(todaySaleItem.Amount ?? todaySaleItem.NetAmt ?? 0);
-              const fbToday = this.todaySummaryList.find(
-                (s) => s.name === 'F & B Sales' || s.name?.toLowerCase().includes('f & b')
-              );
-              if (fbToday) {
-                fbToday.amount = todaySaleAmount;
-                this.cdr.detectChanges();
-              }
+            if (totalTxAmount > 0) {
+              this.todayRevenue = totalTxAmount;
+              this.getUserDashboardAllData.TodayRevenue = totalTxAmount;
             }
+            this.cdr.detectChanges();
           }
         },
         error: (err) => console.error("Error fetching today's transaction data:", err),

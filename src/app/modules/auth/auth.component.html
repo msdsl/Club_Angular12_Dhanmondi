@@ -1,16 +1,31 @@
-<div class="custom_login">
-  <div class="d-flex flex-column flex-lg-row flex-column-fluid">
-    <!--begin::Body-->
-    <div
-      class="d-flex flex-column flex-lg-row-fluid w-lg-50 p-10 order-2 order-lg-1"
-    >
-      <!--begin::Form-->
-      <div class="d-flex flex-center flex-column flex-lg-row-fluid">
-        <!--begin::Wrapper-->
-        <div class="bccl__login">
-          <router-outlet></router-outlet>
+<div class="custom-login-viewport">
+  <!-- Glowing Ambient Background Orbs -->
+  <div class="ambient-orb orb-1"></div>
+  <div class="ambient-orb orb-2"></div>
+  <div class="ambient-orb orb-3"></div>
+  <div class="mesh-grid-pattern"></div>
+
+  <!-- Stage Container -->
+  <div class="login-stage-container">
+    <!-- Left Showcase: Watermark Logo (100% Full Visibility, Never Covered) -->
+    <div class="watermark-showcase">
+      <div class="watermark-brand-box">
+        <img
+          src="./assets/media/logos/club-erp-logo-white.png"
+          alt="CLUB ERP Logo"
+          class="watermark-hero-img"
+        />
+        <div class="watermark-badge mt-4">
+          <span class="watermark-badge-dot"></span>
+          <span class="watermark-badge-text">Next-Gen Club Management System</span>
         </div>
-        <!--end::Wrapper-->
+      </div>
+    </div>
+
+    <!-- Right: Frosted Glass Login Portal -->
+    <div class="login-card-wrapper">
+      <div class="glass-portal-card">
+        <router-outlet></router-outlet>
       </div>
     </div>
   </div>

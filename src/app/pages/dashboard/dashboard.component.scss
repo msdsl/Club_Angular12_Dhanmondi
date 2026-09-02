@@ -37,13 +37,22 @@
 .club-crest-badge {
   width: 48px;
   height: 48px;
-  border-radius: 14px;
-  background: linear-gradient(135deg, #1e293b 0%, #0f172a 100%);
+  border-radius: 12px;
+  background: #ffffff;
+  border: 1px solid #e2e8f0;
   display: flex;
   align-items: center;
   justify-content: center;
-  box-shadow: 0 4px 14px rgba(15, 23, 42, 0.25);
+  box-shadow: 0 2px 8px rgba(15, 23, 42, 0.06);
   flex-shrink: 0;
+  padding: 5px;
+  overflow: hidden;
+
+  .club-logo-img {
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+  }
 }
 
 .dashboard-main-title {
@@ -140,17 +149,17 @@
 }
 
 /* ==========================================================================
-   ROW 1: HERO KPI CARDS (HIGH-IMPACT 4 COLUMNS)
+   ROW 1: HERO KPI CARDS (HIGH-IMPACT 3 COLUMNS)
    ========================================================================== */
 .hero-kpi-card {
   background: #ffffff;
-  border: 1px solid #e2e8f0;
-  border-radius: 18px;
-  padding: 22px;
+  border: 1px solid rgba(226, 232, 240, 0.85);
+  border-radius: 20px;
+  padding: 24px;
   position: relative;
   overflow: hidden;
-  box-shadow: 0 4px 20px -2px rgba(15, 23, 42, 0.04);
-  transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+  box-shadow: 0 2px 8px -1px rgba(15, 23, 42, 0.03), 0 12px 24px -4px rgba(15, 23, 42, 0.04);
+  transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
 
   &::before {
     content: '';
@@ -159,52 +168,67 @@
     left: 0;
     right: 0;
     height: 4px;
+    transition: height 0.25s ease;
   }
 
   &:hover {
-    transform: translateY(-4px);
-    box-shadow: 0 14px 28px -4px rgba(15, 23, 42, 0.09);
+    transform: translateY(-5px);
+    box-shadow: 0 20px 36px -8px rgba(15, 23, 42, 0.09), 0 0 0 1px rgba(99, 102, 241, 0.12);
     border-color: #cbd5e1;
+
+    &::before {
+      height: 5px;
+    }
+
+    .hero-icon-container {
+      transform: scale(1.08) rotate(3deg);
+    }
   }
 
-  &.card-purple-accent::before {
-    background: linear-gradient(90deg, #8b5cf6, #c084fc);
+  &.card-purple-accent {
+    background: radial-gradient(circle at 92% 10%, rgba(139, 92, 246, 0.09) 0%, transparent 60%), #ffffff;
+    &::before {
+      background: linear-gradient(90deg, #7c3aed, #a855f7);
+    }
   }
-  &.card-emerald-accent::before {
-    background: linear-gradient(90deg, #10b981, #34d399);
+  &.card-blue-accent {
+    background: radial-gradient(circle at 92% 10%, rgba(37, 99, 235, 0.09) 0%, transparent 60%), #ffffff;
+    &::before {
+      background: linear-gradient(90deg, #2563eb, #38bdf8);
+    }
   }
-  &.card-blue-accent::before {
-    background: linear-gradient(90deg, #2563eb, #38bdf8);
-  }
-  &.card-amber-accent::before {
-    background: linear-gradient(90deg, #f59e0b, #fbbf24);
+  &.card-amber-accent {
+    background: radial-gradient(circle at 92% 10%, rgba(245, 158, 11, 0.09) 0%, transparent 60%), #ffffff;
+    &::before {
+      background: linear-gradient(90deg, #f59e0b, #fbbf24);
+    }
   }
 }
 
 .hero-icon-container {
-  width: 44px;
-  height: 44px;
-  border-radius: 12px;
+  width: 48px;
+  height: 48px;
+  border-radius: 14px;
   display: flex;
   align-items: center;
   justify-content: center;
   flex-shrink: 0;
+  transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
 
   &.bg-purple-soft {
-    background: #f5f3ff;
-    border: 1px solid #ede9fe;
-  }
-  &.bg-emerald-soft {
-    background: #ecfdf5;
-    border: 1px solid #d1fae5;
+    background: linear-gradient(135deg, #f5f3ff 0%, #ede9fe 100%);
+    border: 1px solid #ddd6fe;
+    box-shadow: 0 4px 14px rgba(139, 92, 246, 0.18);
   }
   &.bg-blue-soft {
-    background: #eff6ff;
-    border: 1px solid #dbeafe;
+    background: linear-gradient(135deg, #eff6ff 0%, #dbeafe 100%);
+    border: 1px solid #bfdbfe;
+    box-shadow: 0 4px 14px rgba(37, 99, 235, 0.18);
   }
   &.bg-amber-soft {
-    background: #fffbeb;
-    border: 1px solid #fef3c7;
+    background: linear-gradient(135deg, #fffbeb 0%, #fef3c7 100%);
+    border: 1px solid #fde68a;
+    box-shadow: 0 4px 14px rgba(245, 158, 11, 0.18);
   }
 }
 
@@ -217,39 +241,82 @@
 .text-violet { color: #7c3aed !important; }
 
 .kpi-micro-label {
-  font-size: 12px;
-  font-weight: 600;
+  font-size: 11.5px;
+  font-weight: 700;
   text-transform: uppercase;
-  letter-spacing: 0.5px;
+  letter-spacing: 0.6px;
   color: #64748b;
   display: block;
   margin-bottom: 4px;
 }
 
 .kpi-hero-number {
-  font-size: 1.85rem;
+  font-size: 2rem;
   font-weight: 850;
   color: #0f172a;
-  letter-spacing: -0.5px;
+  letter-spacing: -0.6px;
   line-height: 1.2;
   font-variant-numeric: tabular-nums;
 
   &.currency-val {
-    font-size: 1.75rem;
+    font-size: 1.9rem;
   }
 
   .currency-symbol {
-    font-size: 1.25rem;
+    font-size: 1.35rem;
     font-weight: 700;
     color: #64748b;
     margin-right: 2px;
   }
 }
 
+/* Smart KPI Mini Progress Meter */
+.kpi-mini-progress {
+  padding: 8px 10px;
+  background: #f8fafc;
+  border: 1px solid #f1f5f9;
+  border-radius: 10px;
+
+  .progress-sub-text {
+    font-size: 11px;
+    font-weight: 600;
+    color: #64748b;
+  }
+
+  .progress-percent-val {
+    font-size: 11px;
+    font-weight: 750;
+    font-variant-numeric: tabular-nums;
+  }
+
+  .kpi-progress-track {
+    height: 4px;
+    background: #e2e8f0;
+    border-radius: 4px;
+    overflow: hidden;
+  }
+
+  .kpi-progress-bar {
+    height: 100%;
+    border-radius: 4px;
+    transition: width 0.7s cubic-bezier(0.34, 1.56, 0.64, 1);
+
+    &.bg-purple-gradient {
+      background: linear-gradient(90deg, #8b5cf6, #c084fc);
+    }
+    &.bg-blue-gradient {
+      background: linear-gradient(90deg, #2563eb, #38bdf8);
+    }
+    &.bg-amber-gradient {
+      background: linear-gradient(90deg, #f59e0b, #fbbf24);
+    }
+  }
+}
+
 .trend-capsule {
   display: inline-flex;
   align-items: center;
-  padding: 3px 9px;
+  padding: 4px 10px;
   border-radius: 20px;
   font-size: 12px;
   font-weight: 700;
@@ -304,13 +371,30 @@
   color: #2563eb;
   display: inline-flex;
   align-items: center;
-  gap: 5px;
+  gap: 6px;
 
   .pulse-ring {
-    width: 6px;
-    height: 6px;
+    width: 7px;
+    height: 7px;
     border-radius: 50%;
     background: #2563eb;
+    box-shadow: 0 0 0 0 rgba(37, 99, 235, 0.7);
+    animation: pulseBlue 2s infinite;
+  }
+}
+
+@keyframes pulseBlue {
+  0% {
+    transform: scale(0.95);
+    box-shadow: 0 0 0 0 rgba(37, 99, 235, 0.7);
+  }
+  70% {
+    transform: scale(1);
+    box-shadow: 0 0 0 6px rgba(37, 99, 235, 0);
+  }
+  100% {
+    transform: scale(0.95);
+    box-shadow: 0 0 0 0 rgba(37, 99, 235, 0);
   }
 }
 
@@ -330,47 +414,92 @@
 }
 
 /* ==========================================================================
-   ROW 2: SECONDARY OPERATIONAL STRIP (4 CARDS)
+   ROW 2: SECONDARY OPERATIONAL STRIP (3 ENHANCED CARDS)
    ========================================================================== */
 .strip-card {
   background: #ffffff;
-  border: 1px solid #e2e8f0;
-  border-radius: 14px;
+  border: 1px solid rgba(226, 232, 240, 0.85);
+  border-radius: 18px;
+  padding: 18px 22px;
   box-shadow: 0 2px 10px rgba(15, 23, 42, 0.03);
-  transition: all 0.22s ease;
+  transition: all 0.28s cubic-bezier(0.34, 1.56, 0.64, 1);
+  position: relative;
+  overflow: hidden;
 
   &:hover {
-    transform: translateY(-2px);
-    box-shadow: 0 6px 18px rgba(15, 23, 42, 0.06);
-    border-color: #cbd5e1;
+    transform: translateY(-3px);
+
+    .strip-icon {
+      transform: scale(1.08) rotate(3deg);
+    }
+  }
+
+  &.strip-card-rose {
+    background: linear-gradient(135deg, #ffffff 0%, #fffbfc 100%);
+    border-color: rgba(254, 205, 211, 0.8);
+    &:hover {
+      box-shadow: 0 14px 26px -6px rgba(244, 63, 94, 0.14);
+      border-color: #f43f5e;
+    }
+  }
+
+  &.strip-card-teal {
+    background: linear-gradient(135deg, #ffffff 0%, #f7fdfc 100%);
+    border-color: rgba(204, 251, 241, 0.8);
+    &:hover {
+      box-shadow: 0 14px 26px -6px rgba(13, 148, 136, 0.14);
+      border-color: #0d9488;
+    }
+  }
+
+  &.strip-card-violet {
+    background: linear-gradient(135deg, #ffffff 0%, #faf8ff 100%);
+    border-color: rgba(237, 233, 254, 0.8);
+    &:hover {
+      box-shadow: 0 14px 26px -6px rgba(124, 58, 237, 0.14);
+      border-color: #7c3aed;
+    }
   }
 }
 
 .strip-icon {
-  width: 40px;
-  height: 40px;
-  border-radius: 10px;
+  width: 44px;
+  height: 44px;
+  border-radius: 12px;
   display: flex;
   align-items: center;
   justify-content: center;
   flex-shrink: 0;
+  transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
 
-  &.bg-rose-soft { background: #fff1f2; border: 1px solid #ffe4e6; }
-  &.bg-teal-soft { background: #f0fdfa; border: 1px solid #ccfbf1; }
-  &.bg-violet-soft { background: #f5f3ff; border: 1px solid #ede9fe; }
-  &.bg-amber-soft { background: #fffbeb; border: 1px solid #fef3c7; }
+  &.bg-rose-soft {
+    background: linear-gradient(135deg, #fff1f2 0%, #ffe4e6 100%);
+    border: 1px solid #fecdd3;
+    box-shadow: 0 3px 10px rgba(244, 63, 94, 0.15);
+  }
+  &.bg-teal-soft {
+    background: linear-gradient(135deg, #f0fdfa 0%, #ccfbf1 100%);
+    border: 1px solid #99f6e4;
+    box-shadow: 0 3px 10px rgba(13, 148, 136, 0.15);
+  }
+  &.bg-violet-soft {
+    background: linear-gradient(135deg, #f5f3ff 0%, #ede9fe 100%);
+    border: 1px solid #ddd6fe;
+    box-shadow: 0 3px 10px rgba(124, 58, 237, 0.15);
+  }
 }
 
 .strip-label {
   font-size: 11.5px;
-  font-weight: 600;
+  font-weight: 650;
   color: #64748b;
   display: block;
+  margin-bottom: 2px;
 }
 
 .strip-number {
-  font-size: 1.15rem;
-  font-weight: 750;
+  font-size: 1.25rem;
+  font-weight: 800;
   color: #0f172a;
   font-variant-numeric: tabular-nums;
   line-height: 1.2;
@@ -379,41 +508,47 @@
 .alert-status-pill {
   font-size: 11px;
   font-weight: 700;
-  padding: 3px 8px;
-  border-radius: 12px;
+  padding: 4px 10px;
+  border-radius: 14px;
   background: #fff1f2;
   color: #e11d48;
   border: 1px solid #fecdd3;
+  display: inline-flex;
+  align-items: center;
+
+  .dot-indicator {
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+  }
 }
 
 .safe-reserve-pill {
   font-size: 11px;
   font-weight: 700;
-  padding: 3px 8px;
-  border-radius: 12px;
+  padding: 4px 10px;
+  border-radius: 14px;
   background: #f0fdfa;
   color: #0d9488;
   border: 1px solid #99f6e4;
+  display: inline-flex;
+  align-items: center;
+
+  .dot-indicator {
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+  }
 }
 
 .growth-subpill {
   font-size: 11px;
   font-weight: 700;
-  padding: 3px 8px;
-  border-radius: 12px;
+  padding: 4px 10px;
+  border-radius: 14px;
   background: #f5f3ff;
   color: #7c3aed;
   border: 1px solid #ddd6fe;
-}
-
-.health-good-pill {
-  font-size: 11px;
-  font-weight: 700;
-  padding: 3px 8px;
-  border-radius: 12px;
-  background: #fffbeb;
-  color: #b45309;
-  border: 1px solid #fde68a;
 }
 
 /* ==========================================================================
@@ -421,14 +556,16 @@
    ========================================================================== */
 .modern-card {
   background: #ffffff;
-  border: 1px solid #e2e8f0;
-  border-radius: 18px;
-  box-shadow: 0 4px 20px -2px rgba(15, 23, 42, 0.04);
-  transition: all 0.25s ease;
+  border: 1px solid rgba(226, 232, 240, 0.85);
+  border-radius: 20px;
+  box-shadow: 0 2px 8px -1px rgba(15, 23, 42, 0.03), 0 12px 24px -4px rgba(15, 23, 42, 0.04);
+  transition: all 0.28s cubic-bezier(0.4, 0, 0.2, 1);
+  position: relative;
 
   &:hover {
     border-color: #cbd5e1;
-    box-shadow: 0 10px 24px -4px rgba(15, 23, 42, 0.07);
+    box-shadow: 0 16px 32px -8px rgba(15, 23, 42, 0.08);
+    transform: translateY(-3px);
   }
 }
 
@@ -737,6 +874,116 @@
   }
 }
 
+.recent-members-table {
+  border-collapse: separate;
+  border-spacing: 0;
+  width: 100%;
+
+  .table-head-row {
+    th {
+      background: #f8fafc;
+      color: #64748b;
+      font-size: 11px;
+      font-weight: 750;
+      text-transform: uppercase;
+      letter-spacing: 0.4px;
+      padding: 9px 8px;
+      border-top: 1px solid #f1f5f9;
+      border-bottom: 1px solid #e2e8f0;
+      white-space: nowrap;
+
+      &:first-child {
+        border-top-left-radius: 8px;
+        border-bottom-left-radius: 8px;
+        padding-left: 10px;
+      }
+
+      &:last-child {
+        border-top-right-radius: 8px;
+        border-bottom-right-radius: 8px;
+        padding-right: 10px;
+      }
+    }
+  }
+
+  .member-row {
+    transition: background-color 0.15s ease;
+
+    &:hover {
+      background-color: #f8fafc;
+    }
+
+    td {
+      padding: 8.5px 8px;
+      border-bottom: 1px solid #f1f5f9;
+      vertical-align: middle;
+
+      &:first-child {
+        padding-left: 10px;
+      }
+
+      &:last-child {
+        padding-right: 10px;
+      }
+    }
+
+    &:last-child td {
+      border-bottom: none;
+    }
+  }
+
+  .col-id {
+    white-space: nowrap;
+    padding-right: 6px;
+  }
+
+  .col-member {
+    white-space: nowrap;
+
+    .member-name-text {
+      white-space: nowrap;
+      overflow: visible;
+      text-overflow: clip;
+      max-width: none;
+      display: inline-block;
+      vertical-align: middle;
+    }
+  }
+
+  .col-category {
+    white-space: nowrap;
+    text-align: center;
+
+    .category-pill {
+      font-size: 10.5px;
+      font-weight: 700;
+      padding: 3px 8px;
+      border-radius: 6px;
+      white-space: nowrap;
+    }
+  }
+
+  .col-joined {
+    white-space: nowrap;
+  }
+}
+
+.custom-scrollbar {
+  scrollbar-width: thin;
+  scrollbar-color: #cbd5e1 transparent;
+
+  &::-webkit-scrollbar {
+    height: 4px;
+  }
+  &::-webkit-scrollbar-track {
+    background: transparent;
+  }
+  &::-webkit-scrollbar-thumb {
+    background: #cbd5e1;
+    border-radius: 4px;
+  }
+}
+
 .member-avatar-circle {
   width: 28px;
   height: 28px;
@@ -749,6 +996,7 @@
   align-items: center;
   justify-content: center;
   border: 1px solid #dbeafe;
+  flex-shrink: 0;
 }
 
 .category-pill {
@@ -756,6 +1004,7 @@
   font-weight: 650;
   padding: 3px 8px;
   border-radius: 6px;
+  white-space: nowrap;
 }
 
 /* Event Cards */
@@ -955,3 +1204,392 @@
   font-size: 13px;
   font-weight: 500;
 }
+
+/* ==========================================================================
+   MOBILE & UNIVERSAL RESPONSIVE ENHANCEMENTS
+   ========================================================================== */
+
+/* Tablets & Small Laptops (max-width: 1199.98px) */
+@media (max-width: 1199.98px) {
+  .hero-kpi-card {
+    padding: 20px;
+  }
+
+  .kpi-hero-number {
+    font-size: 1.85rem;
+
+    &.currency-val {
+      font-size: 1.75rem;
+    }
+  }
+
+  .strip-card {
+    padding: 16px 18px;
+
+    .strip-number {
+      font-size: 1.35rem;
+    }
+  }
+}
+
+/* Medium Tablets & iPads (max-width: 991.98px) */
+@media (max-width: 991.98px) {
+  .modern-dashboard-canvas {
+    padding: 0.5rem 0.25rem 2rem 0.25rem;
+  }
+
+  .executive-header-bar {
+    padding: 16px 20px;
+    border-radius: 16px;
+  }
+
+  .dashboard-main-title {
+    font-size: 1.35rem;
+  }
+
+  .spline-chart-container {
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+    padding-bottom: 8px;
+
+    .revenue-spline-svg {
+      min-width: 520px;
+    }
+
+    .x-axis-labels {
+      min-width: 520px;
+    }
+  }
+}
+
+/* Mobile Devices & Small Tablets (max-width: 767.98px) */
+@media (max-width: 767.98px) {
+  .modern-dashboard-canvas {
+    padding: 0.25rem 0 1.5rem 0;
+    overflow-x: hidden;
+  }
+
+  /* Executive Header Bar */
+  .executive-header-bar {
+    padding: 14px 16px;
+    border-radius: 14px;
+    margin-bottom: 1.25rem !important;
+
+    > .d-flex {
+      flex-direction: column;
+      align-items: stretch !important;
+      gap: 12px !important;
+    }
+
+    .d-flex.align-items-center.gap-3:last-child {
+      width: 100%;
+      display: flex;
+      gap: 8px !important;
+    }
+
+    .executive-date-pill {
+      flex: 1;
+      justify-content: center;
+      font-size: 11.5px;
+      padding: 7px 10px;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    .btn-executive-export {
+      flex: 1;
+      justify-content: center;
+      font-size: 11.5px;
+      padding: 7px 12px;
+      white-space: nowrap;
+    }
+  }
+
+  .club-crest-badge {
+    width: 42px;
+    height: 42px;
+    border-radius: 10px;
+    padding: 4px;
+  }
+
+  .dashboard-main-title {
+    font-size: 1.25rem;
+  }
+
+  .executive-pill-badge {
+    font-size: 10px;
+    padding: 2px 8px;
+  }
+
+  .dashboard-subtitle {
+    font-size: 11.5px;
+    line-height: 1.4;
+  }
+
+  /* Hero KPI Cards */
+  .hero-kpi-card {
+    padding: 18px 16px;
+    border-radius: 16px;
+
+    .hero-icon-container {
+      width: 42px;
+      height: 42px;
+      border-radius: 12px;
+    }
+
+    .trend-capsule {
+      font-size: 11px;
+      padding: 3px 8px;
+    }
+
+    .kpi-hero-number {
+      font-size: 1.65rem;
+
+      &.currency-val {
+        font-size: 1.55rem;
+      }
+
+      .currency-symbol {
+        font-size: 1.15rem;
+      }
+    }
+
+    .kpi-mini-progress {
+      padding: 6px 8px;
+
+      .progress-sub-text,
+      .progress-percent-val {
+        font-size: 10.5px;
+      }
+    }
+  }
+
+  /* Strip Cards */
+  .strip-card {
+    padding: 14px 16px;
+    border-radius: 14px;
+
+    .strip-icon {
+      width: 42px;
+      height: 42px;
+      border-radius: 12px;
+    }
+
+    .strip-label {
+      font-size: 11px;
+    }
+
+    .strip-number {
+      font-size: 1.35rem;
+    }
+
+    .alert-status-pill,
+    .safe-reserve-pill,
+    .growth-subpill {
+      font-size: 10.5px;
+      padding: 3px 8px;
+    }
+  }
+
+  /* Modern Card Containers */
+  .modern-card {
+    padding: 16px !important;
+    border-radius: 16px;
+
+    .section-card-title {
+      font-size: 1.1rem;
+    }
+
+    .section-card-desc {
+      font-size: 11.5px;
+    }
+  }
+
+  /* Spline Chart */
+  .spline-chart-container {
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+    padding-bottom: 8px;
+
+    .revenue-spline-svg {
+      min-width: 460px;
+      height: 175px;
+    }
+
+    .x-axis-labels {
+      min-width: 460px;
+      padding-left: 36px !important;
+      padding-right: 16px !important;
+
+      .x-axis-label-item {
+        font-size: 10px;
+      }
+    }
+
+    .y-axis-labels {
+      span {
+        font-size: 9.5px;
+      }
+    }
+  }
+
+  /* Department Donut Chart */
+  .donut-chart-wrapper {
+    .donut-svg {
+      width: 150px;
+      height: 150px;
+    }
+
+    .donut-center-text {
+      .donut-amount {
+        font-size: 1.1rem;
+      }
+      .donut-sub-label {
+        font-size: 10.5px;
+      }
+      .donut-sub-percent {
+        font-size: 10px;
+      }
+    }
+  }
+
+  .dept-legend-card {
+    padding: 6px 8px;
+  }
+
+  /* Community & Activity Center */
+  .total-revenue-box {
+    padding: 12px 14px;
+
+    .fs-6 {
+      font-size: 0.85rem !important;
+    }
+    .fs-4 {
+      font-size: 1.15rem !important;
+    }
+  }
+
+  .recent-members-table {
+    min-width: 380px;
+
+    th, td {
+      padding: 8px 6px;
+      font-size: 12px;
+    }
+
+    .col-id {
+      width: 80px;
+    }
+
+    .member-name-text {
+      font-size: 12px;
+    }
+
+    .category-pill {
+      font-size: 10px;
+      padding: 2px 6px;
+    }
+  }
+
+  .event-card-item {
+    padding: 10px 12px;
+
+    .event-date-block {
+      width: 40px;
+      height: 42px;
+
+      .event-month {
+        font-size: 9.5px;
+      }
+      .event-day {
+        font-size: 13px;
+      }
+    }
+
+    .event-title {
+      font-size: 12.5px;
+    }
+  }
+
+  /* Operational Tabbed Console */
+  .modern-nav-pills {
+    overflow-x: auto;
+    flex-wrap: nowrap !important;
+    padding-bottom: 6px;
+    -webkit-overflow-scrolling: touch;
+    scrollbar-width: none;
+
+    &::-webkit-scrollbar {
+      display: none;
+    }
+
+    .nav-tab-pill {
+      flex-shrink: 0;
+      white-space: nowrap;
+      font-size: 11.5px;
+      padding: 7px 12px;
+      border-radius: 8px;
+    }
+  }
+
+  .btn-refresh-action {
+    font-size: 11px;
+    padding: 5px 10px;
+  }
+
+  .modern-data-table {
+    min-width: 560px;
+
+    .table-head-row th {
+      font-size: 10.5px;
+      padding: 9px 10px;
+    }
+
+    .table-body-row td {
+      font-size: 12px;
+      padding: 9px 10px;
+    }
+  }
+}
+
+/* Compact Mobile Devices (max-width: 480px) */
+@media (max-width: 480px) {
+  .executive-header-bar {
+    padding: 12px 14px;
+
+    .club-crest-badge {
+      width: 38px;
+      height: 38px;
+    }
+
+    .dashboard-main-title {
+      font-size: 1.15rem;
+    }
+  }
+
+  .hero-kpi-card {
+    padding: 14px 12px;
+
+    .kpi-hero-number {
+      font-size: 1.5rem;
+
+      &.currency-val {
+        font-size: 1.4rem;
+      }
+    }
+  }
+
+  .strip-card {
+    padding: 12px 14px;
+
+    .strip-number {
+      font-size: 1.25rem;
+    }
+  }
+
+  .modern-card {
+    padding: 14px 12px !important;
+  }
+}
+

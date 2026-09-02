@@ -558,6 +558,10 @@ export class MemberListComponent implements OnInit {
     });
   }
 
+  onTemplateDownloadClick(event?: MouseEvent) {
+    this._alert.success('Sample Excel Template download started', 'Download Started');
+  }
+
   downloadMultiSheetTemplate() {
     // 1. Sheet 1: Members Sample (Dhanmondi Club format)
     const membersSample = [
@@ -686,7 +690,33 @@ export class MemberListComponent implements OnInit {
     XLSX.utils.book_append_sheet(wb, wsSpouse, 'Spouse');
     XLSX.utils.book_append_sheet(wb, wsChildren, 'Children');
 
-    XLSX.writeFile(wb, 'DhanmondiClub_Member_Registration_MultiSheet_Template.xlsx');
+    try {
+      const excelBuffer: any = XLSX.write(wb, { bookType: 'xlsx', type: 'array' });
+      const blob: Blob = new Blob([excelBuffer], {
+        type: 'application/octet-stream',
+      });
+      const fileName = 'DhanmondiClub_Member_Registration_MultiSheet_Template.xlsx';
+
+      if ((window.navigator as any) && (window.navigator as any).msSaveOrOpenBlob) {
+        (window.navigator as any).msSaveOrOpenBlob(blob, fileName);
+      } else {
+        const url = window.URL.createObjectURL(blob);
+        const link = document.createElement('a');
+        link.href = url;
+        link.setAttribute('download', fileName);
+        document.body.appendChild(link);
+        link.click();
+        setTimeout(() => {
+          document.body.removeChild(link);
+          window.URL.revokeObjectURL(url);
+        }, 10000);
+      }
+
+      this._alert.success('Sample Excel Template downloaded successfully', 'Download Started');
+    } catch (err: any) {
+      console.error('Download excel error:', err);
+      this._alert.error('Download failed: ' + (err?.message || err), 'Error');
+    }
   }
 
   onExcelFileSelected(event: any) {

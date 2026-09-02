@@ -1,5 +1,4 @@
 <!--begin::Form-->
-
 <form
   class="form w-100"
   [formGroup]="loginForm"
@@ -7,40 +6,47 @@
   id="kt_login_signin_form"
   (ngSubmit)="submit()"
 >
-  <!--begin::Heading-->
-  <div class="text-center mb-4">
-    <img
-      alt="Logo"
-      src="../../../../../assets/media/logos/logo.png"
-      class="bccl__logo"
-    />
-    <!--begin::Subtitle-->
-    <div class="text-gray-500 fw-semibold fs-6"></div>
+  <!-- Brand Heading with Glass Halo -->
+  <div class="text-center mb-7">
+    <div class="login-brand-halo mb-3 mx-auto">
+      <img
+        alt="Dhanmondi Club Logo"
+        src="./assets/media/logos/logo.png"
+        class="login-brand-logo"
+      />
+    </div>
+    <h1 class="login-brand-title mb-1">DHANMONDI CLUB</h1>
+    <p class="login-brand-subtitle mb-0">Executive & Member Portal</p>
   </div>
 
+  <!-- Error Alert Slate -->
   <ng-container *ngIf="hasError">
-    <div class="mb-lg-15 alert alert-danger">
-      <div class="alert-text font-weight-bold">
-        The login details are incorrect
-      </div>
+    <div class="glass-alert-danger d-flex align-items-center mb-6 p-3 rounded-3">
+      <i class="fas fa-exclamation-circle fs-4 me-2.5 text-danger"></i>
+      <span class="fs-7 fw-semibold text-white">The login details are incorrect. Please verify and try again.</span>
     </div>
   </ng-container>
-  <!-- end::Alert error-->
 
-  <!--begin::Form group-->
-  <div class="fv-row mb-8">
-    <label class="form-label fs-6 fw-bolder text-gray-900">Email</label>
-    <input
-      class="form-control bg-transparent"
-      type="email"
-      name="email"
-      formControlName="email"
-      autocomplete="off"
-      [ngClass]="{
-        'is-invalid': loginForm.controls['email'].invalid,
-        'is-valid': loginForm.controls['email'].valid
-      }"
-    />
+  <!-- Email Field -->
+  <div class="modern-form-group mb-5">
+    <label class="glass-field-label mb-1.5">
+      <span class="label-text">Email Address</span>
+    </label>
+    <div class="glass-input-wrapper">
+      <i class="fas fa-envelope glass-input-icon"></i>
+      <input
+        class="form-control modern-glass-input"
+        type="email"
+        name="email"
+        formControlName="email"
+        placeholder="e.g. member@dhanmondiclub.com"
+        autocomplete="email"
+        [ngClass]="{
+          'is-invalid': loginForm.controls['email'].invalid && (loginForm.controls['email'].dirty || loginForm.controls['email'].touched),
+          'is-valid': loginForm.controls['email'].valid && (loginForm.controls['email'].dirty || loginForm.controls['email'].touched)
+        }"
+      />
+    </div>
     <ng-container
       [ngTemplateOutlet]="formError"
       [ngTemplateOutletContext]="{
@@ -53,7 +59,7 @@
       [ngTemplateOutlet]="formError"
       [ngTemplateOutletContext]="{
         validation: 'email',
-        message: 'Email is invalid',
+        message: 'Please enter a valid email address',
         control: loginForm.controls['email']
       }"
     ></ng-container>
@@ -61,7 +67,7 @@
       [ngTemplateOutlet]="formError"
       [ngTemplateOutletContext]="{
         validation: 'minLength',
-        message: 'Email should have at least 3 symbols',
+        message: 'Email should have at least 3 characters',
         control: loginForm.controls['email']
       }"
     ></ng-container>
@@ -69,28 +75,46 @@
       [ngTemplateOutlet]="formError"
       [ngTemplateOutletContext]="{
         validation: 'maxLength',
-        message: 'Email should have maximum 360 symbols',
+        message: 'Email should have maximum 320 characters',
         control: loginForm.controls['email']
       }"
     ></ng-container>
   </div>
-  <!--end::Form group-->
 
-  <!--begin::Form group-->
-  <div class="fv-row mb-3">
-    <label class="form-label fw-bolder text-gray-900 fs-6 mb-0">Password</label>
-
-    <input
-      class="form-control bg-transparent"
-      type="password"
-      name="password"
-      autocomplete="off"
-      formControlName="password"
-      [ngClass]="{
-        'is-invalid': loginForm.controls['password'].invalid,
-        'is-valid': loginForm.controls['password'].valid
-      }"
-    />
+  <!-- Password Field with Show/Hide Eye Toggle -->
+  <div class="modern-form-group mb-4">
+    <div class="d-flex justify-content-between align-items-center mb-1.5">
+      <label class="glass-field-label mb-0">
+        <span class="label-text">Password</span>
+      </label>
+      <a routerLink="/auth/forgot-password" class="glass-forgot-link">
+        Forgot Password?
+      </a>
+    </div>
+    <div class="glass-input-wrapper">
+      <i class="fas fa-lock glass-input-icon"></i>
+      <input
+        class="form-control modern-glass-input pe-10"
+        [type]="showPassword ? 'text' : 'password'"
+        name="password"
+        autocomplete="current-password"
+        placeholder="Enter your secret key"
+        formControlName="password"
+        [ngClass]="{
+          'is-invalid': loginForm.controls['password'].invalid && (loginForm.controls['password'].dirty || loginForm.controls['password'].touched),
+          'is-valid': loginForm.controls['password'].valid && (loginForm.controls['password'].dirty || loginForm.controls['password'].touched)
+        }"
+      />
+      <button
+        type="button"
+        class="btn-eye-toggle"
+        (click)="togglePasswordVisibility()"
+        [title]="showPassword ? 'Hide password' : 'Show password'"
+        tabindex="-1"
+      >
+        <i [class]="showPassword ? 'fas fa-eye-slash' : 'fas fa-eye'"></i>
+      </button>
+    </div>
     <ng-container
       [ngTemplateOutlet]="formError"
       [ngTemplateOutletContext]="{
@@ -103,7 +127,7 @@
       [ngTemplateOutlet]="formError"
       [ngTemplateOutletContext]="{
         validation: 'minlength',
-        message: 'Password should have at least 3 symbols',
+        message: 'Password should have at least 3 characters',
         control: loginForm.controls['password']
       }"
     ></ng-container>
@@ -111,57 +135,49 @@
       [ngTemplateOutlet]="formError"
       [ngTemplateOutletContext]="{
         validation: 'maxLength',
-        message: 'Password should have maximum 100 symbols',
+        message: 'Password should have maximum 100 characters',
         control: loginForm.controls['password']
       }"
     ></ng-container>
   </div>
-  <!--end::Form group-->
 
-  <!--begin::Wrapper-->
-  <div class="d-flex flex-stack flex-wrap gap-3 fs-base fw-semibold mb-8">
-    <div></div>
-
-    <!--begin::Link-->
-    <a routerLink="/auth/forgot-password" class="link-primary">
-      Forgot Password ?
-    </a>
-    <!--end::Link-->
-  </div>
-  <!--end::Wrapper-->
-
-  <!--begin::Action-->
-  <div class="d-grid mb-10">
+  <!-- Submit Action Button -->
+  <div class="d-grid mt-7 mb-4">
     <button
       type="submit"
       id="kt_sign_in_submit"
-      class="btn"
-      [disabled]="loginForm.invalid"
+      class="btn-glass-submit"
+      [disabled]="loginForm.invalid || (isLoading$ | async)"
     >
       <ng-container *ngIf="isLoading$ | async">
-        <span class="indicator-progress" [style.display]="'block'">
-          Please wait...
-          <span
-            class="spinner-border spinner-border-sm align-middle ms-2"
-          ></span>
+        <span class="d-flex align-items-center justify-content-center gap-2">
+          <span class="spinner-border spinner-border-sm" role="status"></span>
+          <span>Signing in...</span>
         </span>
       </ng-container>
       <ng-container *ngIf="(isLoading$ | async) === false">
-        <span class="indicator-label">Continue</span>
+        <span class="d-flex align-items-center justify-content-center gap-2">
+          <span>Sign In to Portal</span>
+          <i class="fas fa-arrow-right fs-7 ms-1"></i>
+        </span>
       </ng-container>
     </button>
   </div>
 
-  <div class="text-gray-500 text-center fw-semibold fs-6">
-    Not a Member yet?
-
-    <a routerLink="/auth/registration" class="link-primary"> Sign up </a>
+  <!-- Registration Link -->
+  <div class="glass-signup-note text-center mt-4">
+    <span class="note-muted">Not a Member yet?</span>
+    <a routerLink="/auth/registration" class="note-highlight ms-1.5">Apply for Membership</a>
   </div>
 
-  <!--end::Action-->
+  <!-- Security Seal -->
+  <div class="glass-security-seal text-center mt-5 pt-3 border-top border-white-10">
+    <i class="fas fa-shield-alt text-emerald me-1.5"></i>
+    <span class="seal-text">256-Bit SSL Encrypted Secure Session</span>
+  </div>
 </form>
-<!--end::Form-->
 
+<!-- Validation Template -->
 <ng-template
   #formError
   let-control="control"
@@ -171,10 +187,9 @@
   <ng-container
     *ngIf="control.hasError(validation) && (control.dirty || control.touched)"
   >
-    <div class="fv-plugins-message-container">
-      <span role="alert">
-        {{ message }}
-      </span>
+    <div class="glass-field-error mt-1">
+      <i class="fas fa-exclamation-triangle me-1"></i>
+      <span>{{ message }}</span>
     </div>
   </ng-container>
 </ng-template>

@@ -370,54 +370,81 @@
     </div>
 
     <!-- Right Column: Profile Photo Upload Zone -->
+    <!-- Right Column: Modern Profile Photo Upload Zone -->
     <div class="col-lg-3 col-md-12">
-      <div class="photo-upload-card p-4 rounded-3 border text-center">
-        <h6 class="fw-bolder text-dark mb-3">Member Photograph</h6>
+      <div
+        class="modern-photo-card p-4 rounded-4 text-center"
+        [class.drag-over]="isDragOver"
+        (dragover)="onDragOver($event)"
+        (dragleave)="onDragLeave($event)"
+        (drop)="onDrop($event)"
+      >
+        <div class="d-flex align-items-center justify-content-between mb-3">
+          <h6 class="fw-bolder text-dark mb-0 fs-7">Member Photo</h6>
+          <span
+            class="badge"
+            [ngClass]="selectedProfileFile ? 'badge-light-primary' : (imagePreviewUrl ? 'badge-light-success' : 'badge-light-secondary')"
+          >
+            {{ selectedProfileFile ? 'New Selected' : (imagePreviewUrl ? 'Saved' : 'Empty') }}
+          </span>
+        </div>
 
-        <div class="photo-preview-wrapper mb-3">
+        <!-- Photo Avatar Ring Container -->
+        <div class="photo-preview-wrapper position-relative mb-3">
           <div class="photo-avatar-ring">
             <img
-              *ngIf="memberForm.value.ImgFileUrl"
+              *ngIf="imagePreviewUrl"
               id="profilePic"
               class="photo-preview-img"
-              [src]="memberForm.value.ImgFileUrl"
+              [src]="imagePreviewUrl"
               alt="Member Photo"
             />
-            <div *ngIf="!memberForm.value.ImgFileUrl" class="photo-placeholder-box">
-              <i class="fas fa-user-circle fa-4x text-muted mb-2"></i>
-              <span class="fs-9 fw-semibold text-muted">No Photo Uploaded</span>
+            <div *ngIf="!imagePreviewUrl" class="photo-placeholder-box">
+              <i class="fas fa-user-circle fa-4x text-muted mb-2 opacity-50"></i>
+              <span class="fs-8 fw-semibold text-muted">No Photo Uploaded</span>
+              <span class="fs-9 text-muted mt-1">Drag & drop image here</span>
             </div>
           </div>
 
-          <!-- Remove Image Action Button -->
+          <!-- Remove / Clear Image Button -->
           <button
             type="button"
             class="btn-photo-remove"
             (click)="removeImage()"
-            *ngIf="memberForm.value.ImgFileUrl"
+            *ngIf="imagePreviewUrl"
             title="Remove Photo"
           >
             <i class="fas fa-times"></i>
           </button>
         </div>
 
+        <!-- Selected File Metadata Info -->
+        <div *ngIf="selectedProfileFile" class="selected-file-meta mb-3 p-2 rounded-3 bg-light-primary border border-primary border-opacity-25">
+          <div class="d-flex align-items-center justify-content-center gap-1 text-primary fs-8 fw-bold">
+            <i class="fas fa-check-circle"></i>
+            <span class="text-truncate" style="max-width: 140px;">{{ selectedFileName }}</span>
+          </div>
+          <span class="fs-9 text-muted">{{ selectedFileSize }}</span>
+        </div>
+
+        <!-- Action Controls -->
         <div class="photo-upload-actions">
-          <label for="newProfilePhoto" class="btn-photo-upload w-100">
+          <label for="newProfilePhoto" class="btn-photo-upload w-100 mb-2 cursor-pointer">
             <i class="fas fa-camera me-1.5"></i>
-            {{ memberForm.value.ImgFileUrl ? 'Change Photo' : 'Upload Photo' }}
+            {{ imagePreviewUrl ? 'Change Photo' : 'Upload Photo' }}
           </label>
           <input
-            formControlName="ProfileFile"
             class="d-none"
             type="file"
             name="profile_pic"
             id="newProfilePhoto"
-            accept="image/*"
+            accept="image/jpeg,image/png,image/jpg,image/webp"
             (change)="imageChangeHandler($event)"
           />
-          <span class="text-muted fs-9 d-block mt-2">
-            Accepted formats: JPG, PNG. Max: 2MB
-          </span>
+          <div class="d-flex flex-column gap-1 text-muted fs-9">
+            <span><i class="fas fa-cloud-arrow-up me-1 text-primary"></i> Click or Drag & Drop</span>
+            <span>JPG, PNG, WEBP • Max 5MB</span>
+          </div>
         </div>
       </div>
     </div>

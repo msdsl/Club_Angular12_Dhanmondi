@@ -1,21 +1,243 @@
 :host {
+  display: block;
+  width: 100%;
   height: 100%;
 }
-.custom_login {
-  background: url(/assets/25.png);
-  background-size: cover;
-  background-repeat: no-repeat;
-  background-color: #eff6fc;
-  height: 100vh;
+
+.custom-login-viewport {
+  position: relative;
+  min-height: 100vh;
+  width: 100%;
+  background-color: #070b12;
+  background-image:
+    radial-gradient(circle at 15% 20%, rgba(14, 165, 233, 0.22) 0%, transparent 45%),
+    radial-gradient(circle at 85% 80%, rgba(99, 102, 241, 0.24) 0%, transparent 45%),
+    radial-gradient(circle at 50% 50%, rgba(15, 23, 42, 0.9) 0%, #06090e 100%);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow-x: hidden;
+  overflow-y: auto;
+  font-family: 'Inter', system-ui, -apple-system, sans-serif;
+  padding: 30px 16px;
 }
 
-.bccl__login {
-  background-color: rgba(172, 31, 38, 0.3);
-  padding: 30px;
-  border-radius: 12px;
-  width: 350px;
+/* Subtle Geometric Mesh Grid */
+.mesh-grid-pattern {
   position: absolute;
-  top: 25%;
-  right: 25%;
-  box-shadow: 1px 5px 10px 11px rgba(0, 0, 0, 0.1);
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-image:
+    linear-gradient(rgba(255, 255, 255, 0.02) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(255, 255, 255, 0.02) 1px, transparent 1px);
+  background-size: 48px 48px;
+  pointer-events: none;
+  z-index: 1;
+}
+
+/* Ambient Floating Glow Orbs for Dynamic Glassmorphism */
+.ambient-orb {
+  position: absolute;
+  border-radius: 50%;
+  filter: blur(85px);
+  pointer-events: none;
+  z-index: 1;
+  opacity: 0.55;
+
+  &.orb-1 {
+    width: 380px;
+    height: 380px;
+    top: 8%;
+    left: 10%;
+    background: linear-gradient(135deg, #0284c7 0%, #38bdf8 100%);
+    animation: floatOrbOne 20s ease-in-out infinite alternate;
+  }
+
+  &.orb-2 {
+    width: 440px;
+    height: 440px;
+    bottom: 6%;
+    right: 8%;
+    background: linear-gradient(135deg, #6366f1 0%, #a855f7 100%);
+    animation: floatOrbTwo 24s ease-in-out infinite alternate;
+  }
+
+  &.orb-3 {
+    width: 300px;
+    height: 300px;
+    top: 55%;
+    left: 45%;
+    background: linear-gradient(135deg, #0ea5e9 0%, #10b981 100%);
+    animation: floatOrbThree 18s ease-in-out infinite alternate;
+  }
+}
+
+@keyframes floatOrbOne {
+  0%   { transform: translate(0, 0) scale(1); }
+  50%  { transform: translate(40px, 60px) scale(1.12); }
+  100% { transform: translate(-30px, 30px) scale(0.95); }
+}
+
+@keyframes floatOrbTwo {
+  0%   { transform: translate(0, 0) scale(1); }
+  50%  { transform: translate(-50px, -40px) scale(1.08); }
+  100% { transform: translate(30px, -60px) scale(0.92); }
+}
+
+@keyframes floatOrbThree {
+  0%   { transform: translate(0, 0) scale(1); }
+  50%  { transform: translate(-35px, 45px) scale(1.15); }
+  100% { transform: translate(45px, -25px) scale(0.9); }
+}
+
+/* Stage Container (Dual Pane or Balanced Showcase) */
+.login-stage-container {
+  position: relative;
+  z-index: 10;
+  width: 100%;
+  max-width: 1140px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 48px;
+  margin: auto;
+
+  @media (max-width: 991.98px) {
+    flex-direction: column;
+    justify-content: center;
+    gap: 24px;
+    max-width: 460px;
+  }
+}
+
+/* Watermark Showcase (100% Fully Visible) */
+.watermark-showcase {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  user-select: none;
+
+  .watermark-brand-box {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    animation: fadeInSlide 0.8s ease-out;
+
+    @media (max-width: 991.98px) {
+      align-items: center;
+      text-align: center;
+    }
+  }
+
+  .watermark-hero-img {
+    width: 100%;
+    max-width: 480px;
+    height: auto;
+    object-fit: contain;
+    filter: drop-shadow(0 10px 30px rgba(0, 0, 0, 0.5));
+    opacity: 0.95;
+    transition: transform 0.3s ease;
+
+    &:hover {
+      transform: scale(1.02);
+    }
+
+    @media (max-width: 991.98px) {
+      max-width: 280px;
+    }
+
+    @media (max-width: 480px) {
+      max-width: 220px;
+    }
+  }
+
+  .watermark-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    background: rgba(255, 255, 255, 0.06);
+    border: 1px solid rgba(255, 255, 255, 0.12);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    padding: 6px 16px;
+    border-radius: 20px;
+    box-shadow: 0 4px 14px rgba(0, 0, 0, 0.2);
+
+    .watermark-badge-dot {
+      width: 7px;
+      height: 7px;
+      border-radius: 50%;
+      background: #10b981;
+      box-shadow: 0 0 0 0 rgba(16, 185, 129, 0.7);
+      animation: pulseGreen 2s infinite;
+    }
+
+    .watermark-badge-text {
+      font-size: 12px;
+      font-weight: 600;
+      letter-spacing: 0.5px;
+      color: #94a3b8;
+    }
+  }
+}
+
+@keyframes pulseGreen {
+  0% { box-shadow: 0 0 0 0 rgba(16, 185, 129, 0.7); }
+  70% { box-shadow: 0 0 0 6px rgba(16, 185, 129, 0); }
+  100% { box-shadow: 0 0 0 0 rgba(16, 185, 129, 0); }
+}
+
+@keyframes fadeInSlide {
+  from { opacity: 0; transform: translateY(14px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+/* Login Card Wrapper */
+.login-card-wrapper {
+  flex: 1;
+  display: flex;
+  justify-content: flex-end;
+  width: 100%;
+
+  @media (max-width: 991.98px) {
+    justify-content: center;
+  }
+}
+
+/* Luxury Frosted Glass Card */
+.glass-portal-card {
+  width: 100%;
+  max-width: 440px;
+  background: rgba(15, 23, 42, 0.65);
+  backdrop-filter: blur(28px) saturate(200%);
+  -webkit-backdrop-filter: blur(28px) saturate(200%);
+  border: 1px solid rgba(255, 255, 255, 0.14);
+  border-radius: 28px;
+  box-shadow:
+    0 35px 80px -15px rgba(0, 0, 0, 0.7),
+    0 0 0 1px rgba(255, 255, 255, 0.06),
+    inset 0 1px 1px rgba(255, 255, 255, 0.35);
+  padding: 42px 36px;
+  position: relative;
+  overflow: hidden;
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+
+  /* Top Light Reflection Beam */
+  &::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 15%;
+    right: 15%;
+    height: 1.5px;
+    background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.6), transparent);
+  }
+
+  @media (max-width: 575.98px) {
+    padding: 30px 20px;
+    border-radius: 22px;
+  }
 }

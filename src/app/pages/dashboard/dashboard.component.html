@@ -4,11 +4,11 @@
     <div class="d-flex flex-wrap justify-content-between align-items-center gap-4">
       <div class="d-flex align-items-center gap-3">
         <div class="club-crest-badge">
-          <app-keenicon name="crown-2" class="fs-2x text-warning" type="duotone"></app-keenicon>
+          <img src="./assets/media/logos/logo.png" alt="Dhanmondi Club Logo" class="club-logo-img" />
         </div>
         <div>
           <div class="d-flex align-items-center gap-2 mb-1">
-            <h1 class="dashboard-main-title mb-0">Executive Dashboard</h1>
+            <h1 class="dashboard-main-title mb-0">Dashboard</h1>
             <span class="executive-pill-badge">Dhanmondi Club Ltd</span>
           </div>
           <p class="dashboard-subtitle mb-0">
@@ -33,10 +33,10 @@
     </div>
   </div>
 
-  <!-- Row 1: 4 High-Impact Hero KPI Cards -->
+  <!-- Row 1: High-Impact Hero KPI Cards (3 Streamlined Cards) -->
   <div class="row g-4 mb-6">
     <!-- Hero 1: Total Master Members -->
-    <div class="col-xl-3 col-lg-6 col-md-6 col-12">
+    <div class="col-xl-4 col-lg-4 col-md-6 col-12">
       <div class="hero-kpi-card h-100 card-purple-accent">
         <div class="kpi-top-row d-flex justify-content-between align-items-start mb-3">
           <div class="hero-icon-container bg-purple-soft">
@@ -55,6 +55,17 @@
           </div>
         </div>
 
+        <!-- Smart Mini Progress Meter -->
+        <div class="kpi-mini-progress mt-3">
+          <div class="d-flex justify-content-between align-items-center mb-1">
+            <span class="progress-sub-text">Active Member Ratio</span>
+            <span class="progress-percent-val text-purple">94.8%</span>
+          </div>
+          <div class="kpi-progress-track">
+            <div class="kpi-progress-bar bg-purple-gradient" style="width: 94.8%"></div>
+          </div>
+        </div>
+
         <div class="hero-kpi-footer d-flex justify-content-between align-items-center mt-3 pt-3 border-top-subtle">
           <div class="spouse-subtag" title="Spouses & Family Members">
             <app-keenicon name="people" class="fs-7 text-muted me-1" type="duotone"></app-keenicon>
@@ -65,37 +76,8 @@
       </div>
     </div>
 
-    <!-- Hero 2: Active Members -->
-    <div class="col-xl-3 col-lg-6 col-md-6 col-12">
-      <div class="hero-kpi-card h-100 card-emerald-accent">
-        <div class="kpi-top-row d-flex justify-content-between align-items-start mb-3">
-          <div class="hero-icon-container bg-emerald-soft">
-            <app-keenicon name="user-tick" class="fs-2 text-emerald" type="duotone"></app-keenicon>
-          </div>
-          <div class="trend-capsule" [ngClass]="activeMemberGrowthRate >= 0 ? 'trend-up' : 'trend-down'">
-            <app-keenicon [name]="activeMemberGrowthRate >= 0 ? 'arrow-up-right' : 'arrow-down-right'" class="fs-6 me-1" type="duotone"></app-keenicon>
-            <span>{{ activeMemberGrowthRate >= 0 ? '+' : '' }}{{ activeMemberGrowthRate }}%</span>
-          </div>
-        </div>
-
-        <div class="hero-kpi-body">
-          <span class="kpi-micro-label">Active Engagement</span>
-          <div class="kpi-hero-number">
-            {{ (getUserDashboardAllData.TotalActiveMember || 3890) | number }}
-          </div>
-        </div>
-
-        <div class="hero-kpi-footer d-flex justify-content-between align-items-center mt-3 pt-3 border-top-subtle">
-          <span class="active-ratio-badge">
-            <span class="dot-indicator"></span> 74.1% Active Ratio
-          </span>
-          <span class="kpi-comparison-note">vs last month</span>
-        </div>
-      </div>
-    </div>
-
-    <!-- Hero 3: Today's Revenue -->
-    <div class="col-xl-3 col-lg-6 col-md-6 col-12">
+    <!-- Hero 2: Today's Revenue -->
+    <div class="col-xl-4 col-lg-4 col-md-6 col-12">
       <div class="hero-kpi-card h-100 card-blue-accent">
         <div class="kpi-top-row d-flex justify-content-between align-items-start mb-3">
           <div class="hero-icon-container bg-blue-soft">
@@ -110,7 +92,18 @@
         <div class="hero-kpi-body">
           <span class="kpi-micro-label">Today's Revenue</span>
           <div class="kpi-hero-number currency-val">
-            <span class="currency-symbol">৳</span> {{ (todayRevenue || getUserDashboardAllData.TodayRevenue || 328750) | number }}
+            <span class="currency-symbol">৳</span> {{ displayTodayRevenue | number }}
+          </div>
+        </div>
+
+        <!-- Smart Mini Progress Meter -->
+        <div class="kpi-mini-progress mt-3">
+          <div class="d-flex justify-content-between align-items-center mb-1">
+            <span class="progress-sub-text">Daily Collection Target</span>
+            <span class="progress-percent-val text-blue">{{ todayTargetPercent }}%</span>
+          </div>
+          <div class="kpi-progress-track">
+            <div class="kpi-progress-bar bg-blue-gradient" [style.width.%]="todayTargetPercent > 100 ? 100 : todayTargetPercent"></div>
           </div>
         </div>
 
@@ -123,8 +116,8 @@
       </div>
     </div>
 
-    <!-- Hero 4: This Month's Revenue -->
-    <div class="col-xl-3 col-lg-6 col-md-6 col-12">
+    <!-- Hero 3: This Month's Revenue -->
+    <div class="col-xl-4 col-lg-4 col-md-6 col-12">
       <div class="hero-kpi-card h-100 card-amber-accent">
         <div class="kpi-top-row d-flex justify-content-between align-items-start mb-3">
           <div class="hero-icon-container bg-amber-soft">
@@ -143,6 +136,17 @@
           </div>
         </div>
 
+        <!-- Smart Mini Progress Meter -->
+        <div class="kpi-mini-progress mt-3">
+          <div class="d-flex justify-content-between align-items-center mb-1">
+            <span class="progress-sub-text">Monthly Target Run Rate</span>
+            <span class="progress-percent-val text-amber">108.2%</span>
+          </div>
+          <div class="kpi-progress-track">
+            <div class="kpi-progress-bar bg-amber-gradient" style="width: 100%"></div>
+          </div>
+        </div>
+
         <div class="hero-kpi-footer d-flex justify-content-between align-items-center mt-3 pt-3 border-top-subtle">
           <span class="performance-target-badge">
             Target Pace: <strong>108%</strong>
@@ -153,11 +157,11 @@
     </div>
   </div>
 
-  <!-- Row 2: Secondary Operational Stat Strip (4 Streamlined Cards) -->
+  <!-- Row 2: Secondary Operational Stat Strip (3 Streamlined Cards) -->
   <div class="row g-4 mb-6">
     <!-- Strip 1: Outstanding Due -->
-    <div class="col-xl-3 col-lg-6 col-md-6 col-12">
-      <div class="strip-card d-flex align-items-center justify-content-between p-4">
+    <div class="col-xl-4 col-lg-4 col-md-6 col-12">
+      <div class="strip-card strip-card-rose d-flex align-items-center justify-content-between p-4">
         <div class="d-flex align-items-center gap-3">
           <div class="strip-icon bg-rose-soft text-rose">
             <app-keenicon name="bill" class="fs-3 text-rose" type="duotone"></app-keenicon>
@@ -169,13 +173,13 @@
             </div>
           </div>
         </div>
-        <span class="alert-status-pill">Due Pending</span>
+        <span class="alert-status-pill"><span class="dot-indicator bg-danger me-1"></span> Pending</span>
       </div>
     </div>
 
     <!-- Strip 2: Member Wallet Balance -->
-    <div class="col-xl-3 col-lg-6 col-md-6 col-12">
-      <div class="strip-card d-flex align-items-center justify-content-between p-4">
+    <div class="col-xl-4 col-lg-4 col-md-6 col-12">
+      <div class="strip-card strip-card-teal d-flex align-items-center justify-content-between p-4">
         <div class="d-flex align-items-center gap-3">
           <div class="strip-icon bg-teal-soft text-teal">
             <app-keenicon name="dollar" class="fs-3 text-teal" type="duotone"></app-keenicon>
@@ -187,13 +191,13 @@
             </div>
           </div>
         </div>
-        <span class="safe-reserve-pill">In Reserve</span>
+        <span class="safe-reserve-pill"><span class="dot-indicator bg-success me-1"></span> In Reserve</span>
       </div>
     </div>
 
     <!-- Strip 3: New Enrolments -->
-    <div class="col-xl-3 col-lg-6 col-md-6 col-12">
-      <div class="strip-card d-flex align-items-center justify-content-between p-4">
+    <div class="col-xl-4 col-lg-4 col-md-6 col-12">
+      <div class="strip-card strip-card-violet d-flex align-items-center justify-content-between p-4">
         <div class="d-flex align-items-center gap-3">
           <div class="strip-icon bg-violet-soft text-violet">
             <app-keenicon name="user-square" class="fs-3 text-violet" type="duotone"></app-keenicon>
@@ -206,26 +210,6 @@
           </div>
         </div>
         <span class="growth-subpill">+{{ pendingMemberGrowthRate }}% new</span>
-      </div>
-    </div>
-
-    <!-- Strip 4: Maintenance & Alerts -->
-    <div class="col-xl-3 col-lg-6 col-md-6 col-12">
-      <div class="strip-card d-flex align-items-center justify-content-between p-4">
-        <div class="d-flex align-items-center gap-3">
-          <div class="strip-icon bg-amber-soft text-amber">
-            <app-keenicon name="setting-2" class="fs-3 text-amber" type="duotone"></app-keenicon>
-          </div>
-          <div>
-            <span class="strip-label">System Operations</span>
-            <div class="strip-number">
-              {{ getUserDashboardAllData.PendingMaintenance || operationalKpis.maintenanceRequests }} Pending
-            </div>
-          </div>
-        </div>
-        <span class="health-good-pill">
-          {{ getUserDashboardAllData.SystemAlerts || operationalKpis.systemAlerts }} Alerts
-        </span>
       </div>
     </div>
   </div>
@@ -409,7 +393,7 @@
   <div class="row g-4 mb-6">
     <!-- Col-4: Today's Live Sales -->
     <div class="col-xl-4 col-lg-6 col-12">
-      <div class="modern-card p-5 h-100 d-flex flex-column">
+      <div class="modern-card p-4 h-100 d-flex flex-column">
         <div class="d-flex justify-content-between align-items-center mb-4">
           <div>
             <h2 class="section-card-title mb-0">Today's Live Sales</h2>
@@ -436,14 +420,14 @@
             <app-keenicon name="wallet" class="fs-3 text-white" type="duotone"></app-keenicon>
             <span class="fs-6 fw-bold text-white">Total Collected Today</span>
           </div>
-          <span class="fs-4 fw-bolder text-white font-tabular">৳ {{ todaySummaryTotal | number }}</span>
+          <span class="fs-4 fw-bolder text-white font-tabular">৳ {{ displayTodayRevenue | number }}</span>
         </div>
       </div>
     </div>
 
     <!-- Col-4: Recent Memberships -->
     <div class="col-xl-4 col-lg-6 col-12">
-      <div class="modern-card p-5 h-100 d-flex flex-column">
+      <div class="modern-card p-4 h-100 d-flex flex-column">
         <div class="d-flex justify-content-between align-items-center mb-4">
           <div>
             <h2 class="section-card-title mb-0">Recent Memberships</h2>
@@ -452,31 +436,31 @@
           <a routerLink="/member" class="view-all-link">View All</a>
         </div>
 
-        <div class="table-responsive flex-grow-1">
-          <table class="table modern-table align-middle gs-0 gy-3 mb-0">
+        <div class="table-responsive flex-grow-1 mb-0 custom-scrollbar">
+          <table class="table recent-members-table align-middle mb-0">
             <thead>
-              <tr class="table-header-row">
-                <th class="ps-0">Member ID</th>
-                <th>Member</th>
-                <th>Category</th>
-                <th class="text-end pe-0">Joined</th>
+              <tr class="table-head-row">
+                <th class="col-id">Member ID</th>
+                <th class="col-member">Member</th>
+                <th class="col-category">Category</th>
+                <th class="col-joined text-end">Joined</th>
               </tr>
             </thead>
             <tbody>
-              <tr *ngFor="let member of recentMembersList">
-                <td class="ps-0 fs-7 fw-semibold text-primary font-tabular">{{ member.id }}</td>
-                <td>
+              <tr *ngFor="let member of recentMembersList" class="member-row">
+                <td class="col-id fs-7 fw-semibold text-primary font-tabular">{{ member.id }}</td>
+                <td class="col-member">
                   <div class="d-flex align-items-center">
-                    <div class="member-avatar-circle me-2">
+                    <div class="member-avatar-circle me-2 flex-shrink-0">
                       {{ member.initials }}
                     </div>
-                    <span class="fs-7 fw-bold text-dark text-truncate" style="max-width: 120px;">{{ member.name }}</span>
+                    <span class="fs-7 fw-bold text-dark member-name-text">{{ member.name }}</span>
                   </div>
                 </td>
-                <td>
+                <td class="col-category">
                   <span class="badge {{ member.badgeClass }} category-pill">{{ member.category }}</span>
                 </td>
-                <td class="text-end pe-0 fs-8 text-muted fw-medium">{{ member.joinDate }}</td>
+                <td class="col-joined text-end fs-8 text-muted fw-medium">{{ member.joinDate }}</td>
               </tr>
             </tbody>
           </table>
@@ -486,7 +470,7 @@
 
     <!-- Col-4: Upcoming Club Events -->
     <div class="col-xl-4 col-lg-12 col-12">
-      <div class="modern-card p-5 h-100 d-flex flex-column">
+      <div class="modern-card p-4 h-100 d-flex flex-column">
         <div class="d-flex justify-content-between align-items-center mb-4">
           <div>
             <h2 class="section-card-title mb-0">Upcoming Club Events</h2>

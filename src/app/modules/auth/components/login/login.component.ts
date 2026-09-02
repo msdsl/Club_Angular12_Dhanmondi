@@ -24,10 +24,15 @@ export class LoginComponent implements OnInit, OnDestroy {
   hasError: boolean;
   returnUrl: string;
   isLoading$: Observable<boolean>;
+  showPassword = false;
   private authLocalStorageToken = `currentBgclUser`;
   navs: any;
   // private fields
-  private unsubscribe: Subscription[] = []; // Read more: => https://brianflove.com/2016/12/11/anguar-2-unsubscribe-observables/
+  private unsubscribe: Subscription[] = [];
+
+  togglePasswordVisibility() {
+    this.showPassword = !this.showPassword;
+  }
 
   constructor(
     private fb: FormBuilder,

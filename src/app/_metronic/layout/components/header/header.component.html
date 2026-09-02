@@ -6,17 +6,10 @@
     <!--begin::sidebar mobile toggle-->
     <div class="d-flex align-items-center d-lg-none ms-n2 me-2" title="Show sidebar menu">
       <div class="btn btn-icon btn-active-color-primary w-35px h-35px" id="kt_app_sidebar_mobile_toggle">
-        <app-keenicon name="abstract-14" class="fs-1"></app-keenicon>
+        <i class="fas fa-bars fs-2 text-white"></i>
       </div>
     </div>
     <!--end::sidebar mobile toggle-->
-    <!--begin::Mobile logo-->
-    <div class="d-flex align-items-center flex-grow-1 flex-lg-grow-0">
-      <a routerLink="/dashboard" class="d-lg-none">
-        <img alt="Logo" src="./assets/media/logos/default-small.svg" class="h-30px" />
-      </a>
-    </div>
-    <!--end::Mobile logo-->
   </ng-container>
 
   <ng-container *ngIf="!appSidebarDisplay">
@@ -69,7 +62,7 @@
         <!--begin::Smart Header Sidebar Toggle-->
         <div
           id="kt_app_sidebar_header_toggle"
-          class="btn btn-icon smart-header-toggle"
+          class="btn btn-icon smart-header-toggle d-none d-lg-flex"
           data-kt-toggle="true"
           data-kt-toggle-state="active"
           data-kt-toggle-target="body"

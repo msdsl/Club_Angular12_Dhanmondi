@@ -34,6 +34,13 @@ export class BcpersonalInfoComponent implements OnInit {
   @ViewChild('noticeSwal')
   noticeSwal!: SwalComponent;
 
+  // Modern image upload state
+  selectedProfileFile: File | null = null;
+  imagePreviewUrl: string | null = null;
+  selectedFileName: string = '';
+  selectedFileSize: string = '';
+  isDragOver: boolean = false;
+
   constructor(
     private service: MemberbcService,
     private memberTypeService: MemberTypeService,
@@ -122,6 +129,22 @@ export class BcpersonalInfoComponent implements OnInit {
       HomeAddress: data.HomeAddress,
       MemberFullId: data.MemberFullId,
     });
+
+    // Handle existing photo preview from server
+    if (data.ImgFileUrl && typeof data.ImgFileUrl === 'string' && data.ImgFileUrl.trim() !== '' && data.ImgFileUrl !== 'null') {
+      if (!data.ImgFileUrl.startsWith('http')) {
+        const base = (this.service['APIUrl'] || '').replace(/\/api\/?$/, '').replace(/\/$/, '');
+        this.imagePreviewUrl = `${base}/${data.ImgFileUrl.replace(/^\//, '')}`;
+      } else {
+        this.imagePreviewUrl = data.ImgFileUrl;
+      }
+    } else {
+      this.imagePreviewUrl = null;
+    }
+    this.selectedProfileFile = null;
+    this.selectedFileName = '';
+    this.selectedFileSize = '';
+    this.cdr.detectChanges();
   }
 
   createFilterForm() {
@@ -245,81 +268,135 @@ export class BcpersonalInfoComponent implements OnInit {
     );
   }
 
+  onDragOver(event: DragEvent) {
+    event.preventDefault();
+    event.stopPropagation();
+    this.isDragOver = true;
+  }
+
+  onDragLeave(event: DragEvent) {
+    event.preventDefault();
+    event.stopPropagation();
+    this.isDragOver = false;
+  }
+
+  onDrop(event: DragEvent) {
+    event.preventDefault();
+    event.stopPropagation();
+    this.isDragOver = false;
+    if (event.dataTransfer && event.dataTransfer.files && event.dataTransfer.files.length > 0) {
+      this.processSelectedFile(event.dataTransfer.files[0]);
+    }
+  }
+
   imageChangeHandler(event: any) {
-    const file = event.target.files[0];
+    const input = event.target as HTMLInputElement;
+    if (input.files && input.files.length > 0) {
+      this.processSelectedFile(input.files[0]);
+      input.value = '';
+    }
+  }
+
+  processSelectedFile(file: File) {
+    if (!file) return;
+
+    // Validate image format
+    const validTypes = ['image/jpeg', 'image/png', 'image/jpg', 'image/webp'];
+    if (!validTypes.includes(file.type.toLowerCase())) {
+      alert('Please select a valid image file (JPG, PNG, WEBP).');
+      return;
+    }
+
+    // Validate size (max 5MB)
+    const maxSize = 5 * 1024 * 1024;
+    if (file.size > maxSize) {
+      alert('File size exceeds 5MB. Please select a smaller photo.');
+      return;
+    }
+
+    this.selectedProfileFile = file;
+    this.selectedFileName = file.name;
+    this.selectedFileSize = (file.size / (1024 * 1024)).toFixed(2) + ' MB';
+
+    // Local preview only (Base64 is NEVER sent to DB)
     const reader = new FileReader();
-    this.memberForm.get('ProfileFile').patchValue(file);
     reader.onload = (e: any) => {
-      this.memberForm.get('ImgFileUrl').patchValue(e.target.result);
+      this.imagePreviewUrl = e.target.result;
       this.cdr.detectChanges();
     };
     reader.readAsDataURL(file);
-    const inputElement = event.target as HTMLInputElement;
-    // this.updateProfilePicture(inputElement.files as any);
-
-    console.log(this.memberForm.value);
   }
+
   removeImage() {
-    this.memberForm.get('ImgFileUrl').patchValue(null);
-    this.memberForm.get('ProfileFile').patchValue(null);
+    this.selectedProfileFile = null;
+    this.imagePreviewUrl = null;
+    this.selectedFileName = '';
+    this.selectedFileSize = '';
+    this.memberForm.get('ImgFileUrl')?.patchValue(null);
+    this.memberForm.get('ProfileFile')?.patchValue(null);
     this.cdr.detectChanges();
   }
 
   prepareToSave() {
     const formData = new FormData();
 
-    formData.append('MemberFullId', this.memberForm.value.MemberFullId);
-    formData.append('OfficeAddress', this.memberForm.value.OfficeAddress);
-    formData.append('HscYear', this.memberForm.value.HscYear);
-    formData.append('Specialization', this.memberForm.value.Specialization);
-    formData.append('Designation', this.memberForm.value.Designation);
-    formData.append('Organaization', this.memberForm.value.Organaization);
-    formData.append('Email', this.memberForm.value.Email);
-    formData.append('Phone', this.memberForm.value.Phone);
-    formData.append('CadetName', this.memberForm.value.CadetName);
-    formData.append('FullName', this.memberForm.value.FullName);
-    formData.append('QBCusName', this.memberForm.value.QBCusName);
-    formData.append('PinNo', this.memberForm.value.PinNo);
-    formData.append(
-      'MemberActiveStatusId',
-      this.memberForm.value.MemberActiveStatusId
-    );
-    formData.append('BloodGroupId', this.memberForm.value.BloodGroupId);
-    formData.append('MemberStatusId', this.memberForm.value.MemberStatusId);
-    formData.append('MemberTypeId', this.memberForm.value.MemberTypeId);
-    formData.append(
-      'MemberProfessionId',
-      this.memberForm.value.MemberProfessionId
-    );
-    formData.append('CollegeId', this.memberForm.value.CollegeId);
-    formData.append('ProfileFile', this.memberForm.value.ProfileFile);
-    formData.append('ImgFileUrl', this.memberForm.value.ImgFileUrl);
-    formData.append('ImgFileUrl', this.memberForm.value.ImgFileUrl);
-    formData.append('DeviceId', this.memberForm.value.DeviceId);
-    formData.append('Dob', this.memberForm.value.Dob);
-    formData.append('PaidTill', this.memberForm.value.PaidTill);
-    formData.append('Anniversary', this.memberForm.value.Anniversary);
-    formData.append('MemberTypeText', this.memberForm.value.MemberTypeText);
-    formData.append('MemberShipNo', this.memberForm.value.MemberShipNo);
-    formData.append('CreditLimit', this.memberForm.value.CreditLimit);
-    formData.append('BatchNo', this.memberForm.value.BatchNo);
-    formData.append('CadetNo', this.memberForm.value.CadetNo);
-    formData.append('SpouseCardNo', this.memberForm.value.SpouseCardNo);
-    formData.append('CardNo', this.memberForm.value.CardNo);
-    formData.append('Id', this.memberForm.value.Id);
-    formData.append('PrvCusID', this.memberForm.value.PrvCusID);
-    formData.append('PostalAddress', this.memberForm.value.PostalAddress);
-    formData.append('Nok', this.memberForm.value.Nok);
-    formData.append('Name', this.memberForm.value.Name);
-    formData.append('ClubJoinDate', this.memberForm.value.ClubJoinDate);
-    formData.append('EmergencyContact', this.memberForm.value.EmergencyContact);
-    formData.append('PermanentAddress', this.memberForm.value.PermanentAddress);
-    formData.append('NID', this.memberForm.value.NID);
-    formData.append('LeaveDate', this.memberForm.value.LeaveDate);
-    formData.append('JoinDate', this.memberForm.value.JoinDate);
-    formData.append('HasSubscription', this.memberForm.value.HasSubscription);
-    formData.append('CollegeName', this.memberForm.value.CollegeName);
-    formData.append('HomeAddress', this.memberForm.value.HomeAddress);
+    formData.append('MemberFullId', this.memberForm.value.MemberFullId || '');
+    formData.append('OfficeAddress', this.memberForm.value.OfficeAddress || '');
+    formData.append('HscYear', this.memberForm.value.HscYear || '');
+    formData.append('Specialization', this.memberForm.value.Specialization || '');
+    formData.append('Designation', this.memberForm.value.Designation || '');
+    formData.append('Organaization', this.memberForm.value.Organaization || '');
+    formData.append('Email', this.memberForm.value.Email || '');
+    formData.append('Phone', this.memberForm.value.Phone || '');
+    formData.append('CadetName', this.memberForm.value.CadetName || '');
+    formData.append('FullName', this.memberForm.value.FullName || '');
+    formData.append('QBCusName', this.memberForm.value.QBCusName || '');
+    formData.append('PinNo', this.memberForm.value.PinNo || '');
+    formData.append('MemberActiveStatusId', this.memberForm.value.MemberActiveStatusId || '');
+    formData.append('BloodGroupId', this.memberForm.value.BloodGroupId || '');
+    formData.append('MemberStatusId', this.memberForm.value.MemberStatusId || '');
+    formData.append('MemberTypeId', this.memberForm.value.MemberTypeId || '');
+    formData.append('MemberProfessionId', this.memberForm.value.MemberProfessionId || '');
+    formData.append('CollegeId', this.memberForm.value.CollegeId || '');
+
+    // 1. Binary profile image file: Only append if an actual File was selected
+    if (this.selectedProfileFile instanceof File) {
+      formData.append('ProfileFile', this.selectedProfileFile, this.selectedProfileFile.name);
+    }
+
+    // 2. ImgFileUrl: Do NOT send Base64 string! Only pass relative server path if retaining old photo
+    const currentImg = this.memberForm.value.ImgFileUrl;
+    if (this.imagePreviewUrl && currentImg && typeof currentImg === 'string' && !currentImg.startsWith('data:')) {
+      formData.append('ImgFileUrl', currentImg);
+    } else {
+      formData.append('ImgFileUrl', '');
+    }
+
+    formData.append('DeviceId', this.memberForm.value.DeviceId || '');
+    formData.append('Dob', this.memberForm.value.Dob || '');
+    formData.append('PaidTill', this.memberForm.value.PaidTill || '');
+    formData.append('Anniversary', this.memberForm.value.Anniversary || '');
+    formData.append('MemberTypeText', this.memberForm.value.MemberTypeText || '');
+    formData.append('MemberShipNo', this.memberForm.value.MemberShipNo || '');
+    formData.append('CreditLimit', this.memberForm.value.CreditLimit || '');
+    formData.append('BatchNo', this.memberForm.value.BatchNo || '');
+    formData.append('CadetNo', this.memberForm.value.CadetNo || '');
+    formData.append('SpouseCardNo', this.memberForm.value.SpouseCardNo || '');
+    formData.append('CardNo', this.memberForm.value.CardNo || '');
+    formData.append('Id', this.memberForm.value.Id || 0);
+    formData.append('PrvCusID', this.memberForm.value.PrvCusID || '');
+    formData.append('PostalAddress', this.memberForm.value.PostalAddress || '');
+    formData.append('Nok', this.memberForm.value.Nok || '');
+    formData.append('Name', this.memberForm.value.Name || '');
+    formData.append('ClubJoinDate', this.memberForm.value.ClubJoinDate || '');
+    formData.append('EmergencyContact', this.memberForm.value.EmergencyContact || '');
+    formData.append('PermanentAddress', this.memberForm.value.PermanentAddress || '');
+    formData.append('NID', this.memberForm.value.NID || '');
+    formData.append('LeaveDate', this.memberForm.value.LeaveDate || '');
+    formData.append('JoinDate', this.memberForm.value.JoinDate || '');
+    formData.append('HasSubscription', this.memberForm.value.HasSubscription ? 'true' : 'false');
+    formData.append('CollegeName', this.memberForm.value.CollegeName || '');
+    formData.append('HomeAddress', this.memberForm.value.HomeAddress || '');
 
     return formData;
   }
